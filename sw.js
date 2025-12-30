@@ -1,6 +1,6 @@
-const CACHE_NAME = 'aura-ios-v3';
+const CACHE_NAME = 'aura-ios-v4';
 
-const ASSETS = [
+const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './manifest.json',
@@ -21,11 +21,11 @@ self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return Promise.all(
-        ASSETS.map((url) => {
+        ASSETS_TO_CACHE.map((url) => {
           return fetch(url).then((res) => {
-            if (!res.ok) throw Error('Gagal: ' + url);
+            if (!res.ok) throw Error('Gagal memuat: ' + url);
             return cache.put(url, res);
-          }).catch((err) => console.log('Lewati aset error:', err));
+          }).catch((err) => {});
         })
       );
     })
@@ -34,10 +34,12 @@ self.addEventListener('install', (event) => {
 
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((keys) => {
+    caches.keys().then((cacheNames) => {
       return Promise.all(
-        keys.map((key) => {
-          if (key !== CACHE_NAME) return caches.delete(key);
+        cacheNames.map((cacheName) => {
+          if (cacheName !== CACHE_NAME) {
+            return caches.delete(cacheName);
+          }
         })
       );
     })
