@@ -1,6 +1,6 @@
 {
-  "name": "AURA AI",
-  "short_name": "AURA",
+  "name": "ASISTEN AI",
+  "short_name": "ASISTEN AI",
   "start_url": "./index.html",
   "scope": "/",
   "display": "standalone",
