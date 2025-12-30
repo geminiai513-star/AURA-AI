@@ -1,4 +1,4 @@
-const CACHE_NAME = 'aura-pwa-v1';
+const CACHE_NAME = 'aura-pwa-v2';
 
 const ASSETS_TO_CACHE = [
   './',
