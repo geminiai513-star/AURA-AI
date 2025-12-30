@@ -1,6 +1,6 @@
-const CACHE_NAME = 'aura-pwa-v2';
+const CACHE_NAME = 'aura-ios-v2';
 
-const ASSETS_TO_CACHE = [
+const ASSETS = [
   './',
   './index.html',
   './manifest.json',
@@ -17,22 +17,27 @@ const ASSETS_TO_CACHE = [
 ];
 
 self.addEventListener('install', (event) => {
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS_TO_CACHE);
+      return Promise.all(
+        ASSETS.map((url) => {
+          return fetch(url).then((res) => {
+            if (!res.ok) throw Error('Gagal: ' + url);
+            return cache.put(url, res);
+          }).catch((err) => console.log('Lewati aset error:', err));
+        })
+      );
     })
   );
-  self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
+    caches.keys().then((keys) => {
       return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME) {
-            return caches.delete(cacheName);
-          }
+        keys.map((key) => {
+          if (key !== CACHE_NAME) return caches.delete(key);
         })
       );
     })
