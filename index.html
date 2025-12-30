@@ -1,0 +1,2399 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <title>ASISTEN AI - GEMINI 3</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="apple-mobile-web-app-title" content="ASISTEN AI">
+    <link rel="apple-touch-icon" href="icon/icon-512.png">
+    <link rel="icon" type="image/png" href="icon/icon-512.png">
+	<link rel="manifest" href="manifest.json">
+
+    <!-- External Scripts -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+    <!-- External Styles -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-light.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
+    <!-- Internal Styles -->
+    <style>
+        /* Reset & Base */
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            position: fixed;
+            background-color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            -webkit-text-size-adjust: none;
+            text-size-adjust: none;
+            overscroll-behavior: none;
+            touch-action: pan-x pan-y;
+        }
+
+        * {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* App Layout */
+        #app-root {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .view-container {
+            position: absolute;
+            inset: 0;
+            display: none;
+            width: 100%;
+            height: 100%;
+        }
+
+        .view-container.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        header {
+		    flex: 0 0 auto;
+		    background: white;
+		    border-bottom: 1px solid #f1f5f9;
+		    padding-top: env(safe-area-inset-top, 0px);
+		    z-index: 100;
+		    overflow: visible !important;
+		    position: relative;
+		}
+
+        /* Main Content */
+        main {
+            flex: 1 1 auto;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            background-color: #ffffff;
+            overscroll-behavior-y: contain;
+            padding: 1rem 1rem 12px 1rem;
+        }
+
+        /* Footer */
+        footer {
+            flex: 0 0 auto;
+            background-color: #ffffff;
+            padding: 10px 16px;
+            padding-bottom: calc(env(safe-area-inset-bottom, 20px) + 20px);
+            z-index: 100;
+        }
+
+        /* Chat Input */
+        #chat-input {
+            background: transparent !important;
+            border: none !important;
+            outline: none !important;
+            box-shadow: none !important;
+            resize: none;
+            width: 100%;
+            padding: 12px 12px !important;
+            font-size: 16px;
+            font-weight: 500;
+            line-height: 1.2;
+            max-height: 150px;
+            color: #1f2937;
+        }
+		
+		#header-menu-trigger, 
+		#header-dropdown, 
+		#header-dropdown div,
+		.dropdown-option,
+		.voice-option {
+		    cursor: pointer;
+		    touch-action: manipulation;
+		}
+
+        /* Prose Content */
+        .prose h1, .prose h2, .prose h3, .prose p, .prose ul, .prose ol, .prose table {
+            margin-top: 0.5rem !important;
+            margin-bottom: 0.5rem !important;
+        }
+
+        .text-body-container > *:first-child {
+            margin-top: 0 !important;
+        }
+
+        .text-body-container > *:last-child {
+            margin-bottom: 0 !important;
+        }
+
+        .msg-content .grid {
+            margin-bottom: 0 !important;
+        }
+
+        .prose h1, .prose h2, .prose h3 { 
+            font-weight: 700; 
+        }
+
+        /* Lists */
+        .prose ul { 
+            list-style-type: disc; 
+            margin-left: 1.5rem; 
+            display: block !important; 
+        }
+
+        .prose ol { 
+            list-style-type: decimal; 
+            margin-left: 1.5rem; 
+            display: block !important; 
+        }
+
+        .prose li { 
+            margin-bottom: 0.2rem; 
+            display: list-item !important; 
+        }
+
+        /* Tables */
+        .prose table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            font-size: 0.9em; 
+            display: block !important;
+            overflow-x: auto !important;
+            background-color: transparent !important;
+        }
+
+        .prose thead:has(th:empty), 
+        .prose thead tr:first-child:empty {
+            display: none !important;
+        }
+
+        .prose th { 
+            background-color: #f9fafb !important;
+            font-weight: 600; 
+            border: 1px solid #e2e8f0; 
+            padding: 6px 10px !important; 
+            text-align: left; 
+            line-height: 1.8 !important;
+        }
+
+        .prose td { 
+            border: 1px solid #e2e8f0; 
+            padding: 6px 10px !important; 
+            text-align: left; 
+            line-height: 1.8 !important;
+            background-color: transparent !important;
+        }
+
+        .prose th:empty, .prose thead:empty {
+            display: none !important;
+        }
+
+        .prose tr, .prose tr:nth-child(even) { 
+            background-color: transparent !important; 
+        }
+
+        /* Code Blocks */
+        .code-container {
+            margin: 1.5rem 0;
+            border: none !important;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            background-color: #ffffff;
+        }
+
+        .code-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.5rem 1rem;
+            background-color: #f9fafb;
+            border-bottom: 4px solid #f3f4f6 !important;
+        }
+
+        .code-header span {
+            font-size: 13px !important;
+            font-weight: 700;
+            color: #94a3b8;
+            letter-spacing: 0.05em;
+        }
+
+        .code-header button {
+            background: none !important;
+            border: none !important;
+            padding: 0 !important;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .prose pre {
+            background-color: #f8fafc !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            border: none !important;
+			white-space: pre !important;
+        }
+
+        .prose pre code {
+            background-color: transparent !important;
+            display: block !important;
+            padding: 0.5rem 1.2rem !important;
+            font-size: 14px !important;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Menlo', 'Monaco', 'Consolas', monospace !important;
+            line-height: 1.4 !important;
+            -webkit-font-smoothing: antialiased;
+			white-space: pre !important;
+			word-break: normal !important;
+        }
+
+        .prose :not(pre) > code {
+            background-color: #e5e7eb !important;
+            color: #1f2937 !important;
+            padding: 0.2rem 0.4rem !important;
+            border-radius: 0.4rem !important;
+            font-size: 0.9em !important;
+            font-weight: 400 !important;
+        }
+		
+        /* Animations */
+        .fade-in { 
+            animation: fadeIn 0.3s ease-out forwards; 
+        }
+
+        @keyframes fadeIn { 
+            from { opacity: 0; transform: translateY(10px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
+
+        @keyframes blink { 
+            0%, 80%, 100% { opacity: 0.2; } 
+            40% { opacity: 1; } 
+        }
+
+        @keyframes brush-stroke {
+            0%, 100% { transform: rotate(0deg) translateX(0); }
+            33% { transform: rotate(-20deg) translateX(-1px); }
+            66% { transform: rotate(20deg) translateX(1px); }
+        }
+
+        /* UI Components */
+        .ai-gradient {
+            background: linear-gradient(90deg, #2563eb, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+
+        .animate-brush {
+            display: inline-block;
+            animation: brush-stroke 1s ease-in-out infinite;
+            transform-origin: center;
+            color: #6b7280;
+        }
+
+        .download-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px);
+            border: none;
+            border-radius: 6px;
+            padding: 4px;
+            cursor: pointer;
+            display: none !important;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            z-index: 10;
+            transition: all 0.2s ease;
+        }
+
+        .download-btn:hover {
+            background: rgba(0, 0, 0, 0.7);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .download-btn:active {
+            transform: scale(0.95);
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        /* Image Container States */
+        .image-container .download-btn {
+            display: none !important;
+        }
+
+        .image-container.show-dl .download-btn {
+            display: flex !important;
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        /* Button Icons */
+        button i { 
+            pointer-events: none; 
+        }
+    </style>
+</head>
+<body>
+    <div id="app-root">
+        <!-- Authentication View -->
+        <div id="auth-view" class="view-container bg-slate-50 items-center justify-center p-6">
+            <div class="w-full max-w-sm bg-white rounded-3xl p-8 shadow-xl shadow-slate-200/50 border border-slate-100 fade-in">
+                <div class="text-center mb-6">
+				    <div class="flex items-center justify-center mx-auto mb-0">
+				        <img src="icon/icon.png" alt="Logo" class="h-24 w-auto object-contain block">
+				    </div>
+				</div>
+
+                <form id="auth-form" class="space-y-5">
+                    <div class="relative flex items-center">
+                        <div class="absolute left-5 text-slate-400">
+                            <i data-lucide="mail" class="w-4 h-4"></i>
+                        </div>
+                        <input type="email" id="auth-email" required onblur="window.scrollTo(0,0)" 
+                            class="w-full bg-slate-50 border-none rounded-2xl pl-12 pr-5 py-4 text-sm font-medium placeholder:font-medium placeholder:text-slate-400 outline-none transition-all" 
+                            placeholder="Email">
+                    </div>
+
+                    <div class="relative flex items-center">
+                        <div class="absolute left-5 text-slate-400">
+                            <i data-lucide="key-round" class="w-4 h-4"></i>
+                        </div>
+                        <input type="password" id="auth-password" required onblur="window.scrollTo(0,0)" 
+                            class="w-full bg-slate-50 border-none rounded-2xl pl-12 pr-5 py-4 text-sm font-medium placeholder:font-medium placeholder:text-slate-400 outline-none transition-all" 
+                            placeholder="Kata Sandi">
+                    </div>
+
+                    <button type="submit" id="auth-submit-btn" 
+					    class="w-full bg-slate-800 text-white text-sm font-bold py-4 rounded-2xl active:scale-[0.98] transition-all flex items-center justify-center mt-2 tracking-widest uppercase border-none outline-none relative overflow-hidden">
+					    <span id="auth-btn-text">MASUK</span>
+					    <div id="auth-spinner" class="hidden">
+					        <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+					            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+					            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+					        </svg>
+					    </div>
+					</button>
+                </form>
+                <p id="auth-error" class="text-red-500 text-[10px] text-center mt-6 hidden"></p>
+            </div>
+        </div>
+
+        <!-- Chat View -->
+        <div id="chat-view" class="view-container">
+            <header class="h-16 px-4 flex justify-between items-center bg-white shrink-0 border-b border-gray-100 py-0 relative">
+                <div class="flex items-center h-full">
+                    <img src="icon/icon.png" alt="Logo" class="h-14 w-auto object-contain block py-0">
+	                <div style="display: flex; flex-direction: column; justify-content: center; margin-left: 4px; gap: 3px;">
+					    <span style="font-size: 18px; font-weight: 800; letter-spacing: -0.5px; line-height: 1; background: linear-gradient(90deg, #2563eb 0%, #06b6d4 70%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">AURA</span>
+					    <span style="font-size: 10px; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1;">ARTIFICIAL INTELLIGENCE</span>
+					</div>
+                </div>
+
+                <div class="flex items-center relative">
+				    <button id="header-menu-trigger" class="p-2.5 text-gray-500 active:scale-90 transition-transform outline-none">
+				        <i data-lucide="settings-2" stroke-width="2.5" class="w-5 h-5"></i>
+				    </button>
+				    
+				    <div id="header-dropdown" class="hidden absolute right-0 top-full mt-4 w-44 bg-slate-50 rounded-2xl shadow-xl border border-gray-100 p-1.5 z-[150] fade-in">
+				        <div class="flex flex-col">
+				            <div onclick="clearChat(); closeHeaderDropdown()" class="flex items-center justify-end gap-3 py-2.5 px-4 rounded-xl hover:bg-gray-200/50 cursor-pointer transition-colors border-b border-gray-200/60">
+				                <span class="text-sm font-medium text-slate-600 tracking-wider">Reset</span>
+				                <i data-lucide="refresh-cw" class="w-4 h-4 text-slate-500"></i>
+				            </div>
+				            
+				            <div onclick="showView('settings'); closeHeaderDropdown()" class="flex items-center justify-end gap-3 py-2.5 px-4 rounded-xl hover:bg-gray-200/50 cursor-pointer transition-colors border-b border-gray-200/60">
+				                <span class="text-sm font-medium text-slate-600 tracking-wider">Pengaturan</span>
+				                <i data-lucide="settings" class="w-4 h-4 text-slate-500"></i>
+				            </div>
+				            
+				            <div onclick="handleLogout(); closeHeaderDropdown()" class="flex items-center justify-end gap-3 py-2.5 px-4 rounded-xl hover:bg-gray-200/50 cursor-pointer transition-colors">
+				                <span class="text-sm font-medium text-slate-600 tracking-wider">Logout</span>
+				                <i data-lucide="log-out" class="w-4 h-4 text-slate-500"></i>
+				            </div>
+				        </div>
+				    </div>
+				</div>
+            </header>
+
+            <main id="chat-scroller">
+                <div id="message-list" class="max-w-3xl mx-auto space-y-4 pb-2"></div>
+            </main>
+
+            <footer style="background-color: #ffffff; padding: 6px 16px; padding-bottom: calc(env(safe-area-inset-bottom, 10px) + 18px);">
+                <div style="max-width: 48rem; margin-left: auto; margin-right: auto;">
+                    <div id="file-preview-container" class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-2"></div>
+                    
+                    <div id="capsule-container" style="background-color: #f3f4f6; border-radius: 14px; padding: 4px; transition: all 0.2s ease; border: 1px solid transparent;">
+                        <div id="input-row-1" style="display: flex; align-items: center; gap: 4px; margin-bottom: 2px;">
+                            <button onclick="document.getElementById('file-input').click()" 
+                                style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: #9ca3af; background: none; border: none; cursor: pointer; flex-shrink: 0;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px;">
+                                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                </svg>
+                            </button>
+                            <input type="file" id="file-input" multiple accept="image/*,application/pdf,.docx,.xlsx,.xls,.pptx,.js,.css,.java,.html,.xml,.py,.sql,.ts,.cpp,.h,.hpp,.lua,.swift" class="hidden" onchange="handleFileSelect(event)">
+                            
+                            <textarea id="chat-input" rows="1" placeholder="Tulis pesan..." oninput="adjustInput(this)"
+                                style="flex: 1; background: transparent; border: none; outline: none; resize: none; padding: 10px 4px; font-size: 16px; font-weight: 500; color: #1f2937; line-height: 20px; min-height: 40px; display: block; overflow: hidden;"></textarea>
+                            
+                            <button id="send-btn" onclick="onSend()" 
+                                style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: #374151; background: none; border: none; cursor: pointer; flex-shrink: 0;">
+                                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width: 24px; height: 24px;" fill="currentColor">
+                                    <path d="M21.66,12a2,2,0,0,1-1.14,1.81L5.87,20.75A2.08,2.08,0,0,1,5,21a2,2,0,0,1-1.82-2.82L5.46,13H11a1,1,0,0,0,0-2H5.46L3.18,5.87A2,2,0,0,1,5.86,3.25h0l14.65,6.94A2,2,0,0,1,21.66,12Z"></path>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px;">
+                            <button id="btn-mode-image" onclick="toggleImageMode()" 
+                                style="height: 32px; display: flex; align-items: center; justify-content: center; color: #9ca3af; background-color: #f9fafb; border-radius: 10px; border: none; transition: all 0.2s; cursor: pointer;">
+                                <i data-lucide="image" style="width: 15px; height: 15px;"></i>
+                            </button>
+                            <button id="btn-mode-video" onclick="toggleVideoMode()" 
+                                style="height: 32px; display: flex; align-items: center; justify-content: center; color: #9ca3af; background-color: #f9fafb; border-radius: 10px; border: none; transition: all 0.2s; cursor: pointer;">
+                                <svg fill="currentColor" viewBox="0 0 20 20" style="width: 16px; height: 16px;">
+                                    <path d="M20 5V3.799A.798.798 0 0 0 19.201 3H.801A.8.8 0 0 0 0 3.799V5h2v2H0v2h2v2H0v2h2v2H0v1.199A.8.8 0 0 0 .801 17h18.4a.8.8 0 0 0 .799-.801V15h-2v-2h2v-2h-2V9h2V7h-2V5h2zM8 13V7l5 3-5 3z"></path>
+                                </svg>
+                            </button>
+                            <button id="btn-mode-voice" onclick="openVoiceMode()" 
+                                style="height: 32px; display: flex; align-items: center; justify-content: center; color: #9ca3af; background-color: #f9fafb; border-radius: 10px; border: none; transition: all 0.2s; cursor: pointer;">
+                                <svg viewBox="0 0 24 24" fill="currentColor" style="width: 18px; height: 18px;">
+                                    <path d="M12,3 C12.51285,3 12.9355092,3.38604429 12.9932725,3.88337975 L13,4 L13,20 C13,20.5523 12.5523,21 12,21 C11.48715,21 11.0644908,20.613973 11.0067275,20.1166239 L11,20 L11,4 C11,3.44772 11.4477,3 12,3 Z M8,6 C8.55228,6 9,6.44772 9,7 L9,17 C9,17.5523 8.55228,18 8,18 C7.44772,18 7,17.5523 7,17 L7,7 C7,6.44772 7.44772,6 8,6 Z M16,6 C16.5523,6 17,6.44772 17,7 L17,17 C17,17.5523 16.5523,18 16,18 C15.4477,18 15,17.5523 15,17 L15,7 C15,6.44772 15.4477,6 16,6 Z M4,9 C4.55228,9 5,9.44772 5,10 L5,14 C5,14.5523 4.55228,15 4,15 C3.44772,15 3,14.5523 3,14 L3,10 C3,9.44772 3.44772,9 4,9 Z M20,9 C20.51285,9 20.9355092,9.38604429 20.9932725,9.88337975 L21,10 L21,14 C21,14.5523 20.5523,15 20,15 C19.48715,15 19.0644908,14.613973 19.0067275,14.1166239 L19,14 L19,10 C19,9.44772 19.4477,9 20,9 Z"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+
+        <!-- Settings View -->
+        <div id="settings-view" class="view-container bg-white">
+            <header class="h-16 px-6 flex justify-between items-center bg-white shrink-0 border-b border-gray-100">
+                <button onclick="saveSettings(); showView('chat')" class="p-2.5 -ml-3 text-gray-500 active:scale-90 transition-transform">
+                    <i data-lucide="chevron-left" stroke-width="2.5" class="w-5 h-5"></i>
+                </button>
+            </header>
+
+            <main id="settings-scroller" class="flex-1 overflow-y-auto bg-white p-4">
+                <div class="max-w-3xl mx-auto w-full">
+                    <div class="w-full bg-gray-100 rounded-2xl px-8 py-7 space-y-6 fade-in">
+                        <!-- AI Model Selection -->
+                        <div class="space-y-2 pb-4 border-b border-gray-200">
+                            <label class="text-sm font-bold text-gray-800 ml-1">MODEL AI</label>
+                            <div class="relative w-full" id="custom-dropdown">
+                                <button type="button" id="dropdown-trigger" 
+                                    class="w-full bg-gray-50 border-none rounded-2xl px-5 py-4 text-sm outline-none transition-all font-bold text-gray-700 shadow-sm flex items-center justify-between">
+                                    <span id="selected-model-text">Gemini 3 Flash</span>
+                                    <i data-lucide="chevron-down" class="w-4 h-4 text-gray-500 transition-transform duration-200" id="dropdown-icon"></i>
+                                </button>
+
+                                <div id="dropdown-menu" class="hidden absolute left-0 right-0 mt-2 bg-gray-50 rounded-3xl shadow-xl border border-gray-100 p-1.5 z-[110] fade-in">
+                                    <div class="flex flex-col">
+                                        <div class="dropdown-option py-2 px-3 rounded-2xl hover:bg-gray-50 cursor-pointer transition-colors border-b border-gray-100/60 last:border-none" data-value="gemini-3-flash-preview">
+                                            <span class="text-sm font-medium text-gray-800">Gemini 3 Flash</span>
+                                        </div>
+                                        <div class="dropdown-option py-2 px-3 rounded-2xl hover:bg-gray-50 cursor-pointer transition-colors border-b border-gray-100/60 last:border-none" data-value="gemini-3-pro-preview">
+                                            <span class="text-sm font-medium text-gray-800">Gemini 3 Pro</span>
+                                        </div>
+                                        <div class="dropdown-option py-2 px-3 rounded-2xl hover:bg-gray-50 cursor-pointer transition-colors" data-value="gemini-3-deep-think-preview">
+                                            <span class="text-sm font-medium text-gray-800">Gemini 3 Deep Think</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Voice Model Selection -->
+                        <div class="space-y-2 pb-4 border-b border-gray-200">
+                            <label class="text-sm font-bold text-gray-800 ml-1 uppercase">Model Suara</label>
+                            <div class="relative w-full" id="voice-dropdown">
+                                <button type="button" id="voice-trigger" 
+                                    class="w-full bg-gray-50 border-none rounded-2xl px-5 py-4 text-sm outline-none transition-all font-bold text-gray-700 shadow-sm flex items-center justify-between">
+                                    <span id="selected-voice-text">Kore</span>
+                                    <i data-lucide="chevron-down" class="w-4 h-4 text-gray-500 transition-transform duration-200" id="voice-icon"></i>
+                                </button>
+
+                                <div id="voice-menu" class="hidden absolute left-0 right-0 mt-2 bg-gray-50 rounded-3xl shadow-xl border border-gray-100 p-1.5 z-[120] fade-in">
+                                    <div class="flex flex-col max-h-48 overflow-y-auto custom-scroll">
+                                        <div class="voice-option py-2 px-3 rounded-2xl hover:bg-gray-50 cursor-pointer transition-colors border-b border-gray-100/60" data-value="Kore">
+                                            <span class="text-sm font-medium text-gray-800">Kore (Default)</span>
+                                        </div>
+                                        <div class="voice-option py-2 px-3 rounded-2xl hover:bg-gray-50 cursor-pointer transition-colors border-b border-gray-100/60" data-value="Aoede">
+                                            <span class="text-sm font-medium text-gray-800">Aoede</span>
+                                        </div>
+                                        <div class="voice-option py-2 px-3 rounded-2xl hover:bg-gray-50 cursor-pointer transition-colors border-b border-gray-100/60" data-value="Zephyr">
+                                            <span class="text-sm font-medium text-gray-800">Zephyr</span>
+                                        </div>
+                                        <div class="voice-option py-2 px-3 rounded-2xl hover:bg-gray-50 cursor-pointer transition-colors border-b border-gray-100/60" data-value="Leda">
+                                            <span class="text-sm font-medium text-gray-800">Leda</span>
+                                        </div>
+                                        <div class="voice-option py-2 px-3 rounded-2xl hover:bg-gray-50 cursor-pointer transition-colors" data-value="Fenrir">
+                                            <span class="text-sm font-medium text-gray-800">Fenrir</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Thinking Level -->
+                        <div class="space-y-2 pb-4 border-b border-gray-200">
+                            <div class="flex justify-between items-center ml-1">
+                                <label class="text-sm font-bold text-gray-800 uppercase">Tingkat Pemikiran</label>
+                                <span id="label-thinking" class="hidden">MEDIUM</span>
+                            </div>
+                            <input type="range" id="settings-thinking" min="1" max="3" step="1" oninput="updateSliderLabels(); saveSettings()" 
+                                class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-indigo-600">
+                            <div class="flex justify-between text-[10px] text-gray-400 px-1 font-bold uppercase">
+                                <span>LOW</span>
+                                <span>MEDIUM</span>
+                                <span>HIGH</span>
+                            </div>
+                        </div>
+
+                        <!-- Token Limit -->
+                        <div class="space-y-2 pb-4 border-b border-gray-200">
+                            <div class="flex justify-between items-center ml-1">
+                                <label class="text-sm font-bold text-gray-800 uppercase">Batas Token</label>
+                                <span id="label-tokens" class="text-sm font-bold text-indigo-600">65536</span>
+                            </div>
+                            <input type="range" id="settings-tokens" min="1024" max="65536" step="1024" oninput="updateSliderLabels(); saveSettings()" 
+                                class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-indigo-600">
+                        </div>
+
+                        <!-- System Instructions -->
+                        <div class="space-y-2">
+                            <label class="text-sm font-bold text-gray-800 ml-1 uppercase tracking-wider">System Instruksi</label>
+                            <textarea id="settings-prompt" rows="4" oninput="saveSettings()" 
+                                class="w-full bg-gray-50 border-none rounded-2xl px-4 py-4 text-sm font-medium outline-none focus:ring-0 focus:outline-none transition-all leading-tight shadow-sm text-gray-700" 
+                                placeholder="Contoh: Jadilah asisten yang sangat teknis..." onblur="window.scrollTo(0,0)"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Voice Overlay -->
+        <div id="voice-overlay" class="fixed inset-0 bg-white z-[200] hidden flex-col transition-all duration-500" style="display: none;">
+            <header class="h-16 px-6 relative flex items-center bg-white shrink-0 border-none">
+			    <button id="btn-switch-cam" onclick="switchCamera()" class="relative z-10 p-2.5 text-gray-300 active:scale-90 transition-transform">
+			        <i data-lucide="refresh-ccw" stroke-width="2.5" class="w-5 h-5"></i>
+			    </button>
+			
+			    <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+			        <span class="text-[14px] font-bold tracking-[0.5em] text-slate-800 uppercase">LIVE VOICE</span>
+			    </div>
+			
+			    <button id="btn-voice-cam" onclick="toggleVoiceCamera()" class="relative z-10 p-2.5 ml-auto text-gray-300 active:scale-90 transition-transform">
+			        <i data-lucide="video" stroke-width="2.5" class="w-5 h-5"></i>
+			    </button>
+			</header>
+            
+            <main id="voice-main-content" class="flex-1 flex items-center justify-center p-4 bg-white overflow-hidden">
+                <div id="voice-visual-box" class="relative w-full max-w-3xl h-full flex items-center justify-center">
+                    <canvas id="voice-canvas" class="block"></canvas>
+                    <video id="voice-large-video" autoplay playsinline muted class="hidden absolute inset-0 w-full h-full object-cover rounded-[32px] bg-slate-900 border-none"></video>
+                    <canvas id="voice-frame-canvas" style="display:none;"></canvas>
+                    <video id="voice-hidden-video" autoplay playsinline muted style="display:none;"></video>
+                </div>
+            </main>
+            
+            <footer class="flex-none bg-white border-none px-4 py-4" style="padding-bottom: calc(env(safe-area-inset-bottom, 20px) + 20px);">
+                <div class="max-w-3xl mx-auto flex flex-col items-center gap-4">
+                    <div id="voice-timer" class="text-slate-400 font-mono text-sm tracking-[0.3em] font-bold">00:00:00</div>
+                    <button onclick="closeVoiceMode()" 
+                        class="w-14 h-14 bg-red-50 text-red-500 rounded-full flex items-center justify-center border border-red-100 active:scale-90 transition-all">
+                        <i data-lucide="phone-off" class="w-6 h-6"></i>
+                    </button>
+                </div>
+            </footer>
+        </div>
+    </div>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js')
+        .then((reg) => console.log('Service Worker Registered'))
+        .catch((err) => console.log('Service Worker Failed', err));
+    });
+  }
+</script>
+<script>
+	// ============================
+	// KONFIGURASI & VARIABEL GLOBAL
+	// ============================
+	
+	const SUPABASE_URL = "https://eofuiyhnyyxrapxilank.supabase.co";
+	const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVvZnVpeWhueXl4cmFweGlsYW5rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU5Mzc3NTEsImV4cCI6MjA4MTUxMzc1MX0.aogUNcs5K2-q7h8cDHpgRwYN5dTO9sm2P2aHlKeUlvc";
+	const VEO_PROXY = "https://aura-veo-api-408925499207.asia-southeast2.run.app";
+	const DB_NAME = 'ChatStorage';
+	const STORE_NAME = 'files';
+	
+	const _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+	
+	const PERMANENT_PROMPT = "";
+	
+	// DOM Elements
+	const authView = document.getElementById('auth-view');
+	const chatView = document.getElementById('chat-view');
+	const settingsView = document.getElementById('settings-view');
+	const scroller = document.getElementById('chat-scroller');
+	const messageList = document.getElementById('message-list');
+	const input = document.getElementById('chat-input');
+	const sendBtn = document.getElementById('send-btn');
+	const authError = document.getElementById('auth-error');
+	const settingsPrompt = document.getElementById('settings-prompt');
+	const activeModelLabel = document.getElementById('active-model-label');
+	const settingsThinking = document.getElementById('settings-thinking');
+	const settingsTokens = document.getElementById('settings-tokens');
+	const labelThinking = document.getElementById('label-thinking');
+	const labelTokens = document.getElementById('label-tokens');
+	const dropdownTrigger = document.getElementById('dropdown-trigger');
+	const dropdownMenu = document.getElementById('dropdown-menu');
+	const selectedModelText = document.getElementById('selected-model-text');
+	const dropdownOptions = document.querySelectorAll('.dropdown-option');
+	const voiceTrigger = document.getElementById('voice-trigger');
+	const voiceMenu = document.getElementById('voice-menu');
+	const voiceOptions = document.querySelectorAll('.voice-option');
+	const headerMenuTrigger = document.getElementById('header-menu-trigger');
+	const headerDropdown = document.getElementById('header-dropdown');
+	
+	// State Variables
+	let currentModel = localStorage.getItem('ai_model') || 'gemini-3-flash-preview';
+	let systemPrompt = localStorage.getItem('system_prompt') || 'Anda adalah asisten AI yang cerdas menggunakan model Gemini 3.';
+	let chatHistory = JSON.parse(localStorage.getItem('chat_history')) || [];
+	let currentThinking = localStorage.getItem('ai_thinking') || 'MEDIUM';
+	let maxTokens = parseInt(localStorage.getItem('ai_tokens')) || 65536;
+	let currentVoice = localStorage.getItem('v_voice') || 'Kore';
+	let pendingFiles = [];
+	let isImageMode = false;
+	let isVideoMode = false;
+	
+	// Voice Mode Variables
+	let voiceWs, voiceInCtx, voiceOutCtx, voiceAnalyser, aiAnalyser, voiceDataArray, voiceStream;
+	let isAISpeaking = false;
+	let voiceNextTime = 0;
+	let voiceTimerInterval;
+	let voiceCamStream, voiceCamInterval;
+	let isVoiceCamOn = false;
+	let facingMode = 'user';
+	let activeVoiceSources = [];
+	let voiceEnabled = false;
+	let voiceSessionId = 0;
+	
+	// Stop Respon
+	let isGenerating = false;
+	let originalSendBtnContent = null;
+	
+	// ============================
+	// MARKDOWN RENDERER SETUP
+	// ============================
+	
+	const renderer = new marked.Renderer();
+	renderer.code = function(token) {
+	    const code = token.text || "";
+	    const language = token.lang || 'plaintext';
+	    
+	    return `
+	        <div class="code-container">
+	            <div class="code-header">
+	                <span>${language}</span>
+	                <button onclick="copyToClipboard(this)">
+	                    <i data-lucide="copy" class="w-[14px] h-[14px] text-gray-400"></i>
+	                </button>
+	            </div>
+	            <pre><code class="hljs language-${language}">${escapeHTML(code)}</code></pre>
+	        </div>
+	    `;
+	};
+	marked.setOptions({ renderer: renderer, langPrefix: 'hljs language-' });
+	
+	// ============================
+	// FUNGSI UTILITAS UMUM
+	// ============================
+	
+	function escapeHTML(str) {
+	    const p = document.createElement('p');
+	    p.textContent = str;
+	    return p.innerHTML;
+	}
+	
+	function formatBytes(bytes, decimals = 2) {
+	    if (bytes === 0) return '0 Bytes';
+	    const k = 1024;
+	    const dm = decimals < 0 ? 0 : decimals;
+	    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+	    const i = Math.floor(Math.log(bytes) / Math.log(k));
+	    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+	}
+	
+	function adjustInput(el) {
+	    el.style.height = '40px'; 
+	    const newHeight = el.scrollHeight;
+	    
+	    if (newHeight > 40) {
+	        el.style.height = newHeight + 'px';
+	    } else {
+	        el.style.height = '40px';
+	    }
+	    
+	    const container = document.getElementById('capsule-container');
+	    const row1 = document.getElementById('input-row-1');
+	    
+	    if (container && row1) {
+	        if (newHeight > 44) {
+	            row1.style.alignItems = "flex-end";
+	            container.style.borderRadius = "12px";
+	        } else {
+	            row1.style.alignItems = "center";
+	            container.style.borderRadius = "14px";
+	        }
+	    }
+	}
+	
+	function scrollToBottom() {
+	    setTimeout(() => { 
+	        scroller.scrollTo({ 
+	            top: scroller.scrollHeight, 
+	            behavior: 'smooth' 
+	        }); 
+	    }, 50);
+	}
+	
+	function closeHeaderDropdown() {
+	    headerDropdown.classList.add('hidden');
+	}
+	
+	// ============================
+	// FUNGSI INDEXEDDB
+	// ============================
+	
+	function openDB() {
+	    return new Promise((resolve, reject) => {
+	        const request = indexedDB.open(DB_NAME, 1);
+	        request.onupgradeneeded = () => request.result.createObjectStore(STORE_NAME);
+	        request.onsuccess = () => resolve(request.result);
+	        request.onerror = () => reject(request.error);
+	    });
+	}
+	
+	async function saveToLocal(id, data) {
+	    const db = await openDB();
+	    const tx = db.transaction(STORE_NAME, 'readwrite');
+	    tx.objectStore(STORE_NAME).put(data, id);
+	    return new Promise(res => tx.oncomplete = res);
+	}
+	
+	async function getFromLocal(id) {
+	    const db = await openDB();
+	    const tx = db.transaction(STORE_NAME, 'readonly');
+	    const req = tx.objectStore(STORE_NAME).get(id);
+	    return new Promise(res => req.onsuccess = () => res(req.result));
+	}
+	
+	async function clearLocalDB() {
+	    const db = await openDB();
+	    const tx = db.transaction(STORE_NAME, 'readwrite');
+	    tx.objectStore(STORE_NAME).clear();
+	    return new Promise(res => tx.oncomplete = res);
+	}
+	
+	// ============================
+	// FUNGSI UI & VIEW MANAGEMENT
+	// ============================
+	
+	function showView(view) {
+	    authView.classList.remove('active');
+	    chatView.classList.remove('active');
+	    settingsView.classList.remove('active');
+	    if (view === 'chat') chatView.classList.add('active');
+	    else if (view === 'settings') settingsView.classList.add('active');
+	    else authView.classList.add('active');
+	    lucide.createIcons();
+	    if (view === 'chat') scrollToBottom();
+	}
+	
+	async function checkSession() {
+	    try {
+	        const { data: { session } } = await _supabase.auth.getSession();
+	        showView(session ? 'chat' : 'auth');
+	    } catch (e) { showView('auth'); }
+	}
+	
+	function updateSliderLabels() {
+	    const thinkingMap = { "1": "LOW", "2": "MEDIUM", "3": "HIGH" };
+	    labelThinking.innerText = thinkingMap[settingsThinking.value];
+	    labelTokens.innerText = settingsTokens.value;
+	}
+	
+	function closeAllDropdowns() {
+	    dropdownMenu.classList.add('hidden');
+	    const modelIcon = document.getElementById('dropdown-icon');
+	    if (modelIcon) modelIcon.style.transform = 'rotate(0deg)';
+	    
+	    voiceMenu.classList.add('hidden');
+	    const voiceIcon = document.getElementById('voice-icon');
+	    if (voiceIcon) voiceIcon.style.transform = 'rotate(0deg)';
+	}
+	
+	// ============================
+	// FUNGSI AUTHENTIKASI
+	// ============================
+	
+	document.getElementById('auth-form').onsubmit = async (e) => {
+	    e.preventDefault();
+	    const btn = document.getElementById('auth-submit-btn');
+	    const btnText = document.getElementById('auth-btn-text');
+	    const spinner = document.getElementById('auth-spinner');
+	    const authError = document.getElementById('auth-error');
+	    
+	    authError.classList.add('hidden');
+	    btn.disabled = true;
+	    btnText.classList.add('hidden');
+	    spinner.classList.remove('hidden');
+	    
+	    const email = document.getElementById('auth-email').value;
+	    const password = document.getElementById('auth-password').value;
+	
+	    try {
+	        await new Promise(resolve => setTimeout(resolve, 3000));
+	        
+	        const { error } = await _supabase.auth.signInWithPassword({ email, password });
+	        if (error) throw error;
+	    } catch (err) {
+	        authError.innerText = "Kredensial salah atau terjadi gangguan.";
+	        authError.classList.remove('hidden');
+	        
+	        btn.disabled = false;
+	        btnText.classList.remove('hidden');
+	        spinner.classList.add('hidden');
+	    }
+	};
+	
+	async function handleLogout() {
+	    await _supabase.auth.signOut();
+	    showView('auth');
+	}
+	
+	_supabase.auth.onAuthStateChange((ev) => {
+	    if (ev === 'SIGNED_IN') showView('chat');
+	    if (ev === 'SIGNED_OUT') showView('auth');
+	});
+	
+	// ============================
+	// FUNGSI PENGATURAN
+	// ============================
+	
+	function saveSettings() {
+	    systemPrompt = settingsPrompt.value;
+	    
+	    const thinkingMap = { "1": "LOW", "2": "MEDIUM", "3": "HIGH" };
+	    currentThinking = thinkingMap[settingsThinking.value];
+	    maxTokens = parseInt(settingsTokens.value);
+	
+	    localStorage.setItem('ai_model', currentModel);
+	    localStorage.setItem('system_prompt', systemPrompt);
+	    localStorage.setItem('ai_thinking', currentThinking);
+	    localStorage.setItem('ai_tokens', maxTokens);
+	    
+	    const modelLabels = {
+	        'gemini-3-flash-preview': 'Gemini 3 Flash',
+	        'gemini-3-pro-preview': 'Gemini 3 Pro',
+	        'gemini-3-deep-think-preview': 'Gemini 3 Deep Think'
+	    };
+	    selectedModelText.innerText = modelLabels[currentModel] || 'Gemini 3 Flash';
+	    localStorage.setItem('v_voice', currentVoice);
+	}
+	
+	function initUI() {
+	    const modelLabels = {
+	        'gemini-3-flash-preview': 'Gemini 3 Flash',
+	        'gemini-3-pro-preview': 'Gemini 3 Pro',
+	        'gemini-3-deep-think-preview': 'Gemini 3 Deep Think'
+	    };
+	    
+	    selectedModelText.innerText = modelLabels[currentModel] || 'Gemini 3 Flash';
+	    settingsPrompt.value = systemPrompt;
+	    
+	    const thinkingRevMap = { "LOW": "1", "MEDIUM": "2", "HIGH": "3" };
+	    settingsThinking.value = thinkingRevMap[currentThinking] || "2";
+	    settingsTokens.value = maxTokens;
+	    
+	    updateSliderLabels();
+	    lucide.createIcons();
+	    loadSavedChat();
+	    
+	    document.getElementById('selected-voice-text').innerText = currentVoice;
+	}
+	
+	// ============================
+	// FUNGSI CHAT & MESSAGES
+	// ============================
+	
+	function createBubble(role, content = '', files = [], isPlaceholder = false, showTyping = false) {
+	    const isAI = role === 'assistant' || role === 'model';
+	    const roleLabel = isAI ? '<span class="ai-gradient">AURA</span>' : 'USER';
+	    const now = new Date();
+	    const timeStr = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+	    const div = document.createElement('div');
+	    div.className = "w-full animate-in fade-in duration-300 mb-4";
+	
+	    let filesHtml = '';
+	    if (files && files.length > 0) {
+	        const aiFile = files.find(f => f.isAI || f.isVideo);
+	        
+	        if (aiFile) {
+	            filesHtml = `
+	                <div class="mt-2 w-full ai-image-container">
+	                    <div class="file-placeholder w-full h-48 bg-gray-200 rounded-xl animate-pulse flex items-center justify-center" data-file-id="${aiFile.fileId}">
+	                        <i data-lucide="${aiFile.isVideo ? 'video' : 'image'}" class="w-8 h-8 text-gray-400"></i>
+	                    </div>
+	                </div>`;
+	        } else {
+	            filesHtml = '<div class="grid grid-cols-2 md:grid-cols-4 gap-2 mt-2">';
+	            files.forEach(f => {
+	                const ext = f.name.split('.').pop().toLowerCase();
+	                let visual = isPlaceholder 
+	                    ? `<div class="file-placeholder w-10 h-10 flex items-center justify-center bg-gray-200 rounded-lg" data-file-id="${f.fileId || ''}"></div>`
+	                    : (f.mime && f.mime.startsWith('image/')) 
+	                        ? `<img src="data:${f.mime};base64,${f.base64}" class="w-10 h-10 object-cover rounded-lg shadow-sm">` 
+	                        : getFileIcon(ext);
+	                filesHtml += `
+	                    <div class="bg-gray-200 rounded-2xl p-3 flex items-center gap-2 relative w-full min-h-[64px] border-none">
+	                        <div class="w-10 h-10 flex-none flex items-center justify-center overflow-hidden shrink-0">${visual}</div>
+	                        <div class="flex-1 flex flex-col justify-center min-w-0 h-10">
+	                            <div class="text-[13px] font-bold text-gray-700 truncate leading-none mb-1">${f.name}</div>
+	                            <div class="text-[11px] text-gray-400 font-medium leading-none">${f.size || ''}</div>
+	                        </div>
+	                    </div>`;
+	            });
+	            filesHtml += '</div>';
+	        }
+	    }
+	
+	    div.innerHTML = `
+        <div class="w-full bg-gray-100 rounded-2xl px-5 pt-3 pb-5 text-slate-800">
+            <div class="flex justify-between items-center pb-1 border-b border-gray-200">
+                <span class="text-[11px] font-bold uppercase tracking-widest">${roleLabel}</span>
+                <span class="text-[11px] font-medium text-gray-400">${timeStr}</span>
+            </div>
+            <div class="prose prose-sm max-w-none msg-content text-base leading-relaxed font-medium mt-1 space-y-1">
+                ${filesHtml}
+                <div class="text-body-container">${content ? marked.parse(content.replace(/\[\[.*?\]\]/g, '')) : ''}</div>
+                
+	               ${isAI && showTyping ? `
+	                <div class="typing-indicator flex items-center gap-1.5 py-1 text-gray-500">
+	                    <span class="text-sm font-medium italic">Thinking</span>
+	                    <span class="flex leading-none mb-0.5 ml-0.5">
+	                        <span style="animation: blink 1.4s infinite both; animation-delay: 0s;">.</span>
+	                        <span style="animation: blink 1.4s infinite both; animation-delay: 0.2s;">.</span>
+	                        <span style="animation: blink 1.4s infinite both; animation-delay: 0.4s;">.</span>
+	                    </span>
+	                </div>` : ''}
+	            </div>
+	        </div>
+	    `;
+		messageList.appendChild(div);
+	    const bodyContainer = div.querySelector('.text-body-container');
+	    lucide.createIcons();
+	    scrollToBottom();
+	    return { textElement: bodyContainer, typingElement: div.querySelector('.typing-indicator') };
+	}
+	
+	async function clearChat() {
+	    chatHistory = [];
+	    localStorage.removeItem('chat_history');
+	    await clearLocalDB();
+	    pendingFiles = [];
+	    renderPreviews();
+	    messageList.innerHTML = '';
+	    input.value = '';
+	    adjustInput(input);
+	    window.scrollTo(0, 0);
+	}
+	
+	// ============================
+	// FUNGSI FILE HANDLING
+	// ============================
+	
+	async function readCodeFile(file) {
+	    try {
+	        const text = await file.rawFile.text();
+	        return `\n[ISI FILE ${file.name.toUpperCase()}]:\n${text}\n`;
+	    } catch (e) { return `\n[Gagal membaca isi file ${file.name}]\n`; }
+	}
+	
+	function getFileIcon(extension) {
+	    const icons = {
+	        'pdf': 'pdf-file-icon.svg',
+	        'docx': 'docx-file-icon.svg',
+	        'xlsx': 'excel-file-icon.svg',
+	        'xls': 'excel-file-icon.svg',
+	        'pptx': 'ppt-file-icon.svg',
+	        'js': 'javascript-file-icon.svg',
+	        'css': 'css-file-icon.svg',
+	        'java': 'java-file-icon.svg',
+	        'html': 'html-file-icon.svg',
+	        'xml': 'xml-file-icon.svg',
+	        'py': 'python-file-icon.svg',
+	        'sql': 'sql-file-icon.svg',
+	        'ts': 'typescript-file-icon.svg',
+	        'lua': 'lua-file-icon.svg',
+			'cpp': 'cpp-file-icon.svg',
+	        'h': 'cpp-file-icon.svg',
+	        'hpp': 'cpp-file-icon.svg',
+	        'swift': 'swift-file-icon.svg'
+	    };
+	    const iconFile = icons[extension] || 'default-file-icon.svg'; 
+	    return `<img src="icon/${iconFile}" class="w-7 h-7 object-contain">`;
+	}
+	
+	function convertToBase64(file) {
+	    return new Promise((resolve, reject) => {
+	        const reader = new FileReader();
+	        reader.readAsDataURL(file);
+	        reader.onload = () => resolve(reader.result);
+	        reader.onerror = error => reject(error);
+	    });
+	}
+	
+	async function extractTextFromOffice(file) {
+	    const ext = file.name.split('.').pop().toLowerCase();
+	    try {
+	        if (ext === 'docx') {
+	            const ab = await file.rawFile.arrayBuffer();
+	            const res = await mammoth.extractRawText({ arrayBuffer: ab });
+	            return `\n[FILE WORD: ${file.name}]\n${res.value}\n`;
+	        }
+	        if (['xlsx', 'xls'].includes(ext)) {
+	            const ab = await file.rawFile.arrayBuffer();
+	            const wb = XLSX.read(ab, { type: 'array' });
+	            const text = wb.SheetNames.map(n => `\n-- Sheet: ${n} --\n${XLSX.utils.sheet_to_csv(wb.Sheets[n])}`).join('');
+	            return `\n[FILE EXCEL: ${file.name}]\n${text}\n`;
+	        }
+	        if (ext === 'pptx') {
+	            const zip = new JSZip();
+	            const content = await zip.loadAsync(file.rawFile);
+	            let text = `\n[FILE POWERPOINT: ${file.name}]\n`;
+	            const slides = Object.keys(content.files).filter(n => n.startsWith("ppt/slides/slide") && n.endsWith(".xml")).sort();
+	            for (const f of slides) {
+	                const xml = await content.files[f].async("text");
+	                const nodes = new DOMParser().parseFromString(xml, "text/xml").getElementsByTagName("a:t");
+	                text += `\n[SLIDE]\n${Array.from(nodes).map(n => n.textContent).join(" ")}\n`;
+	            }
+	            return text;
+	        }
+	    } catch (e) { return `\n[Gagal membaca ${file.name}]\n`; }
+	    return '';
+	}
+	
+	async function handleFileSelect(event) {
+	    const files = Array.from(event.target.files);
+	    if (!files.length) return;
+	
+	    if (pendingFiles.length + files.length > 4) {
+	        alert("Maksimal 4 file dalam satu pengiriman.");
+	        event.target.value = '';
+	        return;
+	    }
+	
+	    try {
+	        for (const file of files) {
+	            const base64 = await convertToBase64(file);
+	            
+	            let mimeType = file.type || '';
+	            const ext = file.name ? file.name.split('.').pop().toLowerCase() : '';
+	            if (!mimeType && ['jpg', 'jpeg', 'png', 'gif', 'webp', 'heic', 'heif'].includes(ext)) {
+	                mimeType = 'image/jpeg';
+	            }
+	
+	            pendingFiles.push({
+	                name: file.name || "Gambar",
+	                size: formatBytes(file.size),
+	                type: mimeType,
+	                base64: base64.split(',')[1],
+	                mime: mimeType,
+	                rawFile: file
+	            });
+	        }
+	    } catch (e) {
+	        console.error("Gagal membaca file:", e);
+	    } finally {
+	        renderPreviews();
+	        event.target.value = '';
+	    }
+	}
+	
+	function removeFile(index) {
+	    pendingFiles.splice(index, 1);
+	    renderPreviews();
+	}
+	
+	function renderPreviews() {
+	    const container = document.getElementById('file-preview-container');
+	    container.innerHTML = '';
+	    
+	    pendingFiles.forEach((file, index) => {
+	        const ext = file.name ? file.name.split('.').pop().toLowerCase() : '';
+	      
+	        const isImage = (file.type && typeof file.type === 'string' && file.type.startsWith('image/')) || 
+	                        ['jpg', 'jpeg', 'png', 'gif', 'webp', 'heic', 'heif'].includes(ext);
+	
+	        const visual = isImage 
+	            ? `<img src="data:${file.mime || 'image/jpeg'};base64,${file.base64}" class="w-full h-full object-cover rounded-lg">` 
+	            : getFileIcon(ext);
+	        
+	        const card = document.createElement('div');
+	        card.className = "bg-gray-100 rounded-2xl p-3 flex items-center gap-2 relative fade-in w-full min-h-[64px] border-none";
+	        card.innerHTML = `
+	            <div class="w-10 h-10 flex-none flex items-center justify-center overflow-hidden shrink-0">
+	                ${visual}
+	            </div>
+	            <div class="flex-1 flex flex-col justify-center min-w-0 h-10">
+	                <p class="text-[13px] font-bold text-gray-700 truncate leading-none mb-1 m-0 p-0">${file.name}</p>
+	                <p class="text-[11px] text-gray-400 font-medium leading-none m-0 p-0">${file.size}</p>
+	            </div>
+	            <button onclick="removeFile(${index})" class="absolute -top-3 -right-3 w-7 h-7 flex items-center justify-center border-none p-0 cursor-pointer outline-none bg-transparent">
+	                <svg fill="#d1d5db" viewBox="0 0 24 24" class="w-full h-full"><path d="M12 4c-4.419 0-8 3.582-8 8s3.581 8 8 8 8-3.582 8-8-3.581-8-8-8zm3.707 10.293c.391.391.391 1.023 0 1.414-.195.195-.451.293-.707.293s-.512-.098-.707-.293l-2.293-2.293-2.293 2.293c-.195.195-.451.293-.707.293s-.512-.098-.707-.293c-.391-.391-.391-1.023 0-1.414l2.293-2.293-2.293-2.293c-.391-.391-.391-1.023 0-1.414s1.023-.391 1.414 0l2.293 2.293 2.293-2.293c.391-.391 1.023-.391 1.414 0s.391 1.023 0 1.414l-2.293 2.293 2.293 2.293z"></path></svg>
+	            </button>`;
+	        container.appendChild(card);
+	    });
+	}
+	
+	async function processPendingFiles() {
+	    const filesForUI = [];
+	    const filesForStorage = [];
+	    const apiParts = [];
+	    let officeTextContext = "";
+	    const codeExts = ['js', 'css', 'java', 'html', 'xml', 'py', 'sql', 'ts', 'cpp', 'h', 'hpp', 'lua', 'swift'];
+
+    	for (const f of pendingFiles) {
+	        const fileId = 'file_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+	        await saveToLocal(fileId, { mime: f.mime, base64: f.base64, name: f.name, size: f.size });
+	        
+	        filesForUI.push({ ...f });
+	        filesForStorage.push({ name: f.name, size: f.size, fileId: fileId });
+	        
+	        const ext = f.name.split('.').pop().toLowerCase();
+	        
+	        if (f.mime.startsWith('image/') || ext === 'pdf') {
+	            apiParts.push({ inline_data: { mime_type: f.mime, data: f.base64 } });
+	        } 
+	        else if (codeExts.includes(ext)) {
+	            officeTextContext += await readCodeFile(f);
+	        } 
+	        else {
+	            officeTextContext += await extractTextFromOffice(f);
+	        }
+	    }
+	    return { filesForUI, filesForStorage, apiParts, officeTextContext };
+	}
+	
+	// ============================
+	// FUNGSI IMAGE MODE
+	// ============================
+	
+	function setActiveStyle(btn) {
+	    btn.style.color = "#1f2937";
+	    btn.style.backgroundColor = "#ffffff";
+	    btn.style.boxShadow = "0 1px 2px rgba(0,0,0,0.06)";
+	}
+	
+	function resetButtonUI(btnId) {
+	    const btn = document.getElementById(btnId);
+	    if (!btn) return;
+	    btn.style.color = "#9ca3af";
+	    btn.style.backgroundColor = "#f9fafb";
+	    btn.style.boxShadow = "none";
+	}
+	
+	function toggleImageMode() {
+	    if (!isImageMode && isVideoMode) {
+	        isVideoMode = false;
+	        resetButtonUI('btn-mode-video');
+	    }
+	
+	    isImageMode = !isImageMode;
+	    const btn = document.getElementById('btn-mode-image');
+	    const input = document.getElementById('chat-input');
+	
+	    if (isImageMode) {
+	        setActiveStyle(btn);
+	        input.placeholder = "Deskripsikan gambar...";
+	    } else {
+	        resetButtonUI('btn-mode-image');
+	        input.placeholder = "Tulis pesan...";
+	    }
+	}
+	
+	async function handleImageGeneration(prompt, imgObj = null) {
+	    const isEdit = prompt.toLowerCase().startsWith('/edit');
+	    const cleanPrompt = prompt.replace(/^\/(gambar|edit)\s+/i, '').trim();
+	    const imageModel = 'gemini-2.5-flash-image'; 
+	    
+	    const aiBubble = createBubble('assistant', '', [], false, false); 
+	    const targetId = 'gen_' + Date.now();
+	    aiBubble.textElement.id = targetId;
+	    
+	    aiBubble.textElement.innerHTML = `
+	        <div class="flex items-center gap-1 py-0.5 text-gray-500">
+	            <span class="text-sm font-medium italic">${isEdit ? 'mengedit gambar' : 'membuat gambar'}</span>
+	            <div class="flex items-end mb-0.5">
+	                <svg viewBox="0 0 16 16" class="w-3 h-3 animate-brush" fill="currentColor">
+	                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+	                        <g transform="translate(0.000000, 1.000000)" fill="currentColor">
+	                            <path d="M15.172,3.244 C14.715,3.785 10.553,8.014 8.326,9.666 L7.413,8.799 C8.703,6.288 12.154,1.507 12.609,0.967 C13.204,0.263 14.646,-0.248 15.416,0.298 C16.428,1.014 15.766,2.538 15.172,3.244 Z"></path>
+	                            <path d="M6.607,9.702 C6.607,9.702 4.515,9.149 3.259,11.296 C2.004,13.443 0.808,12.708 0.27,12.524 C-0.268,12.34 1.526,14.794 2.363,14.794 C3.181,14.794 6.752,15.969 7.631,11.36 C7.649,11.259 7.703,9.877 6.607,9.702 L6.607,9.702 Z"></path>
+	                        </g>
+	                    </g>
+	                </svg>
+	                <span class="flex ml-0.5 leading-none">
+	                    <span style="animation: blink 1.4s infinite both; animation-delay: 0s;">.</span>
+	                    <span style="animation: blink 1.4s infinite both; animation-delay: 0.2s;">.</span>
+	                    <span style="animation: blink 1.4s infinite both; animation-delay: 0.4s;">.</span>
+	                </span>
+	            </div>
+	        </div>
+	    `;
+	    
+	    if (window.lucide) lucide.createIcons();
+	
+	    try {
+	        const endpoint = `${SUPABASE_URL}/functions/v1/ai-proxy-v2?model=${imageModel}&action=generateContent`;
+	        const response = await fetch(endpoint, {
+	            method: 'POST',
+	            headers: { 
+	                'Content-Type': 'application/json', 
+	                'apikey': SUPABASE_KEY,
+	                'Authorization': `Bearer ${SUPABASE_KEY}` 
+	            },
+	            body: JSON.stringify({ 
+	                contents: [{ parts: imgObj ? [imgObj, { text: cleanPrompt }] : [{ text: cleanPrompt }] }],
+	                generationConfig: { response_modalities: ["IMAGE"] }
+	            })
+	        });
+	
+	        if (!response.ok) {
+			    const errText = await response.text();
+			    throw new Error(`Server Error (${response.status}): ${errText.substring(0, 50)}...`);
+			}
+			const data = await response.json();
+	        const b64 = data.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData?.data;
+	
+	        if (b64) {
+	            const mime = 'image/jpeg';
+	            const imgId = 'ai_gen_' + Date.now();
+	            await saveToLocal(imgId, { mime, base64: b64, name: 'AI Generated', size: 'AI' });
+	            renderImageToBubble(targetId, b64, mime);
+	            chatHistory.push({ 
+	                role: "model", 
+	                parts: [{ text: `[[CONFIRM_IMAGE_CREATED]] Saya telah berhasil membuatkan gambar dengan deskripsi: "${cleanPrompt}". Gambar tersebut sudah muncul di layar chat di atas.` }],
+	                _ui: { 
+	                    val: "", 
+	                    filesForStorage: [{ name: 'AI_Generated.jpg', size: 'AI', fileId: imgId, mime: mime, isAI: true }] 
+	                }
+	            });
+	            localStorage.setItem('chat_history', JSON.stringify(chatHistory));
+	        } else {
+	            throw new Error('Respon tidak mengandung gambar');
+	        }
+	    } catch (e) {
+        aiBubble.textElement.innerHTML = `<span class="text-red-500 font-medium">${e.message}</span>`;
+    	} finally {
+	        sendBtn.disabled = false;
+	    }
+	}
+	
+	// ============================
+	// FUNGSI VIDEO MODE
+	// ============================
+	
+	function toggleVideoMode() {
+	    if (!isVideoMode && isImageMode) {
+	        isImageMode = false;
+	        resetButtonUI('btn-mode-image');
+	    }
+	
+	    isVideoMode = !isVideoMode;
+	    const btn = document.getElementById('btn-mode-video');
+	    const input = document.getElementById('chat-input');
+	
+	    if (isVideoMode) {
+	        setActiveStyle(btn);
+	        input.placeholder = "Deskripsikan video...";
+	    } else {
+	        resetButtonUI('btn-mode-video');
+	        input.placeholder = "Tulis pesan...";
+	    }
+	}
+	
+	async function handleVideoGeneration(prompt, imageObj = null) {
+	    const aiBubble = createBubble('assistant', '', [], false, false);
+	    const targetId = 'video_' + Date.now();
+	    aiBubble.textElement.id = targetId;
+	    
+	    aiBubble.textElement.innerHTML = `
+	        <div class="flex items-center gap-2 py-1">
+	            <span id="status-text-${targetId}" class="text-sm font-medium text-gray-500 italic">Membuat video (0s)</span>
+	            <div class="flex items-end mb-1">
+	                <span class="flex leading-none text-gray-400">
+	                    <span style="animation: blink 1.4s infinite both; animation-delay: 0s;">.</span>
+	                    <span style="animation: blink 1.4s infinite both; animation-delay: 0.2s;">.</span>
+	                    <span style="animation: blink 1.4s infinite both; animation-delay: 0.4s;">.</span>
+	                </span>
+	            </div>
+	        </div>
+	    `;
+	
+	    try {
+	        let instance = { prompt: prompt };
+	        if (imageObj) {
+	            instance.image = { bytesBase64Encoded: imageObj.inline_data.data, mimeType: imageObj.inline_data.mime_type };
+	        }
+	
+	        const res = await fetch(`${VEO_PROXY}/api/generate`, {
+	            method: 'POST',
+	            headers: { 'Content-Type': 'application/json' },
+	            body: JSON.stringify({
+	                model: "veo-3.1-generate-preview",
+	                instances: [instance],
+	                parameters: { sampleCount: 1, aspectRatio: "16:9" }
+	            })
+	        });
+	
+	        const data = await res.json();
+	        if (!res.ok) throw new Error(data.error?.message || "Gagal memanggil AI Video.");
+	
+	        startVideoPolling(data.name, targetId);
+	
+	    } catch (e) {
+        aiBubble.textElement.innerHTML = `<span class="text-red-500 font-medium">${e.message}</span>`;
+    	} finally {
+	        sendBtn.disabled = false;
+	    }
+	}
+	
+	function startVideoPolling(fullName, targetId) {
+	    const statusEl = document.getElementById(`status-text-${targetId}`);
+	    let startTime = Date.now();
+	    
+	    const pollInterval = setInterval(async () => {
+	        try {
+	            const elapsed = Math.round((Date.now() - startTime) / 1000);
+	            
+	            if (statusEl) statusEl.innerText = `Membuat video... (${elapsed}s)`;
+	
+	            const res = await fetch(`${VEO_PROXY}/api/status?name=${encodeURIComponent(fullName)}`);
+	            const data = await res.json();
+	
+	            if (data.error) {
+	                const container = document.getElementById(targetId);
+	                container.innerHTML = `<div class="text-red-500 text-xs">Error: ${data.error.message}</div>`;
+	                clearInterval(pollInterval);
+	                return;
+	            }
+	
+	            if (data.done) {
+	                clearInterval(pollInterval);
+	                const videoUri = data.response?.generateVideoResponse?.generatedSamples?.[0]?.video?.uri;
+	                
+	                if (videoUri) {
+	                    if (statusEl) statusEl.innerText = "Video selesai, menyimpan...";
+	                    
+	                    const resp = await fetch(videoUri);
+	                    const blob = await resp.blob();
+	                    const reader = new FileReader();
+	                    
+	                    reader.onloadend = async () => {
+	                        const base64Video = reader.result.split(',')[1];
+	                        const videoId = 'vid_gen_' + Date.now();
+	                        const mime = "video/mp4";
+	
+	                        await saveToLocal(videoId, { 
+	                            mime: mime, base64: base64Video, name: 'AI-Video.mp4', size: formatBytes(blob.size) 
+	                        });
+	
+	                        renderVideoToBubble(targetId, base64Video, mime);
+	
+	                        chatHistory.push({ 
+	                            role: "model", 
+	                            parts: [{ text: `[[CONFIRM_VIDEO_CREATED]] Saya telah berhasil membuatkan video sesuai permintaan terakhir Anda: "${prompt}". Video sudah siap diputar di atas.` }],
+	                            _ui: { 
+	                                val: "", 
+	                                filesForStorage: [{ 
+	                                    name: 'AURA-VIDEO.mp4', size: formatBytes(blob.size), 
+	                                    fileId: videoId, mime: mime, isVideo: true, isAI: true 
+	                                }] 
+	                            }
+	                        });
+	                        localStorage.setItem('chat_history', JSON.stringify(chatHistory));
+	                    };
+	                    reader.readAsDataURL(blob);
+	                } else {
+	                    const container = document.getElementById(targetId);
+	                    container.innerHTML = `<div class="text-yellow-600 text-xs">Render selesai, tapi diblokir filter keamanan.</div>`;
+	                }
+	            }
+	        } catch (e) { 
+	            console.error("Polling error:", e); 
+	        }
+	    }, 5000);
+	}
+	
+	// ============================
+	// FUNGSI VOICE MODE
+	// ============================
+	
+	function openVoiceMode() {
+		const overlay = document.getElementById('voice-overlay');
+		const visualBox = document.getElementById('voice-visual-box');
+		
+		isAISpeaking = false;
+		voiceNextTime = 0;
+		voiceInterrupted = false;
+		
+		overlay.style.display = 'flex';
+		overlay.classList.remove('hidden');
+		if (visualBox) visualBox.style.opacity = '1';
+
+		// Perbaikan Header: Judul di tengah matematis
+		overlay.querySelector('header').innerHTML = `
+			<div class="relative z-30">
+				<button id="btn-switch-cam" onclick="switchCamera()" class="p-2.5 -ml-2 text-gray-400 active:scale-90 transition-transform outline-none border-none">
+					<i data-lucide="refresh-ccw" stroke-width="2.5" class="w-5 h-5"></i>
+				</button>
+			</div>
+			<div class="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+				<span class="text-[14px] font-bold tracking-[0.5em] text-slate-800 uppercase">LIVE VOICE</span>
+			</div>
+			<div class="relative z-30 ml-auto">
+				<button id="btn-voice-cam" onclick="toggleVoiceCamera()" class="p-2.5 -mr-2 text-gray-400 active:scale-90 transition-transform outline-none border-none">
+					<i data-lucide="video" stroke-width="2.5" class="w-5 h-5"></i>
+				</button>
+			</div>
+		`;
+
+		setTimeout(() => {
+			resizeVoiceCanvas();
+			initVoiceSession();
+		}, 200);
+		
+		if (window.lucide) lucide.createIcons();
+	}
+	
+	async function initVoiceSession() {
+	    voiceNextTime = 0;
+	    voiceSessionId++;
+	    voiceInterrupted = false;
+	    isAISpeaking = false;
+	    activeVoiceSources = [];
+	
+	    const historyContext = chatHistory.map(h => `${h.role === 'model' ? 'Aura' : 'User'}: ${h.parts[0].text}`).slice(-6).join('\n');
+	    const fullPrompt = `${systemPrompt}\n\n${PERMANENT_PROMPT}\n\nKonteks Percakapan:\n${historyContext}`;
+	
+	    try {
+	        voiceWs = new WebSocket('wss://gemini-proxy-408925499207.asia-southeast2.run.app');
+	        
+	        voiceWs.onopen = () => {
+	            startVoiceTimer();
+	            voiceWs.send(JSON.stringify({
+	                type: 'setup',
+	                config: {
+	                    responseModalities: ['AUDIO'],
+	                    speechConfig: { 
+	                        voiceConfig: { 
+	                            prebuiltVoiceConfig: { voiceName: currentVoice } 
+	                        } 
+	                    },
+	                    systemInstruction: fullPrompt,
+	                    tools: [{ googleSearch: {} }]
+	                }
+	            }));
+	        };
+	
+	        voiceWs.onmessage = (e) => {
+	            if (!voiceWs || voiceInterrupted) return; 
+	            const res = JSON.parse(e.data);
+	            
+	            if (res.type === 'gemini_msg') {
+	                const modelTurn = res.data.serverContent?.modelTurn;
+	                if (modelTurn && modelTurn.parts) {
+	                    modelTurn.parts.forEach(p => {
+	                        if (p.inlineData) {
+	                            isAISpeaking = true;
+	                            playVoiceAudio(p.inlineData.data, voiceSessionId);
+	                        }
+	                        if (p.text) {
+	                            syncVoiceToChat('assistant', p.text);
+	                        }
+	                    });
+	                }
+	            }
+	        };
+	            
+	        await initVoiceAudio();
+	        startVoiceVisualizer();
+	        
+	    } catch (err) {
+	        console.error("Gagal memulai sesi suara:", err);
+	        closeVoiceMode();
+	    }
+	}
+	
+	async function initVoiceAudio() {
+		voiceInCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 16000 });
+		voiceOutCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 24000 });
+		
+		aiAnalyser = voiceOutCtx.createAnalyser();
+		aiAnalyser.fftSize = 1024;
+		
+		voiceStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+		const source = voiceInCtx.createMediaStreamSource(voiceStream);
+		
+		voiceAnalyser = voiceInCtx.createAnalyser();
+		voiceAnalyser.fftSize = 1024;
+		voiceDataArray = new Uint8Array(voiceAnalyser.frequencyBinCount);
+		source.connect(voiceAnalyser);
+	
+		await voiceInCtx.audioWorklet.addModule('data:application/javascript,' + encodeURIComponent(`
+			class P extends AudioWorkletProcessor {
+				process(inputs) { if (inputs[0][0]) this.port.postMessage(inputs[0][0]); return true; }
+			}; registerProcessor('p', P);`));
+	
+		const node = new AudioWorkletNode(voiceInCtx, 'p');
+		node.port.onmessage = (e) => {
+			if (voiceWs && voiceWs.readyState === WebSocket.OPEN) {
+				let sum = 0;
+				for (let i = 0; i < e.data.length; i++) sum += Math.abs(e.data[i]);
+				let energy = sum / e.data.length;
+
+				if (energy > 0.01 && voiceInterrupted) {
+					voiceInterrupted = false;
+					voiceSessionId++; 
+				}
+
+				if (!isAISpeaking && !voiceInterrupted) {
+					const int16 = new Int16Array(e.data.length);
+					for (let i = 0; i < e.data.length; i++) {
+						int16[i] = Math.max(-1, Math.min(1, e.data[i])) * 0x7FFF;
+					}
+					voiceWs.send(JSON.stringify({
+						type: 'audio',
+						data: {
+							data: btoa(String.fromCharCode(...new Uint8Array(int16.buffer))),
+							mimeType: 'audio/pcm;rate=16000'
+						}
+					}));
+				}
+			}
+		};
+		source.connect(node);
+	}
+	
+	function resizeVoiceCanvas() {
+		const canvas = document.getElementById('voice-canvas');
+		const container = document.getElementById('voice-visual-box');
+		if (!canvas || !container) return;
+		
+		const rect = container.getBoundingClientRect();
+		const dpr = window.devicePixelRatio || 1;
+		
+		canvas.style.width = rect.width + 'px';
+		canvas.style.height = rect.height + 'px';
+		canvas.width = rect.width * dpr;
+		canvas.height = rect.height * dpr;
+	}
+	
+	function startVoiceVisualizer() {
+		const canvas = document.getElementById('voice-canvas');
+		const ctx = canvas.getContext('2d');
+		let currentVol = 0;
+	
+		function draw() {
+			if (document.getElementById('voice-overlay').style.display === 'none') return;
+			requestAnimationFrame(draw);
+			const w = canvas.width, h = canvas.height;
+			ctx.clearRect(0, 0, w, h);
+	
+			let vocalEnergy = 0;
+			const activeAnalyser = isAISpeaking ? aiAnalyser : voiceAnalyser;
+			if (activeAnalyser) {
+				activeAnalyser.getByteFrequencyData(voiceDataArray);
+				let sum = 0;
+				for (let i = 15; i < 100; i++) sum += voiceDataArray[i];
+				vocalEnergy = sum / 85;
+			}
+	
+			currentVol += (vocalEnergy - currentVol) * 0.15;
+			const safeVol = currentVol < 20 ? 0 : currentVol - 20;
+			const centerX = w / 2, centerY = h / 2;
+			const baseRadius = Math.min(w, h) / 4.8;
+			let dynamicRadius = baseRadius + (safeVol * 1.5);
+	
+			ctx.beginPath();
+			ctx.arc(centerX, centerY, dynamicRadius, 0, Math.PI * 2);
+			const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, dynamicRadius);
+			gradient.addColorStop(0, '#1e293b');
+			gradient.addColorStop(1, '#0f172a');
+			ctx.fillStyle = gradient;
+			ctx.fill();
+		}
+		draw();
+	}
+	
+	function startVoiceTimer() {
+		let seconds = 0;
+		const timerEl = document.getElementById('voice-timer');
+		clearInterval(voiceTimerInterval);
+		voiceTimerInterval = setInterval(() => {
+			seconds++;
+			const hrs = Math.floor(seconds / 3600).toString().padStart(2, '0');
+			const mins = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
+			const secs = (seconds % 60).toString().padStart(2, '0');
+			timerEl.innerText = `${hrs}:${mins}:${secs}`;
+		}, 1000);
+	}
+	
+	function interruptVoice() {
+		voiceInterrupted = true; 
+		isAISpeaking = false;
+		voiceSessionId++; 
+
+		activeVoiceSources.forEach(source => {
+			try {
+				source.onended = null;
+				source.stop(0); 
+				source.disconnect();
+			} catch (e) {}
+		});
+		activeVoiceSources = [];
+
+		if (voiceOutCtx) voiceNextTime = voiceOutCtx.currentTime;
+		if (voiceWs && voiceWs.readyState === WebSocket.OPEN) {
+			voiceWs.send(JSON.stringify({ type: 'cancel' }));
+		}
+	}
+
+	function playVoiceAudio(base64, sid) {
+		if (voiceInterrupted || sid !== voiceSessionId) return; 
+
+		const binary = atob(base64);
+		const bytes = new Uint8Array(binary.length);
+		for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+		const int16 = new Int16Array(bytes.buffer);
+		const buf = voiceOutCtx.createBuffer(1, int16.length, 24000);
+		const data = buf.getChannelData(0);
+		for (let i = 0; i < int16.length; i++) data[i] = int16[i] / 32768.0;
+		
+		const source = voiceOutCtx.createBufferSource();
+		source.buffer = buf;
+		source.connect(aiAnalyser);
+		source.connect(voiceOutCtx.destination);
+		
+		const now = voiceOutCtx.currentTime;
+		if (voiceNextTime < now) voiceNextTime = now;
+		
+		source.start(voiceNextTime);
+		voiceNextTime += buf.duration;
+		activeVoiceSources.push(source);
+
+		source.onended = () => { 
+			activeVoiceSources = activeVoiceSources.filter(s => s !== source);
+			if (activeVoiceSources.length === 0) isAISpeaking = false;
+		};
+	}
+	
+	async function switchCamera() {
+		if (!isVoiceCamOn) return;
+		facingMode = (facingMode === 'user') ? 'environment' : 'user';
+		if (voiceCamStream) voiceCamStream.getTracks().forEach(t => t.stop());
+		isVoiceCamOn = false; 
+		await toggleVoiceCamera();
+	}
+	
+	async function toggleVoiceCamera() {
+		const btn = document.getElementById('btn-voice-cam');
+		const largeVid = document.getElementById('voice-large-video');
+		const voiceCanvas = document.getElementById('voice-canvas');
+	
+		if (!isVoiceCamOn) {
+			try {
+				voiceCamStream = await navigator.mediaDevices.getUserMedia({
+					video: { facingMode: facingMode, width: { ideal: 1280 }, height: { ideal: 720 } }
+				});
+				largeVid.srcObject = voiceCamStream;
+				document.getElementById('voice-hidden-video').srcObject = voiceCamStream;
+				voiceCanvas.style.display = 'none';
+				largeVid.classList.remove('hidden');
+				isVoiceCamOn = true;
+				btn.classList.replace('text-gray-300', 'text-blue-600');
+				if (voiceCamInterval) clearInterval(voiceCamInterval);
+				voiceCamInterval = setInterval(sendVoiceFrame, 1000);
+			} catch (e) { alert("Gagal kamera: " + e.message); }
+		} else { stopVoiceCamera(); }
+	}
+	
+	function stopVoiceCamera() {
+		if (voiceCamStream) voiceCamStream.getTracks().forEach(t => t.stop());
+		clearInterval(voiceCamInterval);
+		isVoiceCamOn = false;
+		document.getElementById('voice-canvas').style.display = 'block';
+		document.getElementById('voice-large-video').classList.add('hidden');
+		resizeVoiceCanvas();
+		startVoiceVisualizer();
+		const btn = document.getElementById('btn-voice-cam');
+		btn.classList.replace('text-blue-600', 'text-slate-300');
+	}
+	
+	function sendVoiceFrame() {
+		if (voiceWs && voiceWs.readyState === WebSocket.OPEN && isVoiceCamOn) {
+			const vid = document.getElementById('voice-large-video');
+			const canvas = document.getElementById('voice-frame-canvas');
+			if (vid.videoWidth > 0) {
+				canvas.width = vid.videoWidth; canvas.height = vid.videoHeight;
+				canvas.getContext('2d').drawImage(vid, 0, 0);
+				const base64 = canvas.toDataURL('image/jpeg', 0.5).split(',')[1];
+				voiceWs.send(JSON.stringify({ type: 'image', data: { mimeType: "image/jpeg", data: base64 } }));
+			}
+		}
+	}
+	
+	function closeVoiceMode() {
+	    const overlay = document.getElementById('voice-overlay');
+	    
+	    if (voiceWs) {
+	        voiceWs.onmessage = null;
+	        voiceWs.close();
+	        voiceWs = null;
+	    }
+	    
+	    stopVoiceCamera();
+	    
+	    if (voiceStream) {
+	        voiceStream.getTracks().forEach(track => track.stop());
+	    }
+	    
+	    if (voiceInCtx) voiceInCtx.close();
+	    if (voiceOutCtx) voiceOutCtx.close();
+	    
+	    clearInterval(voiceTimerInterval);
+	    
+	    voiceNextTime = 0;
+	    voiceSessionId = 0;
+	    isAISpeaking = false;
+	    activeVoiceSources = [];
+	    voiceInterrupted = false;
+	    
+	    overlay.style.display = 'none';
+	    overlay.classList.add('hidden');
+	    
+	    showView('chat');
+		closeHeaderDropdown();
+	}
+	
+	function syncVoiceToChat(role, text) {
+	    if (!text || text.trim() === "") return;
+	    
+	    const lastMsg = chatHistory[chatHistory.length - 1];
+	    
+	    if (lastMsg && lastMsg.role === (role === 'assistant' ? 'model' : 'user') && lastMsg._isVoiceUpdate) {
+	        lastMsg.parts[0].text += " " + text;
+	        const bubbles = messageList.querySelectorAll('.text-body-container');
+	        if (bubbles.length > 0) {
+	            bubbles[bubbles.length - 1].innerHTML = marked.parse(lastMsg.parts[0].text);
+	        }
+	    } else {
+	        const newMsg = { 
+	            role: role === 'assistant' ? 'model' : 'user', 
+	            parts: [{ text: text }],
+	            _isVoiceUpdate: true 
+	        };
+	        chatHistory.push(newMsg);
+	        createBubble(role, text);
+	    }
+	    
+	    localStorage.setItem('chat_history', JSON.stringify(chatHistory));
+	}
+	
+	// ============================
+	// FUNGSI RENDER MEDIA
+	// ============================
+	
+	function renderImageToBubble(targetId, b64, mime) {
+	    const el = document.getElementById(targetId);
+	    if (!el) return;
+	    el.innerHTML = '';
+	    
+	    const imageUrl = `data:${mime};base64,${b64}`;
+	    const wrapper = document.createElement('div');
+	    wrapper.className = "mt-2 w-full image-container";
+	    wrapper.style.position = "relative";
+	    wrapper.style.display = "inline-block";
+	
+	    wrapper.onclick = function(e) {
+	        e.stopPropagation();
+	        this.classList.toggle('show-dl');
+	    };
+	
+	    wrapper.innerHTML = `
+	        <img src="${imageUrl}" class="w-full h-auto rounded-xl shadow-md border border-gray-100 block">
+	        <button class="download-btn" style="position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); border: none; border-radius: 6px; padding: 4px; color: white; cursor: pointer; display: none; align-items: center; justify-content: center; z-index: 10;">
+	            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+	                <path d="M15 11a1 1 0 0 0 1 1h2.939a1 1 0 0 1 .75 1.811l-6.835 6.836a1.207 1.207 0 0 1-1.707 0L4.31 13.81a1 1 0 0 1 .75-1.811H8a1 1 0 0 0 1-1V9a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1z"/>
+	                <path d="M9 4h6"/>
+	            </svg>
+	        </button>
+	    `;
+	    
+	    const btn = wrapper.querySelector('.download-btn');
+	    btn.onclick = (e) => {
+	        e.stopPropagation();
+	        downloadAIImage(imageUrl);
+	    };
+	    
+	    el.appendChild(wrapper);
+	    scrollToBottom();
+	}
+	
+	function renderVideoToBubble(targetId, b64, mime) {
+	    const el = document.getElementById(targetId);
+	    if (!el) return;
+	    
+	    const container = el.closest('.ai-image-container') || el;
+	    container.innerHTML = '';
+	    
+	    const videoUrl = `data:${mime};base64,${b64}`;
+	    const wrapper = document.createElement('div');
+	    wrapper.className = "mt-2 w-full image-container";
+	    wrapper.style.position = "relative";
+	    wrapper.style.display = "inline-block";
+	    
+	    wrapper.onclick = function(e) {
+	        e.stopPropagation();
+	        this.classList.toggle('show-dl');
+	    };
+	
+	    wrapper.innerHTML = `
+	        <video src="${videoUrl}" controls playsinline class="w-full rounded-xl shadow-md border border-gray-100 block"></video>
+	        <button class="download-btn" style="position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); border: none; border-radius: 6px; padding: 4px; color: white; cursor: pointer; display: none; align-items: center; justify-content: center; z-index: 20;">
+	            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+	                <path d="M15 11a1 1 0 0 0 1 1h2.939a1 1 0 0 1 .75 1.811l-6.835 6.836a1.207 1.207 0 0 1-1.707 0L4.31 13.81a1 1 0 0 1 .75-1.811H8a1 1 0 0 0 1-1V9a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1z"/>
+	                <path d="M9 4h6"/>
+	            </svg>
+	        </button>
+	    `;
+	    
+	    const btn = wrapper.querySelector('.download-btn');
+	    btn.onclick = (e) => {
+	        e.stopPropagation();
+	        downloadAIImage(videoUrl);
+	    };
+	    
+	    container.appendChild(wrapper);
+	    scrollToBottom();
+	}
+	
+	async function downloadAIImage(url) {
+	    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+	                  (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+	    const isVideo = url.includes("video/mp4");
+	    const fileName = `AURA-${isVideo ? 'VIDEO' : 'ART'}-${Date.now()}.${isVideo ? 'mp4' : 'png'}`;
+	    
+	    try {
+	        const response = await fetch(url);
+	        const blob = await response.blob();
+	        const file = new File([blob], fileName, { type: blob.type });
+	
+	        if (isIOS && navigator.share) {
+	            await navigator.share({ files: [file] });
+	        } else {
+	            const a = document.createElement('a');
+	            a.href = window.URL.createObjectURL(blob);
+	            a.download = fileName;
+	            a.click();
+	        }
+	    } catch (e) { window.open(url, '_blank'); }
+	}
+	
+	// ============================
+	// FUNGSI LOAD CHAT HISTORY
+	// ============================
+	
+	async function loadSavedChat() {
+	    messageList.innerHTML = '';
+	    if (!chatHistory || chatHistory.length === 0) return;
+	
+	    for (const msg of chatHistory) {
+	        const role = msg.role === 'model' ? 'assistant' : 'user';
+	        let text = msg.parts?.[0]?.text || '';
+	        let files = msg._ui ? (msg._ui.filesForStorage || []) : [];
+	        if (msg._ui) text = msg._ui.val;
+	
+	        const bubble = createBubble(role, text, files, true, false);
+	
+	        if (files.length > 0) {
+	            for (const fInfo of files) {
+	                const fData = await getFromLocal(fInfo.fileId);
+	                if (!fData) continue;
+	                const ph = bubble.textElement.parentElement.querySelector(`[data-file-id="${fInfo.fileId}"]`);
+	                if (!ph) continue;
+	
+	                if (fInfo.isVideo) {
+	                    const container = ph.closest('.ai-image-container') || ph.parentElement;
+	                    renderVideoToBubble(container.id || (container.id = 'old_vid_' + Date.now()), fData.base64, fData.mime);
+	                } else if (fInfo.isAI) {
+	                    const container = ph.closest('.ai-image-container') || ph.parentElement;
+	                    const imageUrl = `data:${fData.mime};base64,${fData.base64}`;
+	                    
+	                    container.className = "mt-2 w-full image-container";
+	                    container.style.position = "relative";
+	                    container.style.display = "inline-block";
+	                    
+	                    container.onclick = function(e) {
+	                        e.stopPropagation();
+	                        this.classList.toggle('show-dl');
+	                    };
+	                    
+	                    container.innerHTML = `
+	                        <img src="${imageUrl}" class="w-full h-auto rounded-xl shadow-md border border-gray-100 block">
+	                        <button class="download-btn" style="position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); border: none; border-radius: 6px; padding: 4px; color: white; cursor: pointer; display: none; align-items: center; justify-content: center; z-index: 10;">
+	                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+	                                <path d="M15 11a1 1 0 0 0 1 1h2.939a1 1 0 0 1 .75 1.811l-6.835 6.836a1.207 1.207 0 0 1-1.707 0L4.31 13.81a1 1 0 0 1 .75-1.811H8a1 1 0 0 0 1-1V9a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1z"/>
+	                                <path d="M9 4h6"/>
+	                            </svg>
+	                        </button>
+	                    `;
+	
+	                    const btn = container.querySelector('.download-btn');
+	                    btn.onclick = (e) => {
+	                        e.stopPropagation();
+	                        downloadAIImage(imageUrl);
+	                    };
+	                } else {
+	                    if (fData.mime.startsWith('image/')) {
+	                        ph.innerHTML = `<img src="data:${fData.mime};base64,${fData.base64}" class="w-full h-full object-cover rounded-lg">`;
+	                    } else {
+	                        ph.innerHTML = getFileIcon(fData.name.split('.').pop().toLowerCase());
+	                    }
+	                }
+	            }
+	        }
+	    }
+	
+	    document.querySelectorAll('pre code').forEach(block => hljs.highlightElement(block));
+	
+	    lucide.createIcons();
+	    scrollToBottom();
+	}
+	
+	// ===================== //
+	// FUNGSI UTAMA ON SEND  //
+	// ===================== //
+	
+	async function onSend(e) {
+	    if (e) e.preventDefault();
+	    
+	    if (!originalSendBtnContent) {
+	        originalSendBtnContent = sendBtn.innerHTML;
+	    }
+	
+	    if (isGenerating) {
+	        isGenerating = false; 
+	        return; 
+	    }
+	
+	    const val = input.value.trim();
+	    if (!val && pendingFiles.length === 0) return;
+	
+	    const setButtonState = (state) => {
+	        if (state === 'loading') {
+	            sendBtn.innerHTML = originalSendBtnContent; 
+	            sendBtn.disabled = true; 
+	            isGenerating = false;
+	        } else if (state === 'streaming') {
+	            sendBtn.innerHTML = `<i data-lucide="square" class="w-5 h-5 fill-current text-red-500"></i>`;
+	            sendBtn.disabled = false; 
+	            isGenerating = true;
+	        } else {
+	            sendBtn.innerHTML = originalSendBtnContent;
+	            sendBtn.disabled = false;
+	            isGenerating = false;
+	        }
+	        if (window.lucide) lucide.createIcons();
+	    };
+	
+	    try {
+	        setButtonState('loading');
+	
+	        if (isVideoMode) {
+	            if (!val) throw new Error("Anda belum menuliskan deskripsi video.");
+	            createBubble('user', val, pendingFiles.map(f => ({ ...f })));
+	            let imgObj = null;
+	            if (pendingFiles.length > 0) {
+	                const firstImg = pendingFiles.find(f => f.mime && f.mime.startsWith('image/'));
+	                if (firstImg) imgObj = { inline_data: { mime_type: firstImg.mime, data: firstImg.base64 } };
+	            }
+	            input.value = ''; adjustInput(input); pendingFiles = []; renderPreviews();
+	            
+	            await handleVideoGeneration(val, imgObj);
+	            
+	            toggleVideoMode();
+	            setButtonState('idle');
+	            return;
+	        }
+	
+	        if (isImageMode) {
+	            const editRegex = /^\/?(edit|ganti|ubah|perbaiki|modifikasi|remix)\b/i;
+	            const isIntentToEdit = editRegex.test(val);
+	            if (pendingFiles.length === 0 && isIntentToEdit) throw new Error("Belum ada gambar untuk diedit.");
+	            if (pendingFiles.length === 0 && !val) throw new Error("Belum ada deskripsi gambar.");
+	
+	            let prefix = (pendingFiles.length > 0) ? '/edit ' : '/gambar ';
+	            let promptWithCommand = prefix + val;
+	            createBubble('user', val || "Memproses gambar...", pendingFiles.map(f => ({ ...f })));
+	            
+	            let imgObj = null;
+	            if (pendingFiles.length > 0) {
+	                const firstImg = pendingFiles.find(f => f.mime && f.mime.startsWith('image/'));
+	                if (firstImg) imgObj = { inline_data: { mime_type: firstImg.mime, data: firstImg.base64 } };
+	            }
+	            input.value = ''; adjustInput(input); pendingFiles = []; renderPreviews();
+	            
+	            await handleImageGeneration(promptWithCommand, imgObj);
+	            
+	            toggleImageMode();
+	            setButtonState('idle');
+	            return;
+	        }
+	
+	        const { filesForUI, filesForStorage, apiParts, officeTextContext } = await processPendingFiles();
+	        
+	        createBubble('user', val, filesForUI);
+	        
+	        chatHistory.push({ 
+	            role: "user", 
+	            parts: [{ text: val || "Analisis lampiran ini." }], 
+	            _ui: { val, filesForStorage } 
+	        });
+	
+	        const currentTurnText = (val || "Analisis lampiran ini.") + (officeTextContext ? "\n\nKONTEKS DOKUMEN:\n" + officeTextContext : "");
+	
+	        input.value = ''; adjustInput(input); pendingFiles = []; renderPreviews();
+	
+	        const aiBubble = createBubble('assistant', '', [], false, true);
+	        
+	        const endpoint = `${SUPABASE_URL}/functions/v1/ai-proxy-v2?model=${currentModel}&action=generateContent&version=v1beta`;
+	        const cleanContents = chatHistory.map(h => ({ role: h.role, parts: h.parts }));
+	        cleanContents[cleanContents.length - 1].parts = [...apiParts, { text: currentTurnText }];
+	
+	        const response = await fetch(endpoint, {
+	            method: 'POST',
+	            headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` },
+	            body: JSON.stringify({ 
+	                contents: cleanContents, 
+	                systemInstruction: { parts: [{ text: systemPrompt + "\n\n" + PERMANENT_PROMPT }] },
+	                generationConfig: { temperature: 1, maxOutputTokens: maxTokens, response_modalities: ["TEXT"] },
+	                tools: [{ google_search: {} }] 
+	            })
+	        });
+	
+	        if (!response.ok) {
+	            const errText = await response.text();
+	            throw new Error(`Server Error (${response.status}): ${errText.substring(0, 50)}...`);
+	        }
+	
+	        const data = await response.json();
+	        let partText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+	        
+	        if (!partText) {
+	            const parts = data.candidates?.[0]?.content?.parts || [];
+	            const textPart = parts.find(p => p.text);
+	            if (textPart) partText = textPart.text;
+	        }
+	
+	        let finalSavedText = "";
+	
+	        if (partText) {
+	            if (aiBubble.typingElement) { aiBubble.typingElement.remove(); aiBubble.typingElement = null; }
+	
+	            setButtonState('streaming');
+	
+	            finalSavedText = await streamText(aiBubble.textElement, partText);
+	            
+	        } else {
+	             if (aiBubble.typingElement) aiBubble.typingElement.remove();
+	             const finishReason = data.candidates?.[0]?.finishReason;
+	             let errorMsg = finishReason === 'SAFETY' ? "Konten diblokir filter keamanan." : "Tidak ada respon teks.";
+	             aiBubble.textElement.innerHTML = `<span class="text-orange-500 italic text-sm">${errorMsg}</span>`;
+	             finalSavedText = errorMsg;
+	        }
+	
+	        if (finalSavedText) {
+	            chatHistory.push({ role: "model", parts: [{ text: finalSavedText }] });
+	            localStorage.setItem('chat_history', JSON.stringify(chatHistory));
+	        }
+	
+	    } catch (err) {
+	        console.error("Error onSend:", err);
+	        const typingIndicators = messageList.querySelectorAll('.typing-indicator');
+	        typingIndicators.forEach(el => el.remove());
+	        const errorMessage = err.message || "Terjadi kesalahan koneksi";
+	        createBubble('assistant', `<span class="text-red-500 font-medium">${errorMessage}</span>`);
+	    } finally {
+	        setButtonState('idle');
+	        if (window.lucide) lucide.createIcons();
+	        scrollToBottom();
+	    }
+	}
+		
+	async function streamText(element, text, speed = 30) {
+	    const delay = ms => new Promise(res => setTimeout(res, ms));
+	    let cursor = 0;
+	    const step = 20; 
+	    const scroller = document.getElementById('chat-scroller');
+	
+	    let finalRenderedText = "";
+	
+	    while (cursor < text.length) {
+	        if (!isGenerating) {
+	            return finalRenderedText; 
+	        }
+	
+	        cursor += step;
+	        let currentChunk = text.substring(0, cursor);
+	        
+	        const codeBlockCount = (currentChunk.match(/```/g) || []).length;
+	        if (codeBlockCount % 2 !== 0) {
+	            currentChunk += '\n```'; 
+	        }
+	
+	        element.innerHTML = marked.parse(currentChunk);
+	        finalRenderedText = currentChunk; 
+	
+	        if (scroller) {
+	            scroller.scrollTop = scroller.scrollHeight;
+	        }
+	        
+	        await delay(speed);
+	    }
+	    
+	    element.innerHTML = marked.parse(text);
+	    element.querySelectorAll('pre code').forEach(block => hljs.highlightElement(block));
+	    
+	    if (scroller) {
+	        scroller.scrollTop = scroller.scrollHeight;
+	    }
+	
+	    return text; 
+	}
+	
+	// ============================
+	// FUNGSI COPY CLIPBOARD
+	// ============================
+	
+	async function copyToClipboard(btn) {
+	    const container = btn.closest('.code-container');
+	    const text = container.querySelector('code').innerText;
+	    try {
+	        await navigator.clipboard.writeText(text);
+	        btn.innerHTML = '<i data-lucide="check" class="w-[14px] h-[14px] text-green-500"></i>';
+	        lucide.createIcons();
+	        setTimeout(() => {
+	            btn.innerHTML = '<i data-lucide="copy" class="w-[14px] h-[14px] text-gray-400"></i>';
+	            lucide.createIcons();
+	        }, 2000);
+	    } catch (err) {
+	        console.error('Gagal menyalin:', err);
+	    }
+	}
+	
+	// ============================
+	// EVENT LISTENERS
+	// ============================
+	
+	// Dropdown Model AI
+	dropdownTrigger.onclick = (e) => {
+	    e.stopPropagation();
+	    const isHidden = dropdownMenu.classList.contains('hidden');
+	    closeAllDropdowns();
+	    if (isHidden) {
+	        dropdownMenu.classList.remove('hidden');
+	        document.getElementById('dropdown-icon').style.transform = 'rotate(180deg)';
+	    }
+	};
+	
+	dropdownOptions.forEach(opt => {
+	    opt.onclick = (e) => {
+	        e.stopPropagation();
+	        currentModel = opt.getAttribute('data-value');
+	        selectedModelText.innerText = opt.querySelector('span').innerText;
+	        closeAllDropdowns();
+	        saveSettings();
+	    };
+	});
+	
+	// Dropdown Model Suara
+	voiceTrigger.onclick = (e) => {
+	    e.stopPropagation();
+	    const isHidden = voiceMenu.classList.contains('hidden');
+	    closeAllDropdowns();
+	    if (isHidden) {
+	        voiceMenu.classList.remove('hidden');
+	        document.getElementById('voice-icon').style.transform = 'rotate(180deg)';
+	    }
+	};
+	
+	voiceOptions.forEach(opt => {
+	    opt.onclick = (e) => {
+	        e.stopPropagation();
+	        currentVoice = opt.getAttribute('data-value');
+	        document.getElementById('selected-voice-text').innerText = currentVoice;
+	        closeAllDropdowns();
+	        saveSettings();
+	    };
+	});
+	
+	document.addEventListener('pointerdown', (e) => {
+	    if (headerMenuTrigger && headerDropdown) {
+	        if (!headerMenuTrigger.contains(e.target) && !headerDropdown.contains(e.target)) {
+	            closeHeaderDropdown();
+	        }
+	    }
+	    
+	    if (dropdownTrigger && dropdownMenu && voiceTrigger && voiceMenu) {
+	        if (!dropdownTrigger.contains(e.target) && !dropdownMenu.contains(e.target) &&
+	            !voiceTrigger.contains(e.target) && !voiceMenu.contains(e.target)) {
+	            closeAllDropdowns();
+	        }
+	    }
+	    
+	    if (!e.target.closest('.image-container')) {
+	        document.querySelectorAll('.image-container').forEach(container => {
+	            container.classList.remove('show-dl');
+	        });
+	    }
+	});
+	
+	document.getElementById('voice-overlay').addEventListener('pointerdown', (e) => {
+	    if (e.target.closest('button')) return;
+	    if (isAISpeaking || activeVoiceSources.length > 0) {
+	        interruptVoice();
+	    }
+	}, { passive: true });
+	
+	if (headerMenuTrigger) {
+	    headerMenuTrigger.addEventListener('click', (e) => {
+	        e.stopPropagation();
+	        const isHidden = headerDropdown.classList.contains('hidden');
+	        
+	        closeAllDropdowns(); 
+	        
+	        if (isHidden) {
+	            headerDropdown.classList.remove('hidden');
+	        } else {
+	            headerDropdown.classList.add('hidden');
+	        }
+	    });
+	}
+	
+	// Input event
+	input.addEventListener('keydown', (e) => { 
+	    if (e.key === 'Enter' && !e.shiftKey) { 
+	        e.preventDefault(); 
+	        onSend(); 
+	    } 
+	});
+	
+	// Scroll prevention
+	scroller.addEventListener('scroll', () => {
+	    const top = scroller.scrollTop;
+	    const totalScroll = scroller.scrollHeight;
+	    const currentScroll = top + scroller.offsetHeight;
+	
+	    if (top === 0) {
+	        scroller.scrollTop = 1;
+	    } 
+	    else if (currentScroll === totalScroll) {
+	        scroller.scrollTop = top - 1;
+	    }
+	});
+	
+	scroller.addEventListener('touchstart', () => {
+	    const top = scroller.scrollTop;
+	    const totalScroll = scroller.scrollHeight;
+	    const currentScroll = top + scroller.offsetHeight;
+	
+	    if (top === 0) {
+	        scroller.scrollTop = 1;
+	    } else if (currentScroll === totalScroll) {
+	        scroller.scrollTop = top - 1;
+	    }
+	});
+	
+	// Anti-zoom
+	document.addEventListener('touchstart', (e) => {
+	    if (e.touches.length > 1) {
+	        e.preventDefault();
+	    }
+	}, { passive: false });
+	
+	document.addEventListener('gesturestart', (e) => {
+	    e.preventDefault();
+	});
+	
+	document.addEventListener('keydown', (e) => {
+	    if (e.ctrlKey && (e.key === '+' || e.key === '-' || e.key === '=' || e.key === '0')) {
+	        e.preventDefault();
+	    }
+	});
+	
+	document.addEventListener('wheel', (e) => {
+	    if (e.ctrlKey) {
+	        e.preventDefault();
+	    }
+	}, { passive: false });
+	
+	// Double tap prevention
+	let lastTouch = 0;
+	document.addEventListener('touchend', (e) => {
+	    const now = Date.now();
+	    if (now - lastTouch <= 300) {
+	        if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA' && e.target.tagName !== 'BUTTON' && !e.target.closest('button')) {
+	            e.preventDefault();
+	        }
+	    }
+	    lastTouch = now;
+	}, false);
+	
+	// ============================
+	// INISIALISASI APLIKASI
+	// ============================
+	
+	settingsThinking.oninput = updateSliderLabels;
+	settingsTokens.oninput = updateSliderLabels;
+	
+	initUI();
+	checkSession();
+</script>
+</body>
+</html>
