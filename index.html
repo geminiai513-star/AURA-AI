@@ -2166,10 +2166,10 @@
 	    }
 	}
 		
-	async function streamText(element, text, speed = 30) {
+	async function streamText(element, text, speed = 10) {
 	    const delay = ms => new Promise(res => setTimeout(res, ms));
 	    let cursor = 0;
-	    const step = 20; 
+	    const step = 30; 
 	    const scroller = document.getElementById('chat-scroller');
 	
 	    let finalRenderedText = "";
