@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
-    <title>ASISTEN AI - GEMINI 3</title>
+    <title>AURA</title>
     
     <!-- PWA Meta Tags -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="theme-color" content="#ffffff">
-    <meta name="apple-mobile-web-app-title" content="ASISTEN AI">
+    <meta name="apple-mobile-web-app-title" content="AURA">
     <link rel="apple-touch-icon" href="icon/icon-512.png">
     <link rel="icon" type="image/png" href="icon/icon-512.png">
 	<link rel="manifest" href="manifest.json">
@@ -413,24 +413,24 @@
 				        <i data-lucide="settings-2" stroke-width="2.5" class="w-5 h-5"></i>
 				    </button>
 				    
-				    <div id="header-dropdown" class="hidden absolute right-0 top-full mt-4 w-44 bg-slate-50 rounded-2xl shadow-xl border border-gray-100 p-1.5 z-[150] fade-in">
-				        <div class="flex flex-col">
-				            <div onclick="clearChat(); closeHeaderDropdown()" class="flex items-center justify-end gap-3 py-2.5 px-4 rounded-xl hover:bg-gray-200/50 cursor-pointer transition-colors border-b border-gray-200/60">
-				                <span class="text-sm font-medium text-slate-600 tracking-wider">Reset</span>
-				                <i data-lucide="refresh-cw" class="w-4 h-4 text-slate-500"></i>
-				            </div>
-				            
-				            <div onclick="showView('settings'); closeHeaderDropdown()" class="flex items-center justify-end gap-3 py-2.5 px-4 rounded-xl hover:bg-gray-200/50 cursor-pointer transition-colors border-b border-gray-200/60">
-				                <span class="text-sm font-medium text-slate-600 tracking-wider">Pengaturan</span>
-				                <i data-lucide="settings" class="w-4 h-4 text-slate-500"></i>
-				            </div>
-				            
-				            <div onclick="handleLogout(); closeHeaderDropdown()" class="flex items-center justify-end gap-3 py-2.5 px-4 rounded-xl hover:bg-gray-200/50 cursor-pointer transition-colors">
-				                <span class="text-sm font-medium text-slate-600 tracking-wider">Logout</span>
-				                <i data-lucide="log-out" class="w-4 h-4 text-slate-500"></i>
-				            </div>
-				        </div>
-				    </div>
+				    <div id="header-dropdown" class="hidden absolute right-0 top-full mt-4 w-44 bg-white rounded-2xl shadow-xl border border-gray-100 p-1.5 z-[150] fade-in">
+					    <div class="flex flex-col">
+					        <div onclick="clearChat(); closeHeaderDropdown()" class="flex items-center justify-end gap-3 py-2.5 px-4 rounded-xl hover:bg-gray-50 cursor-pointer transition-colors border-b border-gray-100">
+					            <span class="text-sm font-medium text-slate-600 tracking-wider">Reset</span>
+					            <i data-lucide="refresh-cw" class="w-4 h-4 text-slate-500"></i>
+					        </div>
+					        
+					        <div onclick="showView('settings'); closeHeaderDropdown()" class="flex items-center justify-end gap-3 py-2.5 px-4 rounded-xl hover:bg-gray-50 cursor-pointer transition-colors border-b border-gray-100">
+					            <span class="text-sm font-medium text-slate-600 tracking-wider">Pengaturan</span>
+					            <i data-lucide="settings" class="w-4 h-4 text-slate-500"></i>
+					        </div>
+					        
+					        <div onclick="handleLogout(); closeHeaderDropdown()" class="flex items-center justify-end gap-3 py-2.5 px-4 rounded-xl hover:bg-gray-50 cursor-pointer transition-colors">
+					            <span class="text-sm font-medium text-slate-600 tracking-wider">Logout</span>
+					            <i data-lucide="log-out" class="w-4 h-4 text-slate-500"></i>
+					        </div>
+					    </div>
+					</div>
 				</div>
             </header>
 
@@ -489,109 +489,107 @@
 
         <!-- Settings View -->
         <div id="settings-view" class="view-container bg-white">
-            <header class="h-16 px-6 flex justify-between items-center bg-white shrink-0 border-b border-gray-100">
-                <button onclick="saveSettings(); showView('chat')" class="p-2.5 -ml-3 text-gray-500 active:scale-90 transition-transform">
-                    <i data-lucide="chevron-left" stroke-width="2.5" class="w-5 h-5"></i>
-                </button>
-            </header>
-
-            <main id="settings-scroller" class="flex-1 overflow-y-auto bg-white p-4">
-                <div class="max-w-3xl mx-auto w-full">
-                    <div class="w-full bg-gray-100 rounded-2xl px-8 py-7 space-y-6 fade-in">
-                        <!-- AI Model Selection -->
-                        <div class="space-y-2 pb-4 border-b border-gray-200">
-                            <label class="text-sm font-bold text-gray-800 ml-1">MODEL AI</label>
-                            <div class="relative w-full" id="custom-dropdown">
-                                <button type="button" id="dropdown-trigger" 
-                                    class="w-full bg-gray-50 border-none rounded-2xl px-5 py-4 text-sm outline-none transition-all font-bold text-gray-700 shadow-sm flex items-center justify-between">
-                                    <span id="selected-model-text">Gemini 3 Flash</span>
-                                    <i data-lucide="chevron-down" class="w-4 h-4 text-gray-500 transition-transform duration-200" id="dropdown-icon"></i>
-                                </button>
-
-                                <div id="dropdown-menu" class="hidden absolute left-0 right-0 mt-2 bg-gray-50 rounded-3xl shadow-xl border border-gray-100 p-1.5 z-[110] fade-in">
-                                    <div class="flex flex-col">
-                                        <div class="dropdown-option py-2 px-3 rounded-2xl hover:bg-gray-50 cursor-pointer transition-colors border-b border-gray-100/60 last:border-none" data-value="gemini-3-flash-preview">
-                                            <span class="text-sm font-medium text-gray-800">Gemini 3 Flash</span>
-                                        </div>
-                                        <div class="dropdown-option py-2 px-3 rounded-2xl hover:bg-gray-50 cursor-pointer transition-colors border-b border-gray-100/60 last:border-none" data-value="gemini-3-pro-preview">
-                                            <span class="text-sm font-medium text-gray-800">Gemini 3 Pro</span>
-                                        </div>
-                                        <div class="dropdown-option py-2 px-3 rounded-2xl hover:bg-gray-50 cursor-pointer transition-colors" data-value="gemini-3-deep-think-preview">
-                                            <span class="text-sm font-medium text-gray-800">Gemini 3 Deep Think</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Voice Model Selection -->
-                        <div class="space-y-2 pb-4 border-b border-gray-200">
-                            <label class="text-sm font-bold text-gray-800 ml-1 uppercase">Model Suara</label>
-                            <div class="relative w-full" id="voice-dropdown">
-                                <button type="button" id="voice-trigger" 
-                                    class="w-full bg-gray-50 border-none rounded-2xl px-5 py-4 text-sm outline-none transition-all font-bold text-gray-700 shadow-sm flex items-center justify-between">
-                                    <span id="selected-voice-text">Kore</span>
-                                    <i data-lucide="chevron-down" class="w-4 h-4 text-gray-500 transition-transform duration-200" id="voice-icon"></i>
-                                </button>
-
-                                <div id="voice-menu" class="hidden absolute left-0 right-0 mt-2 bg-gray-50 rounded-3xl shadow-xl border border-gray-100 p-1.5 z-[120] fade-in">
-                                    <div class="flex flex-col max-h-48 overflow-y-auto custom-scroll">
-                                        <div class="voice-option py-2 px-3 rounded-2xl hover:bg-gray-50 cursor-pointer transition-colors border-b border-gray-100/60" data-value="Kore">
-                                            <span class="text-sm font-medium text-gray-800">Kore (Default)</span>
-                                        </div>
-                                        <div class="voice-option py-2 px-3 rounded-2xl hover:bg-gray-50 cursor-pointer transition-colors border-b border-gray-100/60" data-value="Aoede">
-                                            <span class="text-sm font-medium text-gray-800">Aoede</span>
-                                        </div>
-                                        <div class="voice-option py-2 px-3 rounded-2xl hover:bg-gray-50 cursor-pointer transition-colors border-b border-gray-100/60" data-value="Zephyr">
-                                            <span class="text-sm font-medium text-gray-800">Zephyr</span>
-                                        </div>
-                                        <div class="voice-option py-2 px-3 rounded-2xl hover:bg-gray-50 cursor-pointer transition-colors border-b border-gray-100/60" data-value="Leda">
-                                            <span class="text-sm font-medium text-gray-800">Leda</span>
-                                        </div>
-                                        <div class="voice-option py-2 px-3 rounded-2xl hover:bg-gray-50 cursor-pointer transition-colors" data-value="Fenrir">
-                                            <span class="text-sm font-medium text-gray-800">Fenrir</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Thinking Level -->
-                        <div class="space-y-2 pb-4 border-b border-gray-200">
-                            <div class="flex justify-between items-center ml-1">
-                                <label class="text-sm font-bold text-gray-800 uppercase">Tingkat Pemikiran</label>
-                                <span id="label-thinking" class="hidden">MEDIUM</span>
-                            </div>
-                            <input type="range" id="settings-thinking" min="1" max="3" step="1" oninput="updateSliderLabels(); saveSettings()" 
-                                class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-indigo-600">
-                            <div class="flex justify-between text-[10px] text-gray-400 px-1 font-bold uppercase">
-                                <span>LOW</span>
-                                <span>MEDIUM</span>
-                                <span>HIGH</span>
-                            </div>
-                        </div>
-
-                        <!-- Token Limit -->
-                        <div class="space-y-2 pb-4 border-b border-gray-200">
-                            <div class="flex justify-between items-center ml-1">
-                                <label class="text-sm font-bold text-gray-800 uppercase">Batas Token</label>
-                                <span id="label-tokens" class="text-sm font-bold text-indigo-600">65536</span>
-                            </div>
-                            <input type="range" id="settings-tokens" min="1024" max="65536" step="1024" oninput="updateSliderLabels(); saveSettings()" 
-                                class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-indigo-600">
-                        </div>
-
-                        <!-- System Instructions -->
-                        <div class="space-y-2">
-                            <label class="text-sm font-bold text-gray-800 ml-1 uppercase tracking-wider">System Instruksi</label>
-                            <textarea id="settings-prompt" rows="4" oninput="saveSettings()" 
-                                class="w-full bg-gray-50 border-none rounded-2xl px-4 py-4 text-sm font-medium outline-none focus:ring-0 focus:outline-none transition-all leading-tight shadow-sm text-gray-700" 
-                                placeholder="Contoh: Jadilah asisten yang sangat teknis..." onblur="window.scrollTo(0,0)"></textarea>
-                        </div>
-                    </div>
-                </div>
-            </main>
-        </div>
+		    <header class="h-16 px-6 relative flex items-center bg-white shrink-0 border-b border-gray-100">
+		        <button onclick="saveSettings(); showView('chat')" class="relative z-10 p-2.5 -ml-3 text-gray-500 active:scale-90 transition-transform">
+		            <i data-lucide="chevron-left" stroke-width="2.5" class="w-5 h-5"></i>
+		        </button>
+		        <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+		            <span class="text-[14px] font-bold tracking-[0.2em] text-slate-800 uppercase">PENGATURAN AI</span>
+		        </div>
+		    </header>
+		
+		    <main id="settings-scroller" class="flex-1 overflow-y-auto bg-white p-4">
+		        <div class="max-w-2xl mx-auto w-full">
+		            <div class="w-full bg-white rounded-3xl px-8 py-6 space-y-4 border border-gray-100 shadow-sm fade-in">
+		                <div class="space-y-2 pb-3 border-b border-gray-100">
+		                    <label class="text-sm font-bold text-gray-800 ml-1">MODEL AI</label>
+		                    <div class="relative w-full" id="custom-dropdown">
+		                        <button type="button" id="dropdown-trigger" 
+		                            class="w-full bg-gray-50 border-none rounded-2xl px-5 py-4 text-sm outline-none transition-all font-bold text-gray-700 shadow-sm flex items-center justify-between">
+		                            <span id="selected-model-text">Gemini 3 Flash</span>
+		                            <i data-lucide="chevron-down" class="w-4 h-4 text-gray-500 transition-transform duration-200" id="dropdown-icon"></i>
+		                        </button>
+		
+		                        <div id="dropdown-menu" class="hidden absolute left-0 right-0 mt-2 bg-white rounded-2xl shadow-xl border border-gray-100 p-1.5 z-[110] fade-in">
+		                            <div class="flex flex-col">
+		                                <div class="dropdown-option py-2 px-3 rounded-xl hover:bg-gray-50 cursor-pointer transition-colors border-b border-gray-50 last:border-none" data-value="gemini-3-flash-preview">
+		                                    <span class="text-sm font-medium text-gray-800">Gemini 3 Flash</span>
+		                                </div>
+		                                <div class="dropdown-option py-2 px-3 rounded-xl hover:bg-gray-50 cursor-pointer transition-colors border-b border-gray-50 last:border-none" data-value="gemini-3-pro-preview">
+		                                    <span class="text-sm font-medium text-gray-800">Gemini 3 Pro</span>
+		                                </div>
+		                                <div class="dropdown-option py-2 px-3 rounded-xl hover:bg-gray-50 cursor-pointer transition-colors" data-value="gemini-3-deep-think-preview">
+		                                    <span class="text-sm font-medium text-gray-800">Gemini 3 Deep Think</span>
+		                                </div>
+		                            </div>
+		                        </div>
+		                    </div>
+		                </div>
+		
+		                <div class="space-y-2 pb-3 border-b border-gray-100">
+		                    <label class="text-sm font-bold text-gray-800 ml-1 uppercase">Model Suara</label>
+		                    <div class="relative w-full" id="voice-dropdown">
+		                        <button type="button" id="voice-trigger" 
+		                            class="w-full bg-gray-50 border-none rounded-2xl px-5 py-4 text-sm outline-none transition-all font-bold text-gray-700 shadow-sm flex items-center justify-between">
+		                            <span id="selected-voice-text">Kore</span>
+		                            <i data-lucide="chevron-down" class="w-4 h-4 text-gray-500 transition-transform duration-200" id="voice-icon"></i>
+		                        </button>
+		
+		                        <div id="voice-menu" class="hidden absolute left-0 right-0 mt-2 bg-white rounded-2xl shadow-xl border border-gray-100 p-1.5 z-[120] fade-in">
+		                            <div class="flex flex-col max-h-48 overflow-y-auto custom-scroll">
+		                                <div class="voice-option py-2 px-3 rounded-xl hover:bg-gray-50 cursor-pointer transition-colors border-b border-gray-50" data-value="Kore">
+		                                    <span class="text-sm font-medium text-gray-800">Kore (Default)</span>
+		                                </div>
+		                                <div class="voice-option py-2 px-3 rounded-xl hover:bg-gray-50 cursor-pointer transition-colors border-b border-gray-50" data-value="Aoede">
+		                                    <span class="text-sm font-medium text-gray-800">Aoede</span>
+		                                </div>
+		                                <div class="voice-option py-2 px-3 rounded-xl hover:bg-gray-50 cursor-pointer transition-colors border-b border-gray-50" data-value="Zephyr">
+		                                    <span class="text-sm font-medium text-gray-800">Zephyr</span>
+		                                </div>
+		                                <div class="voice-option py-2 px-3 rounded-xl hover:bg-gray-50 cursor-pointer transition-colors border-b border-gray-50" data-value="Leda">
+		                                    <span class="text-sm font-medium text-gray-800">Leda</span>
+		                                </div>
+		                                <div class="voice-option py-2 px-3 rounded-xl hover:bg-gray-50 cursor-pointer transition-colors" data-value="Fenrir">
+		                                    <span class="text-sm font-medium text-gray-800">Fenrir</span>
+		                                </div>
+		                            </div>
+		                        </div>
+		                    </div>
+		                </div>
+		
+		                <div class="space-y-2 pb-3 border-b border-gray-100">
+		                    <div class="flex justify-between items-center ml-1">
+		                        <label class="text-sm font-bold text-gray-800 uppercase">Tingkat Pemikiran</label>
+		                        <span id="label-thinking" class="hidden">MEDIUM</span>
+		                    </div>
+		                    <input type="range" id="settings-thinking" min="1" max="3" step="1" oninput="updateSliderLabels(); saveSettings()" 
+		                        class="w-full h-2 bg-gray-100 rounded-lg appearance-none cursor-pointer accent-indigo-600">
+		                    <div class="flex justify-between text-[10px] text-gray-400 px-1 font-bold uppercase">
+		                        <span>LOW</span>
+		                        <span>MEDIUM</span>
+		                        <span>HIGH</span>
+		                    </div>
+		                </div>
+		
+		                <div class="space-y-2 pb-3 border-b border-gray-100">
+		                    <div class="flex justify-between items-center ml-1">
+		                        <label class="text-sm font-bold text-gray-800 uppercase">Batas Token</label>
+		                        <span id="label-tokens" class="text-sm font-bold text-gray-400">65536</span>
+		                    </div>
+		                    <input type="range" id="settings-tokens" min="1024" max="65536" step="1024" oninput="updateSliderLabels(); saveSettings()" 
+		                        class="w-full h-2 bg-gray-100 rounded-lg appearance-none cursor-pointer accent-indigo-600">
+		                </div>
+		
+		                <div class="space-y-2">
+		                    <label class="text-sm font-bold text-gray-800 ml-1 uppercase tracking-wider">System Instruksi</label>
+		                    <textarea id="settings-prompt" rows="4" oninput="saveSettings()" 
+		                        class="w-full bg-gray-50 border-none rounded-2xl px-4 py-4 text-sm font-medium outline-none focus:ring-0 focus:outline-none transition-all leading-tight shadow-sm text-gray-700" 
+		                        placeholder="Contoh: Jadilah asisten yang sangat teknis..." onblur="window.scrollTo(0,0)"></textarea>
+		                </div>
+		            </div>
+		        </div>
+		    </main>
+		</div>
 
         <!-- Voice Overlay -->
         <div id="voice-overlay" class="fixed inset-0 bg-white z-[200] hidden flex-col transition-all duration-500" style="display: none;">
@@ -2166,10 +2164,10 @@
 	    }
 	}
 		
-	async function streamText(element, text, speed = 10) {
+	async function streamText(element, text, speed = 5) {
 	    const delay = ms => new Promise(res => setTimeout(res, ms));
 	    let cursor = 0;
-	    const step = 30; 
+	    const step = 2; 
 	    const scroller = document.getElementById('chat-scroller');
 	
 	    let finalRenderedText = "";
