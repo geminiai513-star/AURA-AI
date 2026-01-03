@@ -488,92 +488,148 @@
 							</button>
                         </div>
                         <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px;">
-                            <button id="btn-mode-image" onclick="toggleImageMode()" style="height: 32px; display: flex; align-items: center; justify-content: center; color: #9ca3af; background-color: #f9fafb; border-radius: 10px; border: none; transition: all 0.2s; cursor: pointer;"><i data-lucide="image" class="w-[15px] h-[15px]"></i></button>
-                            <button id="btn-mode-video" onclick="toggleVideoMode()" style="height: 32px; display: flex; align-items: center; justify-content: center; color: #9ca3af; background-color: #f9fafb; border-radius: 10px; border: none; transition: all 0.2s; cursor: pointer;"><i data-lucide="clapperboard" class="w-[15px] h-[15px]"></i></button>
-                            <button id="btn-mode-voice" onclick="openVoiceMode()" style="height: 32px; display: flex; align-items: center; justify-content: center; color: #9ca3af; background-color: #f9fafb; border-radius: 10px; border: none; transition: all 0.2s; cursor: pointer;"><i data-lucide="mic" class="w-[18px] h-[18px]"></i></button>
-                        </div>
+						    <button id="btn-mode-image" onclick="toggleImageMode()" 
+						        style="height: 32px; display: flex; align-items: center; justify-content: center; color: #9ca3af; background-color: #f9fafb; border-radius: 10px; border: none; transition: all 0.2s; cursor: pointer;">
+						        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						            <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
+						            <circle cx="9" cy="9" r="2"/>
+						            <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0 L6 21"/>
+						        </svg>
+						    </button>
+						    
+						    <button id="btn-mode-video" onclick="toggleVideoMode()" 
+						        style="height: 32px; display: flex; align-items: center; justify-content: center; color: #9ca3af; background-color: #f9fafb; border-radius: 10px; border: none; transition: all 0.2s; cursor: pointer;">
+						        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						            <path d="M20.2 6 3 11l-.9-2.4c-.3-1.1.3-2.2 1.3-2.5l13.5-4c1.1-.3 2.2.3 2.5 1.3Z"/>
+						            <path d="m6.2 5.3 3.1 3.9"/>
+						            <path d="m12.4 3.4 3.1 4"/>
+						            <path d="M3 11h18v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/>
+						        </svg>
+						    </button>
+						    
+						    <button id="btn-mode-voice" onclick="openVoiceMode()" 
+						        style="height: 32px; display: flex; align-items: center; justify-content: center; color: #9ca3af; background-color: #f9fafb; border-radius: 10px; border: none; transition: all 0.2s; cursor: pointer;">
+						        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						            <path d="M2 10v3"/><path d="M6 6v11"/><path d="M10 3v18"/><path d="M14 8v7"/><path d="M18 5v13"/><path d="M22 10v3"/>
+						        </svg>
+						    </button>
+						</div>
                     </div>
                 </div>
             </footer>
         </div>
 
         <div id="settings-view" class="view-container bg-white">
-            <header class="h-16 px-6 relative flex items-center bg-white shrink-0 border-b border-gray-100">
-                <button onclick="saveSettings(); showView('chat')" class="relative z-10 p-2.5 -ml-3 text-gray-500 active:scale-90 transition-transform"><i data-lucide="chevron-left" stroke-width="2.5" class="w-5 h-5"></i></button>
-                <div class="absolute inset-0 flex items-center justify-center pointer-events-none"><span class="text-[14px] font-bold tracking-[0.2em] text-slate-800 uppercase">PENGATURAN AI</span></div>
-            </header>
-            <main id="settings-scroller" class="flex-1 overflow-y-auto bg-white p-5">
-                <div class="max-w-2xl mx-auto w-full">
-                    <div class="bg-gray-50 rounded-[32px] p-6 space-y-6">
-                        <div class="relative w-full" id="custom-dropdown">
-                            <button type="button" id="dropdown-trigger" class="w-full bg-gray-100 rounded-2xl px-5 py-4 text-sm font-bold text-gray-700 shadow-sm flex items-center justify-between border-none outline-none">
-                                <span id="selected-model-text">Gemini 3 Flash</span>
-                                <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400" id="dropdown-icon"></i>
-                            </button>
-                            <div id="dropdown-menu" class="hidden absolute left-0 right-0 mt-2 bg-white rounded-2xl shadow-xl border border-gray-100 p-2 z-[110] fade-in">
-                                <div class="flex flex-col">
-                                    <div class="dropdown-option py-3 px-4 rounded-xl hover:bg-gray-50 cursor-pointer text-sm font-medium text-gray-800" data-value="gemini-3-flash-preview">Gemini 3 Flash</div>
-                                    <div class="dropdown-option py-3 px-4 rounded-xl hover:bg-gray-50 cursor-pointer text-sm font-medium text-gray-800" data-value="gemini-3-pro-preview">Gemini 3 Pro</div>
-                                    <div class="dropdown-option py-3 px-4 rounded-xl hover:bg-gray-50 cursor-pointer text-sm font-medium text-gray-800" data-value="gemini-3-deep-think-preview">Gemini 3 Deep Think</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="relative w-full" id="voice-dropdown">
-                            <button type="button" id="voice-trigger" class="w-full bg-gray-100 rounded-2xl px-5 py-4 text-sm font-bold text-gray-700 shadow-sm flex items-center justify-between border-none outline-none">
-                                <span id="selected-voice-text">Kore (Default)</span>
-                                <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400" id="voice-icon"></i>
-                            </button>
-                            <div id="voice-menu" class="hidden absolute left-0 right-0 mt-2 bg-white rounded-2xl shadow-xl border border-gray-100 p-2 z-[120] fade-in">
-                                <div class="flex flex-col max-h-48 overflow-y-auto custom-scroll">
-                                    <div class="voice-option py-3 px-4 rounded-xl hover:bg-gray-50 cursor-pointer text-sm font-medium text-gray-800" data-value="Kore">Kore (Default)</div>
-                                    <div class="voice-option py-3 px-4 rounded-xl hover:bg-gray-50 cursor-pointer text-sm font-medium text-gray-800" data-value="Aoede">Aoede</div>
-                                    <div class="voice-option py-3 px-4 rounded-xl hover:bg-gray-50 cursor-pointer text-sm font-medium text-gray-800" data-value="Zephyr">Zephyr</div>
-                                    <div class="voice-option py-3 px-4 rounded-xl hover:bg-gray-50 cursor-pointer text-sm font-medium text-gray-800" data-value="Leda">Leda</div>
-                                    <div class="voice-option py-3 px-4 rounded-xl hover:bg-gray-50 cursor-pointer text-sm font-medium text-gray-800" data-value="Fenrir">Fenrir</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="space-y-3 px-1">
-                            <input type="range" id="settings-thinking" min="1" max="3" step="1" oninput="updateSliderLabels(); saveSettings()" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600">
-                            <div class="flex justify-between text-[10px] text-gray-400 font-bold tracking-widest uppercase">
-                                <span>Low Thinking</span><span id="label-thinking" class="text-gray-800">MEDIUM</span><span>High Thinking</span>
-                            </div>
-                        </div>
-                        <div class="space-y-3 px-1">
-                            <input type="range" id="settings-tokens" min="1024" max="65536" step="1024" oninput="updateSliderLabels(); saveSettings()" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600">
-                            <div class="flex justify-between text-[10px] text-gray-400 font-bold tracking-widest uppercase">
-                                <span>Min Token</span><span id="label-tokens" class="text-gray-800">65536</span><span>Max Token</span>
-                            </div>
-                        </div>
-                        <div class="bg-gray-100 rounded-2xl overflow-hidden shadow-sm">
-                            <div class="h-3"></div>
-                            <textarea id="settings-prompt" rows="5" oninput="saveSettings()" class="w-full bg-transparent border-none px-5 py-0 text-[15px] font-medium text-gray-700 outline-none resize-none leading-relaxed" placeholder="Tulis instruksi sistem di sini..." onblur="window.scrollTo(0,0)"></textarea>
-                            <div class="h-2"></div>
-                        </div>
-                        <div class="grid grid-cols-2 gap-3">
-                            <input type="checkbox" id="switch-image" class="hidden" onchange="updateSettingCards(); saveSettings()">
-                            <button onclick="document.getElementById('switch-image').click()" id="card-image" class="flex items-center justify-center py-3 px-2 rounded-[24px] bg-gray-100 transition-all border-none outline-none"><span class="text-[10px] uppercase tracking-[0.15em] transition-colors">Mode Gambar</span></button>
-                            <input type="checkbox" id="switch-video" class="hidden" onchange="updateSettingCards(); saveSettings()">
-                            <button onclick="document.getElementById('switch-video').click()" id="card-video" class="flex items-center justify-center py-3 px-2 rounded-[24px] bg-gray-100 transition-all border-none outline-none"><span class="text-[10px] uppercase tracking-[0.15em] transition-colors">Mode Video</span></button>
-                            <input type="checkbox" id="switch-voice" class="hidden" onchange="updateSettingCards(); saveSettings()">
-                            <button onclick="document.getElementById('switch-voice').click()" id="card-voice" class="flex items-center justify-center py-3 px-2 rounded-[24px] bg-gray-100 transition-all border-none outline-none"><span class="text-[10px] uppercase tracking-[0.15em] transition-colors">Mode Suara</span></button>
-                            <input type="checkbox" id="switch-upload" class="hidden" onchange="updateSettingCards(); saveSettings()">
-                            <button onclick="document.getElementById('switch-upload').click()" id="card-upload" class="flex items-center justify-center py-3 px-2 rounded-[24px] bg-gray-100 transition-all border-none outline-none"><span class="text-[10px] uppercase tracking-[0.15em] transition-colors">Mode Upload</span></button>
-                        </div>
-                    </div>
-                </div>
-            </main>
+		    <header class="h-16 px-6 relative flex items-center bg-white shrink-0 border-b border-gray-100">
+		        <button onclick="saveSettings(); showView('chat')" class="relative z-10 p-2.5 -ml-3 text-gray-500 active:scale-90 transition-transform">
+		            <i data-lucide="chevron-left" stroke-width="2.5" class="w-5 h-5"></i>
+		        </button>
+		        <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+		            <span class="text-[14px] font-bold tracking-[0.2em] text-slate-800 uppercase">PENGATURAN AI</span>
+		        </div>
+		    </header>
+		
+		   <main id="settings-scroller" class="flex-1 overflow-y-auto bg-white p-6">
+			    <div class="max-w-2xl mx-auto w-full space-y-8">
+			        
+			        <div class="relative w-full" id="custom-dropdown">
+			            <button type="button" id="dropdown-trigger" 
+			                class="w-full bg-gray-50 rounded-2xl px-5 py-4 text-sm font-bold text-gray-700 shadow-sm flex items-center justify-between border-none outline-none">
+			                <span id="selected-model-text">Gemini 3 Flash</span>
+			                <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400" id="dropdown-icon"></i>
+			            </button>
+			            <div id="dropdown-menu" class="hidden absolute left-0 right-0 mt-2 bg-white rounded-2xl shadow-xl border border-gray-100 p-2 z-[110] fade-in">
+			                <div class="flex flex-col">
+			                    <div class="dropdown-option py-3 px-4 rounded-xl hover:bg-gray-50 cursor-pointer text-sm font-medium text-gray-800" data-value="gemini-3-flash-preview">Gemini 3 Flash</div>
+			                    <div class="dropdown-option py-3 px-4 rounded-xl hover:bg-gray-50 cursor-pointer text-sm font-medium text-gray-800" data-value="gemini-3-pro-preview">Gemini 3 Pro</div>
+			                    <div class="dropdown-option py-3 px-4 rounded-xl hover:bg-gray-50 cursor-pointer text-sm font-medium text-gray-800" data-value="gemini-3-deep-think-preview">Gemini 3 Deep Think</div>
+			                </div>
+			            </div>
+			        </div>
+			
+			        <div class="relative w-full" id="voice-dropdown">
+			            <button type="button" id="voice-trigger" 
+			                class="w-full bg-gray-50 rounded-2xl px-5 py-4 text-sm font-bold text-gray-700 shadow-sm flex items-center justify-between border-none outline-none">
+			                <span id="selected-voice-text">Kore (Default)</span>
+			                <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400" id="voice-icon"></i>
+			            </button>
+			            <div id="voice-menu" class="hidden absolute left-0 right-0 mt-2 bg-white rounded-2xl shadow-xl border border-gray-100 p-2 z-[120] fade-in">
+			                <div class="flex flex-col max-h-48 overflow-y-auto custom-scroll">
+			                    <div class="voice-option py-3 px-4 rounded-xl hover:bg-gray-50 cursor-pointer text-sm font-medium text-gray-800" data-value="Kore">Kore (Default)</div>
+			                    <div class="voice-option py-3 px-4 rounded-xl hover:bg-gray-50 cursor-pointer text-sm font-medium text-gray-800" data-value="Aoede">Aoede</div>
+			                    <div class="voice-option py-3 px-4 rounded-xl hover:bg-gray-50 cursor-pointer text-sm font-medium text-gray-800" data-value="Zephyr">Zephyr</div>
+			                    <div class="voice-option py-3 px-4 rounded-xl hover:bg-gray-50 cursor-pointer text-sm font-medium text-gray-800" data-value="Leda">Leda</div>
+			                    <div class="voice-option py-3 px-4 rounded-xl hover:bg-gray-50 cursor-pointer text-sm font-medium text-gray-800" data-value="Fenrir">Fenrir</div>
+			                </div>
+			            </div>
+			        </div>
+			
+			        <div class="space-y-3 px-1">
+			            <input type="range" id="settings-thinking" min="1" max="3" step="1" oninput="updateSliderLabels(); saveSettings()" 
+			                class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600">
+			            <div class="flex justify-between text-[10px] text-gray-400 font-bold tracking-widest uppercase">
+			                <span>Low Thinking</span>
+			                <span id="label-thinking" class="text-gray-800">MEDIUM</span>
+			                <span>High Thinking</span>
+			            </div>
+			        </div>
+			        
+			        <div class="space-y-3 px-1">
+			            <input type="range" id="settings-tokens" min="1024" max="65536" step="1024" oninput="updateSliderLabels(); saveSettings()" 
+			                class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600">
+			            <div class="flex justify-between text-[10px] text-gray-400 font-bold tracking-widest uppercase">
+			                <span>Min Token</span>
+			                <span id="label-tokens" class="text-gray-800">65536</span>
+			                <span>Max Token</span>
+			            </div>
+			        </div>
+			
+			        <div class="bg-gray-50 rounded-2xl overflow-hidden shadow-sm">
+			            <div class="h-3"></div>
+			            <textarea id="settings-prompt" rows="5" oninput="saveSettings()" 
+			                class="w-full bg-transparent border-none px-5 py-0 text-[15px] font-medium text-gray-700 outline-none resize-none leading-relaxed" 
+			                placeholder="Tulis instruksi sistem di sini..." onblur="window.scrollTo(0,0)"></textarea>
+			            <div class="h-2"></div>
+			        </div>
+			
+			        <div class="grid grid-cols-2 gap-3 pb-10">
+			            <input type="checkbox" id="switch-image" class="hidden" onchange="updateSettingCards(); saveSettings()">
+			            <button onclick="document.getElementById('switch-image').click()" id="card-image" 
+			                class="flex items-center justify-center py-4 px-2 rounded-2xl bg-gray-50 transition-all border-none outline-none">
+			                <span class="text-sm uppercase transition-colors">Mode Gambar</span>
+			            </button>
+			        
+			            <input type="checkbox" id="switch-video" class="hidden" onchange="updateSettingCards(); saveSettings()">
+			            <button onclick="document.getElementById('switch-video').click()" id="card-video" 
+			                class="flex items-center justify-center py-4 px-2 rounded-2xl bg-gray-50 transition-all border-none outline-none">
+			                <span class="text-sm uppercase transition-colors">Mode Video</span>
+			            </button>
+			        
+			            <input type="checkbox" id="switch-voice" class="hidden" onchange="updateSettingCards(); saveSettings()">
+			            <button onclick="document.getElementById('switch-voice').click()" id="card-voice" 
+			                class="flex items-center justify-center py-4 px-2 rounded-2xl bg-gray-50 transition-all border-none outline-none">
+			                <span class="text-sm uppercase transition-colors">Mode Suara</span>
+			            </button>
+			        
+			            <input type="checkbox" id="switch-upload" class="hidden" onchange="updateSettingCards(); saveSettings()">
+			            <button onclick="document.getElementById('switch-upload').click()" id="card-upload" 
+			                class="flex items-center justify-center py-4 px-2 rounded-2xl bg-gray-50 transition-all border-none outline-none">
+			                <span class="text-sm uppercase transition-colors">Mode Upload</span>
+			            </button>
+			        </div>
+			    </div>
+			</main>
         </div>
 
         <div id="history-modal" class="fixed inset-0 z-[300] hidden items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
 		    <div class="absolute inset-0" onclick="closeHistory()"></div>
-		    <div class="relative w-full max-w-sm bg-white rounded-[24px] shadow-2xl overflow-hidden flex flex-col h-[400px] border border-slate-100 fade-in">
+		    <div class="relative w-full max-w-[340px] bg-white rounded-[24px] shadow-2xl overflow-hidden flex flex-col h-[400px] border border-slate-100 fade-in">
 		        <div class="h-[48px] flex-none flex items-center justify-center border-b border-slate-50">
-		            <h3 class="text-[12px] font-bold tracking-[0.2em] text-slate-400 uppercase m-0">Histori Percakapan</h3>
+		            <h3 class="text-[12px] font-bold tracking-[0.2em] text-slate-900 uppercase m-0">Histori Percakapan</h3>
 		        </div>
 		        <div id="history-list-container" class="flex-1 overflow-y-auto px-3 py-2 flex flex-col gap-1 bg-white"></div>
 		        <div class="h-[48px] flex-none flex items-center justify-center px-5 border-t border-slate-50">
-		            <button onclick="closeHistory()" class="w-full bg-transparent text-slate-400 py-2 text-[12px] font-bold tracking-[0.2em] uppercase active:scale-95 transition-all outline-none border-none cursor-pointer">
+		            <button onclick="closeHistory()" class="w-full bg-transparent text-slate-900 py-2 text-[12px] font-bold tracking-[0.2em] uppercase active:scale-95 transition-all outline-none border-none cursor-pointer">
 		                Tutup
 		            </button>
 		        </div>
@@ -581,11 +637,22 @@
 		</div>
 
         <div id="voice-overlay" class="fixed inset-0 bg-white z-[200] hidden flex-col transition-all duration-500">
-            <header class="h-16 px-6 relative flex items-center bg-white shrink-0 border-none">
-                <button id="btn-switch-cam" onclick="switchCamera()" class="relative z-10 p-2.5 text-gray-300 active:scale-90 transition-transform"><i data-lucide="refresh-ccw" stroke-width="2.5" class="w-5 h-5"></i></button>
-                <div class="absolute inset-0 flex items-center justify-center pointer-events-none"><span class="text-[14px] font-bold tracking-[0.2em] text-slate-800 uppercase">LIVE VOICE</span></div>
-                <button id="btn-voice-cam" onclick="toggleVoiceCamera()" class="relative z-10 p-2.5 ml-auto text-gray-300 active:scale-90 transition-transform"><i data-lucide="video" stroke-width="2.5" class="w-5 h-5"></i></button>
-            </header>
+		    <header class="h-16 px-6 relative flex items-center bg-white shrink-0 border-none">
+		        <button id="btn-switch-cam" onclick="switchCamera()" class="relative z-10 p-2.5 text-gray-300 active:scale-90 transition-transform outline-none border-none">
+		            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+		                <path d="M11 19H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h5"/><path d="M13 5h7a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-5"/><circle cx="12" cy="12" r="3"/><path d="m18 22-3-3 3-3"/><path d="m6 2 3 3-3 3"/>
+		            </svg>
+		        </button>
+		        <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+		            <span class="text-[14px] font-bold tracking-[0.2em] text-slate-800 uppercase">LIVE VOICE</span>
+		        </div>
+		        <button id="btn-voice-cam" onclick="toggleVoiceCamera()" class="relative z-10 p-2.5 ml-auto text-gray-300 active:scale-90 transition-transform outline-none border-none">
+		            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+		                <path d="M13.997 4a2 2 0 0 1 1.76 1.05l.486.9A2 2 0 0 0 18.003 7H20a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1.997a2 2 0 0 0 1.759-1.048l.489-.904A2 2 0 0 1 10.004 4z"/><circle cx="12" cy="13" r="3"/>
+		            </svg>
+		        </button>
+		    </header>
+    
             <main id="voice-main-content" class="flex-1 flex items-center justify-center p-4 bg-white overflow-hidden">
                 <div id="voice-visual-box" class="relative w-full max-w-3xl h-full flex items-center justify-center">
                     <canvas id="voice-canvas" class="block"></canvas>
@@ -722,11 +789,14 @@
 	            });
 	        };
 	
-	        modal.querySelector('.relative.w-full.max-w-sm').onclick = (e) => {
-	            if (!e.target.closest('.rounded-xl.cursor-pointer')) {
-	                resetAllDeleteButtons();
-	            }
-	        };
+	        const modalContent = modal.querySelector('.relative.flex.flex-col');
+	        if (modalContent) {
+	            modalContent.onclick = (e) => {
+	                if (!e.target.closest('.rounded-xl.cursor-pointer')) {
+	                    resetAllDeleteButtons();
+	                }
+	            };
+	        }
 	
 	        Object.keys(allChats).sort((a,b) => allChats[b].timestamp - allChats[a].timestamp).forEach(id => {
 	            const isActive = (id === currentChatId);
@@ -750,15 +820,16 @@
 	            const iconColor = isActive ? '#3b82f6' : '#94a3b8';
 	            card.innerHTML = `
 	                <div class="flex items-center gap-2 overflow-hidden flex-1 pointer-events-none">
-	                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${iconColor}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;">
-	                        <path d="M16 10a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 14.286V4a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
-	                        <path d="M20 9a2 2 0 0 1 2 2v10.286a.71.71 0 0 1-1.212.502l-2.202-2.202A2 2 0 0 0 17.172 19H10a2 2 0 0 1-2-2v-1"/>
+	                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${iconColor}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+	                        <path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z"/>
 	                    </svg>
 	                    <span class="text-[13px] font-medium text-slate-700 truncate">${allChats[id].title || 'Percakapan Baru'}</span>
 	                </div>
 	                <div class="w-7 flex justify-end">
 	                    <button onclick="handleTwoStepDelete(this, event, '${id}')" class="del-btn bg-transparent border-none cursor-pointer p-1 outline-none" style="opacity: 0; pointer-events: none; color: #cbd5e1; transition: none;">
-	                        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+	                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+	                            <circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/>
+	                        </svg>
 	                    </button>
 	                </div>
 	            `;
@@ -768,7 +839,6 @@
 	
 	    modal.classList.remove('hidden');
 	    modal.classList.add('flex');
-	    if (window.lucide) lucide.createIcons();
 	}
 	
 	function closeHistory() {
@@ -1667,42 +1737,43 @@
 	// ============================
 	
 	function openVoiceMode() {
-		if (localStorage.getItem('enable_voice') === 'false') return;
-		const overlay = document.getElementById('voice-overlay');
-		const visualBox = document.getElementById('voice-visual-box');
-		
-		isAISpeaking = false;
-		voiceNextTime = 0;
-		voiceInterrupted = false;
-		
-		overlay.style.display = 'flex';
-		overlay.classList.remove('hidden');
-		if (visualBox) visualBox.style.opacity = '1';
+    if (localStorage.getItem('enable_voice') === 'false') return;
+    const overlay = document.getElementById('voice-overlay');
+    const visualBox = document.getElementById('voice-visual-box');
+    
+    isAISpeaking = false;
+    voiceNextTime = 0;
+    voiceInterrupted = false;
+    
+    overlay.style.display = 'flex';
+    overlay.classList.remove('hidden');
+    if (visualBox) visualBox.style.opacity = '1';
 
-		// Perbaikan Header: Judul di tengah matematis
-		overlay.querySelector('header').innerHTML = `
-			<div class="relative z-30">
-				<button id="btn-switch-cam" onclick="switchCamera()" class="p-2.5 -ml-2 text-gray-400 active:scale-90 transition-transform outline-none border-none">
-					<i data-lucide="refresh-ccw" stroke-width="2.5" class="w-5 h-5"></i>
-				</button>
-			</div>
-			<div class="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
-				<span class="text-[14px] font-bold tracking-[0.5em] text-slate-800 uppercase">LIVE VOICE</span>
-			</div>
-			<div class="relative z-30 ml-auto">
-				<button id="btn-voice-cam" onclick="toggleVoiceCamera()" class="p-2.5 -mr-2 text-gray-400 active:scale-90 transition-transform outline-none border-none">
-					<i data-lucide="video" stroke-width="2.5" class="w-5 h-5"></i>
-				</button>
-			</div>
-		`;
+    overlay.querySelector('header').innerHTML = `
+        <div class="relative z-30">
+            <button id="btn-switch-cam" onclick="switchCamera()" class="p-2.5 -ml-2 text-gray-400 active:scale-90 transition-transform outline-none border-none">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M11 19H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h5"/><path d="M13 5h7a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-5"/><circle cx="12" cy="12" r="3"/><path d="m18 22-3-3 3-3"/><path d="m6 2 3 3-3 3"/>
+                </svg>
+            </button>
+        </div>
+        <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+            <span class="text-[14px] font-bold tracking-[0.5em] text-slate-800 uppercase">LIVE VOICE</span>
+        </div>
+        <div class="relative z-30 ml-auto">
+            <button id="btn-voice-cam" onclick="toggleVoiceCamera()" class="p-2.5 -mr-2 text-gray-400 active:scale-90 transition-transform outline-none border-none">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M13.997 4a2 2 0 0 1 1.76 1.05l.486.9A2 2 0 0 0 18.003 7H20a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1.997a2 2 0 0 0 1.759-1.048l.489-.904A2 2 0 0 1 10.004 4z"/><circle cx="12" cy="13" r="3"/>
+                </svg>
+            </button>
+        </div>
+    `;
 
-		setTimeout(() => {
-			resizeVoiceCanvas();
-			initVoiceSession();
-		}, 200);
-		
-		if (window.lucide) lucide.createIcons();
-	}
+    setTimeout(() => {
+        resizeVoiceCanvas();
+        initVoiceSession();
+    }, 200);
+}
 	
 	async function initVoiceSession() {
 	    voiceNextTime = 0;
@@ -2165,34 +2236,35 @@
 	// ===================== //
 	
 	function updateSettingCards() {
-	    const modes = [
-	        { id: 'switch-image', card: 'card-image' },
-	        { id: 'switch-video', card: 'card-video' },
-	        { id: 'switch-voice', card: 'card-voice' },
-	        { id: 'switch-upload', card: 'card-upload' }
-	    ];
-	
-	    modes.forEach(mode => {
-	        const checkbox = document.getElementById(mode.id);
-	        const card = document.getElementById(mode.card);
-	        if (!checkbox || !card) return;
-	        
-	        const isChecked = checkbox.checked;
-	        const text = card.querySelector('span');
-	        
-	        if (isChecked) {
-	            text.classList.remove('text-gray-400', 'font-medium');
-	            text.classList.add('text-blue-600', 'font-bold');
-	            card.classList.add('shadow-sm', 'bg-white');
-	            card.classList.remove('bg-gray-100');
-	        } else {
-	            text.classList.remove('text-blue-600', 'font-bold');
-	            text.classList.add('text-gray-400', 'font-medium');
-	            card.classList.remove('shadow-sm', 'bg-white');
-	            card.classList.add('bg-gray-100');
-	        }
-	    });
-	}
+    const modes = [
+        { id: 'switch-image', card: 'card-image' },
+        { id: 'switch-video', card: 'card-video' },
+        { id: 'switch-voice', card: 'card-voice' },
+        { id: 'switch-upload', card: 'card-upload' }
+    ];
+
+    modes.forEach(mode => {
+        const checkbox = document.getElementById(mode.id);
+        const card = document.getElementById(mode.card);
+        if (!checkbox || !card) return;
+        
+        const isChecked = checkbox.checked;
+        const text = card.querySelector('span');
+        
+        if (isChecked) {
+            text.classList.remove('text-gray-400', 'font-medium');
+            text.classList.add('text-black', 'font-black');
+            // Menghapus shadow-sm dan bg-white agar tetap gray-50
+            card.classList.remove('shadow-sm', 'bg-white');
+            card.classList.add('bg-gray-50');
+        } else {
+            text.classList.remove('text-black', 'font-black');
+            text.classList.add('text-gray-400', 'font-medium');
+            card.classList.remove('shadow-sm', 'bg-white');
+            card.classList.add('bg-gray-50');
+        }
+    });
+}
 	
 	function initUI() {
 	    const modelLabels = {
