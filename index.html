@@ -500,52 +500,47 @@
             </main>
 
             <footer style="background-color: #ffffff; padding: 16px 16px; padding-bottom: calc(env(safe-area-inset-bottom, 10px) + 18px);">
-				    <div style="max-width: 48rem; margin-left: auto; margin-right: auto;">
-				        
-				        <div id="file-preview-container" class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-2"></div>
-				        
-				        <div id="capsule-container" style="background-color: #f3f4f6; border-radius: 14px; padding: 4px; transition: all 0.2s ease; border: 1px solid transparent;">
-                        <div id="input-row-1" style="display: flex; align-items: center; gap: 4px; margin-bottom: 2px;">
-                            <button onclick="if(localStorage.getItem('enable_upload') !== 'false') document.getElementById('file-input').click()" 
-							    style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: #9ca3af; background: none; border: none; cursor: pointer; flex-shrink: 0;">
-							    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px;">
-							        <line x1="12" y1="5" x2="12" y2="19"></line>
-							        <line x1="5" y1="12" x2="19" y2="12"></line>
-							    </svg>
-							</button>
-                            <input type="file" id="file-input" multiple accept="image/*,application/pdf,.docx,.xlsx,.xls,.pptx,.js,.css,.java,.html,.xml,.py,.sql,.ts,.cpp,.h,.hpp,.lua,.swift" class="hidden" onchange="handleFileSelect(event)">
-                            
-                            <textarea id="chat-input" rows="1" placeholder="Tulis pesan..." oninput="adjustInput(this)" onblur="window.scrollTo(0,0)" style="flex: 1; background: transparent; border: none; outline: none; resize: none; padding: 10px 4px; font-size: 16px; font-weight: 500; color: #1f2937; line-height: 20px; min-height: 40px; display: block; overflow: hidden;"></textarea>
-                            
-                            <button id="send-btn" onclick="onSend()" 
-                                style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: #374151; background: none; border: none; cursor: pointer; flex-shrink: 0;">
-                                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width: 24px; height: 24px;" fill="currentColor">
-                                    <path d="M21.66,12a2,2,0,0,1-1.14,1.81L5.87,20.75A2.08,2.08,0,0,1,5,21a2,2,0,0,1-1.82-2.82L5.46,13H11a1,1,0,0,0,0-2H5.46L3.18,5.87A2,2,0,0,1,5.86,3.25h0l14.65,6.94A2,2,0,0,1,21.66,12Z"></path>
-                                </svg>
-                            </button>
-                        </div>
-
-                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px;">
-                            <button id="btn-mode-image" onclick="toggleImageMode()" 
-                                style="height: 32px; display: flex; align-items: center; justify-content: center; color: #9ca3af; background-color: #f9fafb; border-radius: 10px; border: none; transition: all 0.2s; cursor: pointer;">
-                                <i data-lucide="image" style="width: 15px; height: 15px;"></i>
-                            </button>
-                            <button id="btn-mode-video" onclick="toggleVideoMode()" 
-                                style="height: 32px; display: flex; align-items: center; justify-content: center; color: #9ca3af; background-color: #f9fafb; border-radius: 10px; border: none; transition: all 0.2s; cursor: pointer;">
-                                <svg fill="currentColor" viewBox="0 0 20 20" style="width: 16px; height: 16px;">
-                                    <path d="M20 5V3.799A.798.798 0 0 0 19.201 3H.801A.8.8 0 0 0 0 3.799V5h2v2H0v2h2v2H0v2h2v2H0v1.199A.8.8 0 0 0 .801 17h18.4a.8.8 0 0 0 .799-.801V15h-2v-2h2v-2h-2V9h2V7h-2V5h2zM8 13V7l5 3-5 3z"></path>
-                                </svg>
-                            </button>
-                            <button id="btn-mode-voice" onclick="openVoiceMode()" 
-                                style="height: 32px; display: flex; align-items: center; justify-content: center; color: #9ca3af; background-color: #f9fafb; border-radius: 10px; border: none; transition: all 0.2s; cursor: pointer;">
-                                <svg viewBox="0 0 24 24" fill="currentColor" style="width: 18px; height: 18px;">
-                                    <path d="M12,3 C12.51285,3 12.9355092,3.38604429 12.9932725,3.88337975 L13,4 L13,20 C13,20.5523 12.5523,21 12,21 C11.48715,21 11.0644908,20.613973 11.0067275,20.1166239 L11,20 L11,4 C11,3.44772 11.4477,3 12,3 Z M8,6 C8.55228,6 9,6.44772 9,7 L9,17 C9,17.5523 8.55228,18 8,18 C7.44772,18 7,17.5523 7,17 L7,7 C7,6.44772 7.44772,6 8,6 Z M16,6 C16.5523,6 17,6.44772 17,7 L17,17 C17,17.5523 16.5523,18 16,18 C15.4477,18 15,17.5523 15,17 L15,7 C15,6.44772 15.4477,6 16,6 Z M4,9 C4.55228,9 5,9.44772 5,10 L5,14 C5,14.5523 4.55228,15 4,15 C3.44772,15 3,14.5523 3,14 L3,10 C3,9.44772 3.44772,9 4,9 Z M20,9 C20.51285,9 20.9355092,9.38604429 20.9932725,9.88337975 L21,10 L21,14 C21,14.5523 20.5523,15 20,15 C19.48715,15 19.0644908,14.613973 19.0067275,14.1166239 L19,14 L19,10 C19,9.44772 19.4477,9 20,9 Z"></path>
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </footer>
+			    <div style="max-width: 48rem; margin-left: auto; margin-right: auto;">
+			        <div id="file-preview-container" class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4"></div>
+			        <div id="capsule-container" style="background-color: #f3f4f6; border-radius: 14px; padding: 4px; transition: all 0.2s ease; border: 1px solid transparent;">
+			            <div id="input-row-1" style="display: flex; align-items: center; gap: 4px; margin-bottom: 2px;">
+			                <button onclick="if(localStorage.getItem('enable_upload') !== 'false') document.getElementById('file-input').click()" 
+			                    style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: #9ca3af; background: none; border: none; cursor: pointer; flex-shrink: 0;">
+			                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px;">
+			                        <line x1="12" y1="5" x2="12" y2="19"></line>
+			                        <line x1="5" y1="12" x2="19" y2="12"></line>
+			                    </svg>
+			                </button>
+			                <input type="file" id="file-input" multiple accept="image/*,application/pdf,.docx,.xlsx,.xls,.pptx,.js,.css,.java,.html,.xml,.py,.sql,.ts,.cpp,.h,.hpp,.lua,.swift" class="hidden" onchange="handleFileSelect(event)">
+			                <textarea id="chat-input" rows="1" placeholder="Tulis pesan..." oninput="adjustInput(this)" onblur="window.scrollTo(0,0)" style="flex: 1; background: transparent; border: none; outline: none; resize: none; padding: 10px 4px; font-size: 16px; font-weight: 500; color: #1f2937; line-height: 20px; min-height: 40px; display: block; overflow: hidden;"></textarea>
+			                <button id="send-btn" onpointerdown="onSend(event)" 
+			                    style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: #374151; background: none; border: none; cursor: pointer; flex-shrink: 0;">
+			                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width: 24px; height: 24px;" fill="currentColor">
+			                        <path d="M21.66,12a2,2,0,0,1-1.14,1.81L5.87,20.75A2.08,2.08,0,0,1,5,21a2,2,0,0,1-1.82-2.82L5.46,13H11a1,1,0,0,0,0-2H5.46L3.18,5.87A2,2,0,0,1,5.86,3.25h0l14.65,6.94A2,2,0,0,1,21.66,12Z"></path>
+			                    </svg>
+			                </button>
+			            </div>
+			            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px;">
+			                <button id="btn-mode-image" onclick="toggleImageMode()" 
+			                    style="height: 32px; display: flex; align-items: center; justify-content: center; color: #9ca3af; background-color: #f9fafb; border-radius: 10px; border: none; transition: all 0.2s; cursor: pointer;">
+			                    <i data-lucide="image" style="width: 15px; height: 15px;"></i>
+			                </button>
+			                <button id="btn-mode-video" onclick="toggleVideoMode()" 
+			                    style="height: 32px; display: flex; align-items: center; justify-content: center; color: #9ca3af; background-color: #f9fafb; border-radius: 10px; border: none; transition: all 0.2s; cursor: pointer;">
+			                    <svg fill="currentColor" viewBox="0 0 20 20" style="width: 16px; height: 16px;">
+			                        <path d="M20 5V3.799A.798.798 0 0 0 19.201 3H.801A.8.8 0 0 0 0 3.799V5h2v2H0v2h2v2H0v2h2v2H0v2h2v2H0v1.199A.8.8 0 0 0 .801 17h18.4a.8.8 0 0 0 .799-.801V15h-2v-2h2v-2h-2V9h2V7h-2V5h2zM8 13V7l5 3-5 3z"></path>
+			                    </svg>
+			                </button>
+			                <button id="btn-mode-voice" onclick="openVoiceMode()" 
+			                    style="height: 32px; display: flex; align-items: center; justify-content: center; color: #9ca3af; background-color: #f9fafb; border-radius: 10px; border: none; transition: all 0.2s; cursor: pointer;">
+			                    <svg viewBox="0 0 24 24" fill="currentColor" style="width: 18px; height: 18px;">
+			                        <path d="M12,3 C12.51285,3 12.9355092,3.38604429 12.9932725,3.88337975 L13,4 L13,20 C13,20.5523 12.5523,21 12,21 C11.48715,21 11.0644908,20.613973 11.0067275,20.1166239 L11,20 L11,4 C11,3.44772 11.4477,3 12,3 Z M8,6 C8.55228,6 9,6.44772 9,7 L9,17 C9,17.5523 8.55228,18 8,18 C7.44772,18 7,17.5523 7,17 L7,7 C7,6.44772 7.44772,6 8,6 Z M16,6 C16.5523,6 17,6.44772 17,7 L17,17 C17,17.5523 16.5523,18 16,18 C15.4477,18 15,17.5523 15,17 L15,7 C15,6.44772 15.4477,6 16,6 Z M4,9 C4.55228,9 5,9.44772 5,10 L5,14 C5,14.5523 4.55228,15 4,15 C3.44772,15 3,14.5523 3,14 L3,10 C3,9.44772 3.44772,9 4,9 Z M20,9 C20.51285,9 20.9355092,9.38604429 20.9932725,9.88337975 L21,10 L21,14 C21,14.5523 20.5523,15 20,15 C19.48715,15 19.0644908,14.613973 19.0067275,14.1166239 L19,14 L19,10 C19,9.44772 19.4477,9 20,9 Z"></path>
+			                    </svg>
+			                </button>
+			            </div>
+			        </div>
+			    </div>
+			</footer>
         </div>
 
         <!-- Settings View -->
@@ -1178,79 +1173,79 @@
 	// ============================
 	
 	function createBubble(role, content = '', files = [], isPlaceholder = false, showTyping = false) {
-    const isAI = role === 'assistant' || role === 'model';
-    const roleLabel = isAI ? '<span class="ai-gradient">AURA</span>' : 'USER';
-    const now = new Date();
-    const timeStr = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
-    const div = document.createElement('div');
-    div.className = "w-full animate-in fade-in duration-300 mb-4";
-
-    let filesHtml = '';
-    if (files && files.length > 0) {
-        const aiFile = files.find(f => f.isAI || f.isVideo);
-        if (aiFile) {
-            filesHtml = `
-                <div class="mt-2 w-full ai-image-container">
-                    <div class="file-placeholder w-full h-48 bg-gray-200 rounded-xl animate-pulse flex items-center justify-center" data-file-id="${aiFile.fileId}">
-                        <i data-lucide="${aiFile.isVideo ? 'video' : 'image'}" class="w-8 h-8 text-gray-400"></i>
-                    </div>
-                </div>`;
-        } else {
-            filesHtml = '<div class="grid grid-cols-2 md:grid-cols-4 gap-2 mt-2 file-grid-container">';
-            files.forEach(f => {
-                const ext = f.name.split('.').pop().toLowerCase();
-                let visual = isPlaceholder 
-                    ? `<div class="file-placeholder w-10 h-10 flex items-center justify-center bg-gray-200 rounded-lg" data-file-id="${f.fileId || ''}"></div>`
-                    : (f.mime && f.mime.startsWith('image/')) 
-                        ? `<img src="data:${f.mime};base64,${f.base64}" class="w-10 h-10 object-cover rounded-lg">` 
-                        : getFileIcon(ext);
-                
-                filesHtml += `
-                    <div onclick="downloadFile('${f.fileId}')" class="cursor-pointer active:scale-[0.98] transition-all bg-gray-200 rounded-2xl p-3 flex items-center gap-2 relative w-full min-h-[64px] border-none">
-                        <div class="w-10 h-10 flex-none flex items-center justify-center overflow-hidden shrink-0">${visual}</div>
-                        <div class="flex-1 flex flex-col justify-center min-w-0 h-10">
-                            <div class="text-[13px] font-bold text-gray-700 truncate leading-none mb-1">${f.name}</div>
-                            <div class="text-[11px] text-gray-400 font-medium leading-none">${f.size || ''}</div>
-                        </div>
-                    </div>`;
-            });
-            filesHtml += '</div>';
-        }
-    }
-
-    div.innerHTML = `
-        <div class="w-full bg-gray-100 rounded-2xl px-5 pt-3 pb-8 text-slate-800 msg-bubble-container">
-            <div class="flex justify-between items-center pb-1 border-b border-gray-200">
-                <span class="text-[11px] font-bold uppercase tracking-widest">${roleLabel}</span>
-                <span class="text-[11px] font-medium text-gray-400">${timeStr}</span>
-            </div>
-            <div class="prose prose-sm max-w-none msg-content text-base leading-relaxed font-medium mt-1">
-                <div class="text-body-container">${content ? marked.parse(content.replace(/\[\[.*?\]\]/g, '')) : ''}</div>
-                <div class="files-wrapper-area">${filesHtml}</div>
-                ${isAI && showTyping ? `
-                <div class="typing-indicator flex items-center gap-1.5 py-0 text-gray-500 mt-1">
-                    <span class="text-sm font-medium italic">Thinking</span>
-                    <span class="flex leading-none mb-0.5 ml-0.5">
-                        <span style="animation: blink 1.4s infinite both; animation-delay: 0s;">.</span>
-                        <span style="animation: blink 1.4s infinite both; animation-delay: 0.2s;">.</span>
-                        <span style="animation: blink 1.4s infinite both; animation-delay: 0.4s;">.</span>
-                    </span>
-                </div>` : ''}
-            </div>
-            <button onclick="copyMessageText(this)" class="copy-msg-btn">
-                <i data-lucide="copy" class="w-4 h-4"></i>
-            </button>
-        </div>
-    `;
-    messageList.appendChild(div);
-    if (window.lucide) lucide.createIcons();
-    scrollToBottom();
-    return { 
-        textElement: div.querySelector('.text-body-container'), 
-        filesElement: div.querySelector('.files-wrapper-area'),
-        typingElement: div.querySelector('.typing-indicator') 
-    };
-}
+	    const isAI = role === 'assistant' || role === 'model';
+	    const roleLabel = isAI ? '<span class="ai-gradient">AURA</span>' : 'USER';
+	    const now = new Date();
+	    const timeStr = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+	    const div = document.createElement('div');
+	    div.className = "w-full animate-in fade-in duration-300 mb-4";
+	
+	    let filesHtml = '';
+	    if (files && files.length > 0) {
+	        const aiFile = files.find(f => f.isAI || f.isVideo);
+	        if (aiFile) {
+	            filesHtml = `
+	                <div class="mt-2 w-full ai-image-container">
+	                    <div class="file-placeholder w-full h-48 bg-gray-200 rounded-xl animate-pulse flex items-center justify-center" data-file-id="${aiFile.fileId}">
+	                        <i data-lucide="${aiFile.isVideo ? 'video' : 'image'}" class="w-8 h-8 text-gray-400"></i>
+	                    </div>
+	                </div>`;
+	        } else {
+	            filesHtml = '<div class="grid grid-cols-2 md:grid-cols-4 gap-2 mt-2 file-grid-container">';
+	            files.forEach(f => {
+	                const ext = f.name.split('.').pop().toLowerCase();
+	                let visual = isPlaceholder 
+	                    ? `<div class="file-placeholder w-10 h-10 flex items-center justify-center bg-gray-200 rounded-lg" data-file-id="${f.fileId || ''}"></div>`
+	                    : (f.mime && f.mime.startsWith('image/')) 
+	                        ? `<img src="data:${f.mime};base64,${f.base64}" class="w-10 h-10 object-cover rounded-lg">` 
+	                        : getFileIcon(ext);
+	                
+	                filesHtml += `
+	                    <div onclick="downloadFile('${f.fileId}')" class="cursor-pointer active:scale-[0.98] transition-all bg-gray-200 rounded-2xl p-3 flex items-center gap-2 relative w-full min-h-[64px] border-none">
+	                        <div class="w-10 h-10 flex-none flex items-center justify-center overflow-hidden shrink-0">${visual}</div>
+	                        <div class="flex-1 flex flex-col justify-center min-w-0 h-10">
+	                            <div class="text-[13px] font-bold text-gray-700 truncate leading-none mb-1">${f.name}</div>
+	                            <div class="text-[11px] text-gray-400 font-medium leading-none">${f.size || ''}</div>
+	                        </div>
+	                    </div>`;
+	            });
+	            filesHtml += '</div>';
+	        }
+	    }
+	
+	    div.innerHTML = `
+	        <div class="w-full bg-gray-100 rounded-2xl px-5 pt-3 pb-8 text-slate-800 msg-bubble-container">
+	            <div class="flex justify-between items-center pb-1 border-b border-gray-200">
+	                <span class="text-[11px] font-bold uppercase tracking-widest">${roleLabel}</span>
+	                <span class="text-[11px] font-medium text-gray-400">${timeStr}</span>
+	            </div>
+	            <div class="prose prose-sm max-w-none msg-content text-base leading-relaxed font-medium mt-1">
+	                <div class="text-body-container">${content ? marked.parse(content.replace(/\[\[.*?\]\]/g, '')) : ''}</div>
+	                <div class="files-wrapper-area">${filesHtml}</div>
+	                ${isAI && showTyping ? `
+	                <div class="typing-indicator flex items-center gap-1.5 py-0 text-gray-500 mt-1">
+	                    <span class="text-sm font-medium italic">Thinking</span>
+	                    <span class="flex leading-none mb-0.5 ml-0.5">
+	                        <span style="animation: blink 1.4s infinite both; animation-delay: 0s;">.</span>
+	                        <span style="animation: blink 1.4s infinite both; animation-delay: 0.2s;">.</span>
+	                        <span style="animation: blink 1.4s infinite both; animation-delay: 0.4s;">.</span>
+	                    </span>
+	                </div>` : ''}
+	            </div>
+	            <button onclick="copyMessageText(this)" class="copy-msg-btn">
+	                <i data-lucide="copy" class="w-4 h-4"></i>
+	            </button>
+	        </div>
+	    `;
+	    messageList.appendChild(div);
+	    if (window.lucide) lucide.createIcons();
+	    scrollToBottom();
+	    return { 
+	        textElement: div.querySelector('.text-body-container'), 
+	        filesElement: div.querySelector('.files-wrapper-area'),
+	        typingElement: div.querySelector('.typing-indicator') 
+	    };
+	}
 	
 	async function clearChat() {
 	    chatHistory = [];
@@ -1480,119 +1475,119 @@
 	}
 	
 	async function handleImageGeneration(prompt, imgObj = null) {
-    const isEdit = prompt.toLowerCase().startsWith('/edit');
-    const cleanPrompt = prompt.replace(/^\/(gambar|edit)\s+/i, '').trim();
-    const imageModel = 'gemini-2.5-flash-image'; 
-    
-    const aiBubble = createBubble('assistant', '', [], false, false); 
-    const targetId = 'gen_' + Date.now();
-    aiBubble.filesElement.id = targetId;
-    
-    aiBubble.filesElement.innerHTML = `
-        <div class="flex items-center gap-1 py-0.5 text-gray-500 mt-1">
-            <span class="text-sm font-medium italic">${isEdit ? 'mengedit gambar' : 'membuat gambar'}</span>
-            <div class="flex items-end mb-0.5">
-                <svg viewBox="0 0 16 16" class="w-3 h-3 animate-brush" fill="currentColor">
-                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                        <g transform="translate(0.000000, 1.000000)" fill="currentColor">
-                            <path d="M15.172,3.244 C14.715,3.785 10.553,8.014 8.326,9.666 L7.413,8.799 C8.703,6.288 12.154,1.507 12.609,0.967 C13.204,0.263 14.646,-0.248 15.416,0.298 C16.428,1.014 15.766,2.538 15.172,3.244 Z"></path>
-                            <path d="M6.607,9.702 C6.607,9.702 4.515,9.149 3.259,11.296 C2.004,13.443 0.808,12.708 0.27,12.524 C-0.268,12.34 1.526,14.794 2.363,14.794 C3.181,14.794 6.752,15.969 7.631,11.36 C7.649,11.259 7.703,9.877 6.607,9.702 L6.607,9.702 Z"></path>
-                        </g>
-                    </g>
-                </svg>
-                <span class="flex ml-0.5 leading-none">
-                    <span style="animation: blink 1.4s infinite both; animation-delay: 0s;">.</span>
-                    <span style="animation: blink 1.4s infinite both; animation-delay: 0.2s;">.</span>
-                    <span style="animation: blink 1.4s infinite both; animation-delay: 0.4s;">.</span>
-                </span>
-            </div>
-        </div>
-    `;
-    
-    if (window.lucide) lucide.createIcons();
-
-    try {
-        const endpoint = `${SUPABASE_URL}/functions/v1/ai-proxy-v2?model=${imageModel}&action=generateContent`;
-        const response = await fetch(endpoint, {
-            method: 'POST',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'apikey': SUPABASE_KEY,
-                'Authorization': `Bearer ${SUPABASE_KEY}` 
-            },
-            body: JSON.stringify({ 
-                contents: [{ parts: imgObj ? [imgObj, { text: cleanPrompt }] : [{ text: cleanPrompt }] }],
-                generationConfig: { response_modalities: ["IMAGE"] }
-            })
-        });
-
-        if (!response.ok) {
-            const errText = await response.text();
-            throw new Error(`Server Error (${response.status}): ${errText.substring(0, 50)}...`);
-        }
-        const data = await response.json();
-        const b64 = data.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData?.data;
-
-        if (b64) {
-            const mime = 'image/jpeg';
-            const imgId = 'ai_gen_' + Date.now();
-            await saveToLocal(imgId, { mime, base64: b64, name: 'AI Generated', size: 'AI' });
-            renderImageToBubble(targetId, b64, mime);
-            chatHistory.push({ 
-                role: "model", 
-                parts: [{ text: `[[CONFIRM_IMAGE_CREATED]] Saya telah berhasil membuatkan gambar dengan deskripsi: "${cleanPrompt}". Gambar tersebut sudah muncul di layar chat di atas.` }],
-                _ui: { 
-                    val: "", 
-                    filesForStorage: [{ name: 'AI_Generated.jpg', size: 'AI', fileId: imgId, mime: mime, isAI: true }] 
-                }
-            });
-            localStorage.setItem('chat_history', JSON.stringify(chatHistory));
-            saveCurrentChatToHistory();
-        } else {
-            throw new Error('Respon tidak mengandung gambar');
-        }
-    } catch (e) {
-        aiBubble.filesElement.innerHTML = `<span class="text-red-500 font-medium">${e.message}</span>`;
-    } finally {
-        sendBtn.disabled = false;
-    }
-}
-
-function renderImageToBubble(targetId, b64, mime) {
-    const el = document.getElementById(targetId);
-    if (!el) return;
-    el.innerHTML = '';
-    
-    const imageUrl = `data:${mime};base64,${b64}`;
-    const wrapper = document.createElement('div');
-    wrapper.className = "mt-1 w-full image-container";
-    wrapper.style.position = "relative";
-    wrapper.style.display = "inline-block";
-
-    wrapper.onclick = function(e) {
-        e.stopPropagation();
-        this.classList.toggle('show-dl');
-    };
-
-    wrapper.innerHTML = `
-        <img src="${imageUrl}" class="w-full h-auto rounded-xl shadow-md border border-gray-100 block">
-        <button class="download-btn" style="position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); border: none; border-radius: 6px; padding: 4px; color: white; cursor: pointer; display: none; align-items: center; justify-content: center; z-index: 10;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M15 11a1 1 0 0 0 1 1h2.939a1 1 0 0 1 .75 1.811l-6.835 6.836a1.207 1.207 0 0 1-1.707 0L4.31 13.81a1 1 0 0 1 .75-1.811H8a1 1 0 0 0 1-1V9a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1z"/>
-                <path d="M9 4h6"/>
-            </svg>
-        </button>
-    `;
-    
-    const btn = wrapper.querySelector('.download-btn');
-    btn.onclick = (e) => {
-        e.stopPropagation();
-        downloadAIImage(imageUrl);
-    };
-    
-    el.appendChild(wrapper);
-    scrollToBottom();
-}
+	    const isEdit = prompt.toLowerCase().startsWith('/edit');
+	    const cleanPrompt = prompt.replace(/^\/(gambar|edit)\s+/i, '').trim();
+	    const imageModel = 'gemini-2.5-flash-image'; 
+	    
+	    const aiBubble = createBubble('assistant', '', [], false, false); 
+	    const targetId = 'gen_' + Date.now();
+	    aiBubble.filesElement.id = targetId;
+	    
+	    aiBubble.filesElement.innerHTML = `
+	        <div class="flex items-center gap-1 py-0.5 text-gray-500 mt-1">
+	            <span class="text-sm font-medium italic">${isEdit ? 'mengedit gambar' : 'membuat gambar'}</span>
+	            <div class="flex items-end mb-0.5">
+	                <svg viewBox="0 0 16 16" class="w-3 h-3 animate-brush" fill="currentColor">
+	                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+	                        <g transform="translate(0.000000, 1.000000)" fill="currentColor">
+	                            <path d="M15.172,3.244 C14.715,3.785 10.553,8.014 8.326,9.666 L7.413,8.799 C8.703,6.288 12.154,1.507 12.609,0.967 C13.204,0.263 14.646,-0.248 15.416,0.298 C16.428,1.014 15.766,2.538 15.172,3.244 Z"></path>
+	                            <path d="M6.607,9.702 C6.607,9.702 4.515,9.149 3.259,11.296 C2.004,13.443 0.808,12.708 0.27,12.524 C-0.268,12.34 1.526,14.794 2.363,14.794 C3.181,14.794 6.752,15.969 7.631,11.36 C7.649,11.259 7.703,9.877 6.607,9.702 L6.607,9.702 Z"></path>
+	                        </g>
+	                    </g>
+	                </svg>
+	                <span class="flex ml-0.5 leading-none">
+	                    <span style="animation: blink 1.4s infinite both; animation-delay: 0s;">.</span>
+	                    <span style="animation: blink 1.4s infinite both; animation-delay: 0.2s;">.</span>
+	                    <span style="animation: blink 1.4s infinite both; animation-delay: 0.4s;">.</span>
+	                </span>
+	            </div>
+	        </div>
+	    `;
+	    
+	    if (window.lucide) lucide.createIcons();
+	
+	    try {
+	        const endpoint = `${SUPABASE_URL}/functions/v1/ai-proxy-v2?model=${imageModel}&action=generateContent`;
+	        const response = await fetch(endpoint, {
+	            method: 'POST',
+	            headers: { 
+	                'Content-Type': 'application/json', 
+	                'apikey': SUPABASE_KEY,
+	                'Authorization': `Bearer ${SUPABASE_KEY}` 
+	            },
+	            body: JSON.stringify({ 
+	                contents: [{ parts: imgObj ? [imgObj, { text: cleanPrompt }] : [{ text: cleanPrompt }] }],
+	                generationConfig: { response_modalities: ["IMAGE"] }
+	            })
+	        });
+	
+	        if (!response.ok) {
+	            const errText = await response.text();
+	            throw new Error(`Server Error (${response.status}): ${errText.substring(0, 50)}...`);
+	        }
+	        const data = await response.json();
+	        const b64 = data.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData?.data;
+	
+	        if (b64) {
+	            const mime = 'image/jpeg';
+	            const imgId = 'ai_gen_' + Date.now();
+	            await saveToLocal(imgId, { mime, base64: b64, name: 'AI Generated', size: 'AI' });
+	            renderImageToBubble(targetId, b64, mime);
+	            chatHistory.push({ 
+	                role: "model", 
+	                parts: [{ text: `[[CONFIRM_IMAGE_CREATED]] Saya telah berhasil membuatkan gambar dengan deskripsi: "${cleanPrompt}". Gambar tersebut sudah muncul di layar chat di atas.` }],
+	                _ui: { 
+	                    val: "", 
+	                    filesForStorage: [{ name: 'AI_Generated.jpg', size: 'AI', fileId: imgId, mime: mime, isAI: true }] 
+	                }
+	            });
+	            localStorage.setItem('chat_history', JSON.stringify(chatHistory));
+	            saveCurrentChatToHistory();
+	        } else {
+	            throw new Error('Respon tidak mengandung gambar');
+	        }
+	    } catch (e) {
+	        aiBubble.filesElement.innerHTML = `<span class="text-red-500 font-medium">${e.message}</span>`;
+	    } finally {
+	        sendBtn.disabled = false;
+	    }
+	}
+	
+	function renderImageToBubble(targetId, b64, mime) {
+	    const el = document.getElementById(targetId);
+	    if (!el) return;
+	    el.innerHTML = '';
+	    
+	    const imageUrl = `data:${mime};base64,${b64}`;
+	    const wrapper = document.createElement('div');
+	    wrapper.className = "mt-1 w-full image-container";
+	    wrapper.style.position = "relative";
+	    wrapper.style.display = "inline-block";
+	
+	    wrapper.onclick = function(e) {
+	        e.stopPropagation();
+	        this.classList.toggle('show-dl');
+	    };
+	
+	    wrapper.innerHTML = `
+	        <img src="${imageUrl}" class="w-full h-auto rounded-xl shadow-md border border-gray-100 block">
+	        <button class="download-btn" style="position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); border: none; border-radius: 6px; padding: 4px; color: white; cursor: pointer; display: none; align-items: center; justify-content: center; z-index: 10;">
+	            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+	                <path d="M15 11a1 1 0 0 0 1 1h2.939a1 1 0 0 1 .75 1.811l-6.835 6.836a1.207 1.207 0 0 1-1.707 0L4.31 13.81a1 1 0 0 1 .75-1.811H8a1 1 0 0 0 1-1V9a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1z"/>
+	                <path d="M9 4h6"/>
+	            </svg>
+	        </button>
+	    `;
+	    
+	    const btn = wrapper.querySelector('.download-btn');
+	    btn.onclick = (e) => {
+	        e.stopPropagation();
+	        downloadAIImage(imageUrl);
+	    };
+	    
+	    el.appendChild(wrapper);
+	    scrollToBottom();
+	}
 	
 	// ============================
 	// FUNGSI VIDEO MODE
@@ -1619,155 +1614,155 @@ function renderImageToBubble(targetId, b64, mime) {
 	}
 	
 	async function handleVideoGeneration(prompt, imageObj = null) {
-    const aiBubble = createBubble('assistant', '', [], false, false);
-    const targetId = 'video_' + Date.now();
-    aiBubble.filesElement.id = targetId;
-    
-    aiBubble.filesElement.innerHTML = `
-        <div class="flex items-center gap-2 py-1 mt-1">
-            <span id="status-text-${targetId}" class="text-sm font-medium text-gray-500 italic">Membuat video (0s)</span>
-            <div class="flex items-end mb-1">
-                <span class="flex leading-none text-gray-400">
-                    <span style="animation: blink 1.4s infinite both; animation-delay: 0s;">.</span>
-                    <span style="animation: blink 1.4s infinite both; animation-delay: 0.2s;">.</span>
-                    <span style="animation: blink 1.4s infinite both; animation-delay: 0.4s;">.</span>
-                </span>
-            </div>
-        </div>
-    `;
-
-    try {
-        let instance = { prompt: prompt };
-        if (imageObj) {
-            instance.image = { bytesBase64Encoded: imageObj.inline_data.data, mimeType: imageObj.inline_data.mime_type };
-        }
-
-        const res = await fetch(`${VEO_PROXY}/api/generate`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                model: "veo-3.1-generate-preview",
-                instances: [instance],
-                parameters: { sampleCount: 1, aspectRatio: "16:9" }
-            })
-        });
-
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error?.message || "Gagal memanggil AI Video.");
-
-        startVideoPolling(data.name, targetId, prompt);
-
-    } catch (e) {
-        aiBubble.filesElement.innerHTML = `<span class="text-red-500 font-medium">${e.message}</span>`;
-    } finally {
-        sendBtn.disabled = false;
-    }
-}
-
-function renderVideoToBubble(targetId, b64, mime) {
-    const el = document.getElementById(targetId);
-    if (!el) return;
-    
-    el.innerHTML = '';
-    
-    const videoUrl = `data:${mime};base64,${b64}`;
-    const wrapper = document.createElement('div');
-    wrapper.className = "mt-1 w-full image-container";
-    wrapper.style.position = "relative";
-    wrapper.style.display = "inline-block";
-    
-    wrapper.onclick = function(e) {
-        e.stopPropagation();
-        this.classList.toggle('show-dl');
-    };
-
-    wrapper.innerHTML = `
-        <video src="${videoUrl}" controls playsinline class="w-full rounded-xl shadow-md border border-gray-100 block"></video>
-        <button class="download-btn" style="position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); border: none; border-radius: 6px; padding: 4px; color: white; cursor: pointer; display: none; align-items: center; justify-content: center; z-index: 20;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M15 11a1 1 0 0 0 1 1h2.939a1 1 0 0 1 .75 1.811l-6.835 6.836a1.207 1.207 0 0 1-1.707 0L4.31 13.81a1 1 0 0 1 .75-1.811H8a1 1 0 0 0 1-1V9a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1z"/>
-                <path d="M9 4h6"/>
-            </svg>
-        </button>
-    `;
-    
-    const btn = wrapper.querySelector('.download-btn');
-    btn.onclick = (e) => {
-        e.stopPropagation();
-        downloadAIImage(videoUrl);
-    };
-    
-    el.appendChild(wrapper);
-    scrollToBottom();
-}
-
-function startVideoPolling(fullName, targetId, videoPrompt) {
-    const statusEl = document.getElementById(`status-text-${targetId}`);
-    let startTime = Date.now();
-    
-    const pollInterval = setInterval(async () => {
-        try {
-            const elapsed = Math.round((Date.now() - startTime) / 1000);
-            
-            if (statusEl) statusEl.innerText = `Membuat video (${elapsed}s)`;
-
-            const res = await fetch(`${VEO_PROXY}/api/status?name=${encodeURIComponent(fullName)}`);
-            const data = await res.json();
-
-            if (data.error) {
-                const container = document.getElementById(targetId);
-                container.innerHTML = `<div class="text-red-500 text-xs">Error: ${data.error.message}</div>`;
-                clearInterval(pollInterval);
-                return;
-            }
-
-            if (data.done) {
-                clearInterval(pollInterval);
-                const videoUri = data.response?.generateVideoResponse?.generatedSamples?.[0]?.video?.uri;
-                
-                if (videoUri) {
-                    if (statusEl) statusEl.innerText = "Video selesai, menyimpan...";
-                    
-                    const resp = await fetch(videoUri);
-                    const blob = await resp.blob();
-                    const reader = new FileReader();
-                    
-                    reader.onloadend = async () => {
-                        const base64Video = reader.result.split(',')[1];
-                        const videoId = 'vid_gen_' + Date.now();
-                        const mime = "video/mp4";
-
-                        await saveToLocal(videoId, { 
-                            mime: mime, base64: base64Video, name: 'AI-Video.mp4', size: formatBytes(blob.size) 
-                        });
-
-                        renderVideoToBubble(targetId, base64Video, mime);
-
-                        chatHistory.push({ 
-                            role: "model", 
-                            parts: [{ text: `[[CONFIRM_VIDEO_CREATED]] Saya telah berhasil membuatkan video sesuai permintaan terakhir Anda: "${videoPrompt}". Video sudah siap diputar di atas.` }],
-                            _ui: { 
-                                val: "", 
-                                filesForStorage: [{ 
-                                    name: 'AURA-VIDEO.mp4', size: formatBytes(blob.size), 
-                                    fileId: videoId, mime: mime, isVideo: true, isAI: true 
-                                }] 
-                            }
-                        });
-                        localStorage.setItem('chat_history', JSON.stringify(chatHistory));
-                        saveCurrentChatToHistory();
-                    };
-                    reader.readAsDataURL(blob);
-                } else {
-                    const container = document.getElementById(targetId);
-                    container.innerHTML = `<div class="text-yellow-600 text-xs">Render selesai, tapi diblokir filter keamanan.</div>`;
-                }
-            }
-        } catch (e) { 
-            console.error("Polling error:", e); 
-        }
-    }, 5000);
-}
+	    const aiBubble = createBubble('assistant', '', [], false, false);
+	    const targetId = 'video_' + Date.now();
+	    aiBubble.filesElement.id = targetId;
+	    
+	    aiBubble.filesElement.innerHTML = `
+	        <div class="flex items-center gap-2 py-1 mt-1">
+	            <span id="status-text-${targetId}" class="text-sm font-medium text-gray-500 italic">Membuat video (0s)</span>
+	            <div class="flex items-end mb-1">
+	                <span class="flex leading-none text-gray-400">
+	                    <span style="animation: blink 1.4s infinite both; animation-delay: 0s;">.</span>
+	                    <span style="animation: blink 1.4s infinite both; animation-delay: 0.2s;">.</span>
+	                    <span style="animation: blink 1.4s infinite both; animation-delay: 0.4s;">.</span>
+	                </span>
+	            </div>
+	        </div>
+	    `;
+	
+	    try {
+	        let instance = { prompt: prompt };
+	        if (imageObj) {
+	            instance.image = { bytesBase64Encoded: imageObj.inline_data.data, mimeType: imageObj.inline_data.mime_type };
+	        }
+	
+	        const res = await fetch(`${VEO_PROXY}/api/generate`, {
+	            method: 'POST',
+	            headers: { 'Content-Type': 'application/json' },
+	            body: JSON.stringify({
+	                model: "veo-3.1-generate-preview",
+	                instances: [instance],
+	                parameters: { sampleCount: 1, aspectRatio: "16:9" }
+	            })
+	        });
+	
+	        const data = await res.json();
+	        if (!res.ok) throw new Error(data.error?.message || "Gagal memanggil AI Video.");
+	
+	        startVideoPolling(data.name, targetId, prompt);
+	
+	    } catch (e) {
+	        aiBubble.filesElement.innerHTML = `<span class="text-red-500 font-medium">${e.message}</span>`;
+	    } finally {
+	        sendBtn.disabled = false;
+	    }
+	}
+	
+	function renderVideoToBubble(targetId, b64, mime) {
+	    const el = document.getElementById(targetId);
+	    if (!el) return;
+	    
+	    el.innerHTML = '';
+	    
+	    const videoUrl = `data:${mime};base64,${b64}`;
+	    const wrapper = document.createElement('div');
+	    wrapper.className = "mt-1 w-full image-container";
+	    wrapper.style.position = "relative";
+	    wrapper.style.display = "inline-block";
+	    
+	    wrapper.onclick = function(e) {
+	        e.stopPropagation();
+	        this.classList.toggle('show-dl');
+	    };
+	
+	    wrapper.innerHTML = `
+	        <video src="${videoUrl}" controls playsinline class="w-full rounded-xl shadow-md border border-gray-100 block"></video>
+	        <button class="download-btn" style="position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); border: none; border-radius: 6px; padding: 4px; color: white; cursor: pointer; display: none; align-items: center; justify-content: center; z-index: 20;">
+	            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+	                <path d="M15 11a1 1 0 0 0 1 1h2.939a1 1 0 0 1 .75 1.811l-6.835 6.836a1.207 1.207 0 0 1-1.707 0L4.31 13.81a1 1 0 0 1 .75-1.811H8a1 1 0 0 0 1-1V9a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1z"/>
+	                <path d="M9 4h6"/>
+	            </svg>
+	        </button>
+	    `;
+	    
+	    const btn = wrapper.querySelector('.download-btn');
+	    btn.onclick = (e) => {
+	        e.stopPropagation();
+	        downloadAIImage(videoUrl);
+	    };
+	    
+	    el.appendChild(wrapper);
+	    scrollToBottom();
+	}
+	
+	function startVideoPolling(fullName, targetId, videoPrompt) {
+	    const statusEl = document.getElementById(`status-text-${targetId}`);
+	    let startTime = Date.now();
+	    
+	    const pollInterval = setInterval(async () => {
+	        try {
+	            const elapsed = Math.round((Date.now() - startTime) / 1000);
+	            
+	            if (statusEl) statusEl.innerText = `Membuat video (${elapsed}s)`;
+	
+	            const res = await fetch(`${VEO_PROXY}/api/status?name=${encodeURIComponent(fullName)}`);
+	            const data = await res.json();
+	
+	            if (data.error) {
+	                const container = document.getElementById(targetId);
+	                container.innerHTML = `<div class="text-red-500 text-xs">Error: ${data.error.message}</div>`;
+	                clearInterval(pollInterval);
+	                return;
+	            }
+	
+	            if (data.done) {
+	                clearInterval(pollInterval);
+	                const videoUri = data.response?.generateVideoResponse?.generatedSamples?.[0]?.video?.uri;
+	                
+	                if (videoUri) {
+	                    if (statusEl) statusEl.innerText = "Video selesai, menyimpan";
+	                    
+	                    const resp = await fetch(videoUri);
+	                    const blob = await resp.blob();
+	                    const reader = new FileReader();
+	                    
+	                    reader.onloadend = async () => {
+	                        const base64Video = reader.result.split(',')[1];
+	                        const videoId = 'vid_gen_' + Date.now();
+	                        const mime = "video/mp4";
+	
+	                        await saveToLocal(videoId, { 
+	                            mime: mime, base64: base64Video, name: 'AI-Video.mp4', size: formatBytes(blob.size) 
+	                        });
+	
+	                        renderVideoToBubble(targetId, base64Video, mime);
+	
+	                        chatHistory.push({ 
+	                            role: "model", 
+	                            parts: [{ text: `[[CONFIRM_VIDEO_CREATED]] Saya telah berhasil membuatkan video sesuai permintaan terakhir Anda: "${videoPrompt}". Video sudah siap diputar di atas.` }],
+	                            _ui: { 
+	                                val: "", 
+	                                filesForStorage: [{ 
+	                                    name: 'AURA-VIDEO.mp4', size: formatBytes(blob.size), 
+	                                    fileId: videoId, mime: mime, isVideo: true, isAI: true 
+	                                }] 
+	                            }
+	                        });
+	                        localStorage.setItem('chat_history', JSON.stringify(chatHistory));
+	                        saveCurrentChatToHistory();
+	                    };
+	                    reader.readAsDataURL(blob);
+	                } else {
+	                    const container = document.getElementById(targetId);
+	                    container.innerHTML = `<div class="text-yellow-600 text-xs">Render selesai, tapi diblokir filter keamanan.</div>`;
+	                }
+	            }
+	        } catch (e) { 
+	            console.error("Polling error:", e); 
+	        }
+	    }, 5000);
+	}
 	
 	// ============================
 	// FUNGSI VOICE MODE
@@ -2052,33 +2047,32 @@ function startVideoPolling(fullName, targetId, videoPrompt) {
 	}
 	
 	async function toggleVoiceCamera() {
-    const btn = document.getElementById('btn-voice-cam');
-    const video = document.getElementById('voice-large-video');
-    const canvas = document.getElementById('voice-canvas');
-
-    if (!isVoiceCamOn) {
-        try {
-            voiceCamStream = await navigator.mediaDevices.getUserMedia({
-                video: { 
-                    facingMode: facingMode, 
-                    width: { ideal: 640 }, // Diperkecil agar upload lebih cepat
-                    height: { ideal: 360 } 
-                }
-            });
-            video.srcObject = voiceCamStream;
-            canvas.style.display = 'none';
-            video.classList.remove('hidden');
-            isVoiceCamOn = true;
-            btn.classList.replace('text-gray-300', 'text-blue-600');
-            
-            // Interval pengiriman frame
-            if (voiceCamInterval) clearInterval(voiceCamInterval);
-            voiceCamInterval = setInterval(sendVoiceFrame, 1000);
-        } catch (e) { alert("Gagal akses kamera: " + e.message); }
-    } else { 
-        stopVoiceCamera(); 
-    }
-}
+	    const btn = document.getElementById('btn-voice-cam');
+	    const video = document.getElementById('voice-large-video');
+	    const canvas = document.getElementById('voice-canvas');
+	
+	    if (!isVoiceCamOn) {
+	        try {
+	            voiceCamStream = await navigator.mediaDevices.getUserMedia({
+	                video: { 
+	                    facingMode: facingMode, 
+	                    width: { ideal: 640 }, // Diperkecil agar upload lebih cepat
+	                    height: { ideal: 360 } 
+	                }
+	            });
+	            video.srcObject = voiceCamStream;
+	            canvas.style.display = 'none';
+	            video.classList.remove('hidden');
+	            isVoiceCamOn = true;
+	            btn.classList.replace('text-gray-300', 'text-blue-600');
+	            
+	            if (voiceCamInterval) clearInterval(voiceCamInterval);
+	            voiceCamInterval = setInterval(sendVoiceFrame, 1000);
+	        } catch (e) { alert("Gagal akses kamera: " + e.message); }
+	    } else { 
+	        stopVoiceCamera(); 
+	    }
+	}
 
 	function sendVoiceFrame() {
 	    if (voiceWs && voiceWs.readyState === WebSocket.OPEN && isVoiceCamOn) {
@@ -2087,7 +2081,6 @@ function startVideoPolling(fullName, targetId, videoPrompt) {
 	        const ctx = canvas.getContext('2d');
 	        
 	        if (video.videoWidth > 0) {
-	            // Set ukuran canvas hanya jika berbeda (lebih efisien)
 	            if (canvas.width !== 320) {
 	                canvas.width = 320; 
 	                canvas.height = (video.videoHeight / video.videoWidth) * 320;
@@ -2332,11 +2325,13 @@ function startVideoPolling(fullName, targetId, videoPrompt) {
 	
 	async function onSend(e) {
 	    if (e) e.preventDefault();
-	    if (!originalSendBtnContent) originalSendBtnContent = sendBtn.innerHTML;
-	    if (isGenerating) { isGenerating = false; return; }
-	
 	    const val = input.value.trim();
 	    if (!val && pendingFiles.length === 0) return;
+	
+	    input.blur();
+	
+	    if (!originalSendBtnContent) originalSendBtnContent = sendBtn.innerHTML;
+	    if (isGenerating) { isGenerating = false; return; }
 	
 	    const setButtonState = (state) => {
 	        if (state === 'loading') {
@@ -2357,9 +2352,9 @@ function startVideoPolling(fullName, targetId, videoPrompt) {
 	
 	    try {
 	        setButtonState('loading');
-	
+	        const { filesForUI, filesForStorage, apiParts, officeTextContext } = await processPendingFiles();
+	        
 	        if (isVideoMode) {
-	            if (!val) throw new Error("Deskripsi video kosong.");
 	            createBubble('user', val, pendingFiles.map(f => ({ ...f })));
 	            let imgObj = null;
 	            if (pendingFiles.length > 0) {
@@ -2383,17 +2378,9 @@ function startVideoPolling(fullName, targetId, videoPrompt) {
 	            toggleImageMode(); setButtonState('idle'); return;
 	        }
 	
-	        const { filesForUI, filesForStorage, apiParts, officeTextContext } = await processPendingFiles();
 	        createBubble('user', val, filesForUI);
-	        
-	        chatHistory.push({ 
-	            role: "user", 
-	            parts: [{ text: val || "Analisis lampiran ini." }], 
-	            _ui: { val, filesForStorage } 
-	        });
-	        
+	        chatHistory.push({ role: "user", parts: [{ text: val || "Analisis lampiran ini." }], _ui: { val, filesForStorage } });
 	        saveCurrentChatToHistory();
-	
 	        const currentTurnText = (val || "Analisis lampiran ini.") + (officeTextContext ? "\n\nKONTEKS DOKUMEN:\n" + officeTextContext : "");
 	        input.value = ''; adjustInput(input); pendingFiles = []; renderPreviews();
 	
@@ -2419,93 +2406,35 @@ function startVideoPolling(fullName, targetId, videoPrompt) {
 	
 	        let fullAIResponse = "";
 	        parts.forEach(p => { if(p.text) fullAIResponse += p.text; });
-	
 	        let displayChatText = fullAIResponse;
 	        let pptMaterial = null;
 	        let wordMaterial = null;
-	
 	        const pptRegex = /\[PPT\]([\s\S]*?)\[\/PPT\]/;
 	        const wordRegex = /\[WORD\]([\s\S]*?)\[\/WORD\]/;
-	        
 	        const pptMatch = fullAIResponse.match(pptRegex);
 	        const wordMatch = fullAIResponse.match(wordRegex);
 	
-	        if (pptMatch) {
-	            pptMaterial = pptMatch[1].trim();
-	            displayChatText = displayChatText.replace(pptRegex, "").trim();
-	        }
-	        
-	        if (wordMatch) {
-	            wordMaterial = wordMatch[1].trim();
-	            displayChatText = displayChatText.replace(wordRegex, "").trim();
-	        }
-	
-	        if (!displayChatText) {
-	            if (pptMaterial) displayChatText = "Baik, saya sedang menyusun file PowerPoint untuk Anda...";
-	            if (wordMaterial) displayChatText = "Baik, saya sedang memproses dokumen SPT Anda...";
-	        }
+	        if (pptMatch) { pptMaterial = pptMatch[1].trim(); displayChatText = displayChatText.replace(pptRegex, "").trim(); }
+	        if (wordMatch) { wordMaterial = wordMatch[1].trim(); displayChatText = displayChatText.replace(wordRegex, "").trim(); }
 	
 	        let finalSavedText = "";
 	        let aiFilesForStorage = []; 
 	
 	        if (displayChatText || pptMaterial || wordMaterial) {
 	            setButtonState('streaming');
-	            
 	            if (displayChatText) finalSavedText = await streamText(aiBubble.textElement, displayChatText);
-	
 	            if (pptMaterial) {
-	                const statusDiv = document.createElement('div');
-	                statusDiv.className = "typing-indicator flex items-center gap-1.5 text-gray-500 mt-1";
-	                
-	                statusDiv.innerHTML = `
-	                    <span class="text-sm font-bold italic">Membuat PowerPoint</span>
-	                    <span class="flex leading-none mb-0.5 ml-0.5">
-	                        <span style="animation: blink 1.4s infinite both; animation-delay: 0s;">.</span>
-	                        <span style="animation: blink 1.4s infinite both; animation-delay: 0.2s;">.</span>
-	                        <span style="animation: blink 1.4s infinite both; animation-delay: 0.4s;">.</span>
-	                    </span>`;
-	                aiBubble.textElement.appendChild(statusDiv);
-	                scrollToBottom();
-	
 	                const pptFileData = await handlePowerPoint(pptMaterial);
-	                statusDiv.remove();
-	
-	                if (pptFileData) {
-	                    aiFilesForStorage.push(pptFileData);
-	                    renderFileCard(aiBubble.filesElement, pptFileData, "icon/ppt-file-icon.svg");
-	                }
+	                if (pptFileData) { aiFilesForStorage.push(pptFileData); renderFileCard(aiBubble.filesElement, pptFileData, "icon/ppt-file-icon.svg"); }
 	            }
-	
 	            if (wordMaterial) {
-	                const statusDiv = document.createElement('div');
-	                statusDiv.className = "typing-indicator flex items-center gap-1.5 text-gray-500 mt-1";
-	                
-	                statusDiv.innerHTML = `
-	                    <span class="text-sm font-bold italic">Membuat Dokumen SPT</span>
-	                    <span class="flex leading-none mb-0.5 ml-0.5">
-	                        <span style="animation: blink 1.4s infinite both; animation-delay: 0s;">.</span>
-	                        <span style="animation: blink 1.4s infinite both; animation-delay: 0.2s;">.</span>
-	                        <span style="animation: blink 1.4s infinite both; animation-delay: 0.4s;">.</span>
-	                    </span>`;
-	                aiBubble.textElement.appendChild(statusDiv);
-	                scrollToBottom();
-	
 	                const docFileData = await handleWordDocument(wordMaterial);
-	                statusDiv.remove();
-	
-	                if (docFileData) {
-	                    aiFilesForStorage.push(docFileData);
-	                    renderFileCard(aiBubble.filesElement, docFileData, "icon/docx-file-icon.svg");
-	                }
+	                if (docFileData) { aiFilesForStorage.push(docFileData); renderFileCard(aiBubble.filesElement, docFileData, "icon/docx-file-icon.svg"); }
 	            }
 	        }
-
+	
 	        if (finalSavedText || aiFilesForStorage.length > 0) {
-	            chatHistory.push({ 
-	                role: "model", 
-	                parts: [{ text: finalSavedText }],
-	                _ui: { val: displayChatText, filesForStorage: aiFilesForStorage } 
-	            });
+	            chatHistory.push({ role: "model", parts: [{ text: finalSavedText }], _ui: { val: displayChatText, filesForStorage: aiFilesForStorage } });
 	            saveCurrentChatToHistory();
 	        }
 	
@@ -2515,25 +2444,25 @@ function startVideoPolling(fullName, targetId, videoPrompt) {
 	}
 
 	function renderFileCard(container, fileData, iconPath) {
-    let grid = container.querySelector('.file-grid-container');
-    if (!grid) {
-        container.innerHTML = '<div class="grid grid-cols-2 md:grid-cols-4 gap-2 mt-2 file-grid-container"></div>';
-        grid = container.querySelector('.file-grid-container');
-    }
-    const card = document.createElement('div');
-    card.onclick = () => downloadFile(fileData.fileId);
-    card.className = "cursor-pointer active:scale-[0.98] transition-all bg-gray-200 rounded-2xl p-3 flex items-center gap-2 relative w-full min-h-[64px] border-none shadow-sm";
-    card.innerHTML = `
-        <div class="w-10 h-10 flex-none flex items-center justify-center overflow-hidden shrink-0">
-            <img src="${iconPath}" class="w-7 h-7 object-contain">
-        </div>
-        <div class="flex-1 flex flex-col justify-center min-w-0 h-10">
-            <div class="text-[13px] font-bold text-gray-700 truncate leading-none mb-1">${fileData.name}</div>
-            <div class="text-[11px] text-gray-400 font-medium leading-none">${fileData.size}</div>
-        </div>`;
-    grid.appendChild(card);
-    scrollToBottom();
-}
+	    let grid = container.querySelector('.file-grid-container');
+	    if (!grid) {
+	        container.innerHTML = '<div class="grid grid-cols-2 md:grid-cols-4 gap-2 mt-2 file-grid-container"></div>';
+	        grid = container.querySelector('.file-grid-container');
+	    }
+	    const card = document.createElement('div');
+	    card.onclick = () => downloadFile(fileData.fileId);
+	    card.className = "cursor-pointer active:scale-[0.98] transition-all bg-gray-200 rounded-2xl p-3 flex items-center gap-2 relative w-full min-h-[64px] border-none shadow-sm";
+	    card.innerHTML = `
+	        <div class="w-10 h-10 flex-none flex items-center justify-center overflow-hidden shrink-0">
+	            <img src="${iconPath}" class="w-7 h-7 object-contain">
+	        </div>
+	        <div class="flex-1 flex flex-col justify-center min-w-0 h-10">
+	            <div class="text-[13px] font-bold text-gray-700 truncate leading-none mb-1">${fileData.name}</div>
+	            <div class="text-[11px] text-gray-400 font-medium leading-none">${fileData.size}</div>
+	        </div>`;
+	    grid.appendChild(card);
+	    scrollToBottom();
+	}
 		
 	async function streamText(element, text, speed = 5) {
 	    const delay = ms => new Promise(res => setTimeout(res, ms));
@@ -2671,27 +2600,27 @@ function startVideoPolling(fullName, targetId, videoPrompt) {
 	}
 	
 	async function copyMessageText(btn) {
-    const container = btn.closest('.msg-bubble-container');
-    const textElement = container.querySelector('.text-body-container');
-    const textToCopy = textElement.innerText.trim();
-
-    if (!textToCopy) return;
-
-    try {
-        await navigator.clipboard.writeText(textToCopy);
-        
-        const originalIcon = btn.innerHTML;
-        btn.innerHTML = '<i data-lucide="check" class="w-4 h-4 text-green-500"></i>';
-        if (window.lucide) lucide.createIcons();
-
-        setTimeout(() => {
-            btn.innerHTML = originalIcon;
-            if (window.lucide) lucide.createIcons();
-        }, 2000);
-    } catch (err) {
-        console.error('Gagal menyalin teks:', err);
-    }
-}
+	    const container = btn.closest('.msg-bubble-container');
+	    const textElement = container.querySelector('.text-body-container');
+	    const textToCopy = textElement.innerText.trim();
+	
+	    if (!textToCopy) return;
+	
+	    try {
+	        await navigator.clipboard.writeText(textToCopy);
+	        
+	        const originalIcon = btn.innerHTML;
+	        btn.innerHTML = '<i data-lucide="check" class="w-4 h-4 text-green-500"></i>';
+	        if (window.lucide) lucide.createIcons();
+	
+	        setTimeout(() => {
+	            btn.innerHTML = originalIcon;
+	            if (window.lucide) lucide.createIcons();
+	        }, 2000);
+	    } catch (err) {
+	        console.error('Gagal menyalin teks:', err);
+	    }
+	}
 	
 	// ============================
 	// EVENT LISTENERS
@@ -2740,8 +2669,12 @@ function startVideoPolling(fullName, targetId, videoPrompt) {
 	});
 	
 	document.addEventListener('pointerdown', (e) => {
-	    if (scroller.contains(e.target) || messageList.contains(e.target)) {
-	        input.blur();
+	    const isInput = e.target.closest('input, textarea');
+	    const isFooter = e.target.closest('footer');
+	    const isMenu = e.target.closest('#dropdown-menu, #voice-menu, #header-dropdown');
+	
+	    if (!isInput && !isFooter && !isMenu && document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA')) {
+	        document.activeElement.blur();
 	    }
 	
 	    if (headerMenuTrigger && headerDropdown) {
