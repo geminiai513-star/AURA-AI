@@ -141,19 +141,11 @@
         .text-body-container > *:first-child {
             margin-top: 0 !important;
 			word-break: break-word !important;
-			-webkit-user-select: text;
-		    -moz-user-select: text;
-		    -ms-user-select: text;
-		    user-select: text;
         }
 
         .text-body-container > *:last-child {
             margin-bottom: 0 !important;
 			word-break: break-word !important;
-			-webkit-user-select: text;
-		    -moz-user-select: text;
-		    -ms-user-select: text;
-		    user-select: text;
         }
 
         .msg-content .grid {
@@ -366,6 +358,46 @@
             pointer-events: none; 
         }
 		
+		.msg-bubble-container {
+		    position: relative;
+		    padding-bottom: 28px !important; 
+		}
+		
+		.copy-msg-btn {
+		    position: absolute;
+		    right: 20px;
+		    bottom: 12px;
+		    background: none !important;
+		    border: none !important;
+		    padding: 0 !important;
+		    margin: 0 !important;
+		    display: flex;
+		    align-items: center;
+		    justify-content: center;
+		    color: #cbd5e1;
+		    cursor: pointer;
+		    z-index: 10;
+		    opacity: 0;
+		    visibility: hidden;
+		    transition: all 0.2s ease-in-out;
+		}
+		
+		.msg-bubble-container:hover .copy-msg-btn {
+		    opacity: 1;
+		    visibility: visible;
+		}
+		
+		.copy-msg-btn svg {
+		    width: 13px !important;
+		    height: 13px !important;
+		    stroke-width: 2.5px !important;
+		}
+		
+		.copy-msg-btn:active {
+		    color: #94a3b8;
+		    transform: scale(0.9);
+		}
+		
     </style>
 </head>
 <body>
@@ -433,7 +465,7 @@
 					    <div class="flex flex-col">
 					        <div onclick="createNewChat(); closeHeaderDropdown()" class="flex items-center justify-end gap-3 py-3 px-4 rounded-xl hover:bg-gray-50 cursor-pointer transition-colors border-b border-gray-100 text-slate-600">
 					            <span class="text-xs font-bold tracking-wider uppercase">Percakapan Baru</span>
-					            <div class="w-5 h-5 flex items-center justify-center text-slate-500">
+					            <div class="w-4 h-4 flex items-center justify-center text-slate-500">
 					                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full">
 					                    <path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719"/><path d="M8 12h8"/><path d="M12 8v8"/>
 					                </svg>
@@ -442,12 +474,12 @@
 					        
 					        <div onclick="openHistory(); closeHeaderDropdown()" class="flex items-center justify-end gap-3 py-3 px-4 rounded-xl hover:bg-gray-50 cursor-pointer transition-colors border-b border-gray-100 text-slate-600">
 							    <span class="text-xs font-bold tracking-wider uppercase">Histori</span>
-							    <i data-lucide="history" class="w-5 h-5 text-slate-500"></i>
+							    <i data-lucide="history" class="w-4 h-4 text-slate-500"></i>
 							</div>
 					
 					        <div onclick="showView('settings'); closeHeaderDropdown()" class="flex items-center justify-end gap-3 py-3 px-4 rounded-xl hover:bg-gray-50 cursor-pointer transition-colors border-b border-gray-100 text-slate-600">
 					            <span class="text-xs font-bold tracking-wider uppercase">Pengaturan</span>
-					            <div class="w-5 h-5 flex items-center justify-center text-slate-500">
+					            <div class="w-4 h-4 flex items-center justify-center text-slate-500">
 					                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full">
 					                    <path d="M11 10.27 7 3.34"/><path d="m11 13.73-4 6.93"/><path d="M12 22v-2"/><path d="M12 2v2"/><path d="M14 12h8"/><path d="m17 20.66-1-1.73"/><path d="m17 3.34-1 1.73"/><path d="M2 12h2"/><path d="m20.66 17-1.73-1"/><path d="m20.66 7-1.73 1"/><path d="m3.34 17 1.73-1"/><path d="m3.34 7 1.73 1"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="12" r="8"/>
 					                </svg>
@@ -456,7 +488,7 @@
 					        
 					        <div onclick="handleLogout(); closeHeaderDropdown()" class="flex items-center justify-end gap-3 py-3 px-4 rounded-xl hover:bg-gray-50 cursor-pointer transition-colors text-red-500">
 					            <span class="text-xs font-bold tracking-wider uppercase">Logout</span>
-					            <i data-lucide="log-out" class="w-5 h-5"></i>
+					            <i data-lucide="log-out" class="w-4 h-4"></i>
 					        </div>
 					    </div>
 					</div>
@@ -467,11 +499,12 @@
                 <div id="message-list" class="max-w-3xl mx-auto space-y-4 pb-2"></div>
             </main>
 
-            <footer style="background-color: #ffffff; padding: 6px 16px; padding-bottom: calc(env(safe-area-inset-bottom, 10px) + 18px);">
-                <div style="max-width: 48rem; margin-left: auto; margin-right: auto;">
-                    <div id="file-preview-container" class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-2"></div>
-                    
-                    <div id="capsule-container" style="background-color: #f3f4f6; border-radius: 14px; padding: 4px; transition: all 0.2s ease; border: 1px solid transparent;">
+            <footer style="background-color: #ffffff; padding: 16px 16px; padding-bottom: calc(env(safe-area-inset-bottom, 10px) + 18px);">
+				    <div style="max-width: 48rem; margin-left: auto; margin-right: auto;">
+				        
+				        <div id="file-preview-container" class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-2"></div>
+				        
+				        <div id="capsule-container" style="background-color: #f3f4f6; border-radius: 14px; padding: 4px; transition: all 0.2s ease; border: 1px solid transparent;">
                         <div id="input-row-1" style="display: flex; align-items: center; gap: 4px; margin-bottom: 2px;">
                             <button onclick="if(localStorage.getItem('enable_upload') !== 'false') document.getElementById('file-input').click()" 
 							    style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: #9ca3af; background: none; border: none; cursor: pointer; flex-shrink: 0;">
@@ -482,8 +515,11 @@
 							</button>
                             <input type="file" id="file-input" multiple accept="image/*,application/pdf,.docx,.xlsx,.xls,.pptx,.js,.css,.java,.html,.xml,.py,.sql,.ts,.cpp,.h,.hpp,.lua,.swift" class="hidden" onchange="handleFileSelect(event)">
                             
-                            <textarea id="chat-input" rows="1" placeholder="Tulis pesan..." oninput="adjustInput(this)"
-                                style="flex: 1; background: transparent; border: none; outline: none; resize: none; padding: 10px 4px; font-size: 16px; font-weight: 500; color: #1f2937; line-height: 20px; min-height: 40px; display: block; overflow: hidden;"></textarea>
+                            <textarea id="chat-input" rows="1" placeholder="Tulis pesan..." 
+							    oninput="adjustInput(this)" 
+							    onblur="window.scrollTo(0,0)"
+							    style="flex: 1; background: transparent; border: none; outline: none; resize: none; padding: 10px 4px; font-size: 16px; font-weight: 500; color: #1f2937; line-height: 20px; min-height: 40px; display: block; overflow: hidden;">
+							</textarea>
                             
                             <button id="send-btn" onclick="onSend()" 
                                 style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: #374151; background: none; border: none; cursor: pointer; flex-shrink: 0;">
@@ -527,133 +563,103 @@
 		        </div>
 		    </header>
 		
-		    <main id="settings-scroller" class="flex-1 overflow-y-auto bg-white p-4">
-		        <div class="max-w-2xl mx-auto w-full">
-		            <div class="w-full bg-white rounded-3xl px-8 py-6 space-y-4 border border-gray-100 shadow-sm fade-in">
-		                <div class="space-y-2 pb-3 border-b border-gray-100">
-		                    <label class="text-sm font-bold text-gray-800 ml-1">MODEL AI</label>
-		                    <div class="relative w-full" id="custom-dropdown">
-		                        <button type="button" id="dropdown-trigger" 
-		                            class="w-full bg-gray-50 border-none rounded-2xl px-5 py-4 text-sm outline-none transition-all font-bold text-gray-700 shadow-sm flex items-center justify-between">
-		                            <span id="selected-model-text">Gemini 3 Flash</span>
-		                            <i data-lucide="chevron-down" class="w-4 h-4 text-gray-500 transition-transform duration-200" id="dropdown-icon"></i>
-		                        </button>
-		
-		                        <div id="dropdown-menu" class="hidden absolute left-0 right-0 mt-2 bg-white rounded-2xl shadow-xl border border-gray-100 p-1.5 z-[110] fade-in">
-		                            <div class="flex flex-col">
-		                                <div class="dropdown-option py-2 px-3 rounded-xl hover:bg-gray-50 cursor-pointer transition-colors border-b border-gray-50 last:border-none" data-value="gemini-3-flash-preview">
-		                                    <span class="text-sm font-medium text-gray-800">Gemini 3 Flash</span>
-		                                </div>
-		                                <div class="dropdown-option py-2 px-3 rounded-xl hover:bg-gray-50 cursor-pointer transition-colors border-b border-gray-50 last:border-none" data-value="gemini-3-pro-preview">
-		                                    <span class="text-sm font-medium text-gray-800">Gemini 3 Pro</span>
-		                                </div>
-		                                <div class="dropdown-option py-2 px-3 rounded-xl hover:bg-gray-50 cursor-pointer transition-colors" data-value="gemini-3-deep-think-preview">
-		                                    <span class="text-sm font-medium text-gray-800">Gemini 3 Deep Think</span>
-		                                </div>
-		                            </div>
-		                        </div>
-		                    </div>
-		                </div>
-		
-		                <div class="space-y-2 pb-3 border-b border-gray-100">
-		                    <label class="text-sm font-bold text-gray-800 ml-1 uppercase">Model Suara</label>
-		                    <div class="relative w-full" id="voice-dropdown">
-		                        <button type="button" id="voice-trigger" 
-		                            class="w-full bg-gray-50 border-none rounded-2xl px-5 py-4 text-sm outline-none transition-all font-bold text-gray-700 shadow-sm flex items-center justify-between">
-		                            <span id="selected-voice-text">Kore</span>
-		                            <i data-lucide="chevron-down" class="w-4 h-4 text-gray-500 transition-transform duration-200" id="voice-icon"></i>
-		                        </button>
-		
-		                        <div id="voice-menu" class="hidden absolute left-0 right-0 mt-2 bg-white rounded-2xl shadow-xl border border-gray-100 p-1.5 z-[120] fade-in">
-		                            <div class="flex flex-col max-h-48 overflow-y-auto custom-scroll">
-		                                <div class="voice-option py-2 px-3 rounded-xl hover:bg-gray-50 cursor-pointer transition-colors border-b border-gray-50" data-value="Kore">
-		                                    <span class="text-sm font-medium text-gray-800">Kore (Default)</span>
-		                                </div>
-		                                <div class="voice-option py-2 px-3 rounded-xl hover:bg-gray-50 cursor-pointer transition-colors border-b border-gray-50" data-value="Aoede">
-		                                    <span class="text-sm font-medium text-gray-800">Aoede</span>
-		                                </div>
-		                                <div class="voice-option py-2 px-3 rounded-xl hover:bg-gray-50 cursor-pointer transition-colors border-b border-gray-50" data-value="Zephyr">
-		                                    <span class="text-sm font-medium text-gray-800">Zephyr</span>
-		                                </div>
-		                                <div class="voice-option py-2 px-3 rounded-xl hover:bg-gray-50 cursor-pointer transition-colors border-b border-gray-50" data-value="Leda">
-		                                    <span class="text-sm font-medium text-gray-800">Leda</span>
-		                                </div>
-		                                <div class="voice-option py-2 px-3 rounded-xl hover:bg-gray-50 cursor-pointer transition-colors" data-value="Fenrir">
-		                                    <span class="text-sm font-medium text-gray-800">Fenrir</span>
-		                                </div>
-		                            </div>
-		                        </div>
-		                    </div>
-		                </div>
-		
-		                <div class="space-y-2 pb-3 border-b border-gray-100">
-		                    <div class="flex justify-between items-center ml-1">
-		                        <label class="text-sm font-bold text-gray-800 uppercase">Tingkat Pemikiran</label>
-		                        <span id="label-thinking" class="hidden">MEDIUM</span>
-		                    </div>
-		                    <input type="range" id="settings-thinking" min="1" max="3" step="1" oninput="updateSliderLabels(); saveSettings()" 
-		                        class="w-full h-2 bg-gray-100 rounded-lg appearance-none cursor-pointer accent-indigo-600">
-		                    <div class="flex justify-between text-[10px] text-gray-400 px-1 font-bold uppercase">
-		                        <span>LOW</span>
-		                        <span>MEDIUM</span>
-		                        <span>HIGH</span>
-		                    </div>
-		                </div>
-		
-		                <div class="space-y-2 pb-3 border-b border-gray-100">
-		                    <div class="flex justify-between items-center ml-1">
-		                        <label class="text-sm font-bold text-gray-800 uppercase">Batas Token</label>
-		                        <span id="label-tokens" class="text-sm font-bold text-gray-400">65536</span>
-		                    </div>
-		                    <input type="range" id="settings-tokens" min="1024" max="65536" step="1024" oninput="updateSliderLabels(); saveSettings()" 
-		                        class="w-full h-2 bg-gray-100 rounded-lg appearance-none cursor-pointer accent-indigo-600">
-		                </div>
-		
-		                <div class="space-y-2">
-		                    <label class="text-sm font-bold text-gray-800 ml-1 uppercase tracking-wider">System Instruksi</label>
-		                    <textarea id="settings-prompt" rows="4" oninput="saveSettings()" 
-		                        class="w-full bg-gray-50 border-none rounded-2xl px-4 py-4 text-sm font-medium outline-none focus:ring-0 focus:outline-none transition-all leading-tight shadow-sm text-gray-700" 
-		                        placeholder="Contoh: Jadilah asisten yang sangat teknis..." onblur="window.scrollTo(0,0)"></textarea>
-		                </div>
-						<div class="space-y-2 mt-6">
-					    <label class="text-sm font-bold text-gray-800 ml-1 uppercase tracking-wider">Fitur AI</label>
-					    <div class="w-full bg-gray-50 rounded-3xl px-8 py-6 space-y-4 shadow-sm fade-in border-none">
-					        
-					        <div class="flex items-center justify-between py-2 border-b border-gray-100">
-					            <span class="text-sm font-medium text-gray-700">Mode Gambar</span>
-					            <label class="relative inline-flex items-center cursor-pointer">
-					                <input type="checkbox" id="switch-image" class="sr-only peer" onchange="saveSettings()">
-					                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-					            </label>
-					        </div>
-					
-					        <div class="flex items-center justify-between py-2 border-b border-gray-100">
-					            <span class="text-sm font-medium text-gray-700">Mode Video</span>
-					            <label class="relative inline-flex items-center cursor-pointer">
-					                <input type="checkbox" id="switch-video" class="sr-only peer" onchange="saveSettings()">
-					                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-					            </label>
-					        </div>
-					
-					        <div class="flex items-center justify-between py-2 border-b border-gray-100">
-					            <span class="text-sm font-medium text-gray-700">Mode Suara</span>
-					            <label class="relative inline-flex items-center cursor-pointer">
-					                <input type="checkbox" id="switch-voice" class="sr-only peer" onchange="saveSettings()">
-					                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-					            </label>
-					        </div>
-					
-					        <div class="flex items-center justify-between py-2">
-					            <span class="text-sm font-medium text-gray-700">Mode Upload</span>
-					            <label class="relative inline-flex items-center cursor-pointer">
-					                <input type="checkbox" id="switch-upload" class="sr-only peer" onchange="saveSettings()">
-					                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-					            </label>
-					        </div>
-					    </div>
-					</div>
-		        </div>
-		    </main>
+		   <main id="settings-scroller" class="flex-1 overflow-y-auto bg-white p-5">
+			    <div class="max-w-2xl mx-auto w-full">
+			        
+			        <div class="bg-gray-50 rounded-[32px] p-6 space-y-4">
+			            
+			            <div class="relative w-full" id="custom-dropdown">
+			                <button type="button" id="dropdown-trigger" 
+			                    class="w-full bg-gray-100 rounded-2xl px-5 py-4 text-sm font-bold text-gray-700 shadow-sm flex items-center justify-between border-none outline-none">
+			                    <span id="selected-model-text">Gemini 3 Flash</span>
+			                    <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400" id="dropdown-icon"></i>
+			                </button>
+			                <div id="dropdown-menu" class="hidden absolute left-0 right-0 mt-2 bg-white rounded-2xl shadow-xl border border-gray-100 p-2 z-[110] fade-in">
+			                    <div class="flex flex-col">
+			                        <div class="dropdown-option py-3 px-4 rounded-xl hover:bg-gray-50 cursor-pointer text-sm font-medium text-gray-800" data-value="gemini-3-flash-preview">Gemini 3 Flash</div>
+			                        <div class="dropdown-option py-3 px-4 rounded-xl hover:bg-gray-50 cursor-pointer text-sm font-medium text-gray-800" data-value="gemini-3-pro-preview">Gemini 3 Pro</div>
+			                        <div class="dropdown-option py-3 px-4 rounded-xl hover:bg-gray-50 cursor-pointer text-sm font-medium text-gray-800" data-value="gemini-3-deep-think-preview">Gemini 3 Deep Think</div>
+			                    </div>
+			                </div>
+			            </div>
+			
+			            <div class="relative w-full" id="voice-dropdown">
+			                <button type="button" id="voice-trigger" 
+			                    class="w-full bg-gray-100 rounded-2xl px-5 py-4 text-sm font-bold text-gray-700 shadow-sm flex items-center justify-between border-none outline-none">
+			                    <span id="selected-voice-text">Kore (Default)</span>
+			                    <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400" id="voice-icon"></i>
+			                </button>
+			                <div id="voice-menu" class="hidden absolute left-0 right-0 mt-2 bg-white rounded-2xl shadow-xl border border-gray-100 p-2 z-[120] fade-in">
+			                    <div class="flex flex-col max-h-48 overflow-y-auto custom-scroll">
+			                        <div class="voice-option py-3 px-4 rounded-xl hover:bg-gray-50 cursor-pointer text-sm font-medium text-gray-800" data-value="Kore">Kore (Default)</div>
+			                        <div class="voice-option py-3 px-4 rounded-xl hover:bg-gray-50 cursor-pointer text-sm font-medium text-gray-800" data-value="Aoede">Aoede</div>
+			                        <div class="voice-option py-3 px-4 rounded-xl hover:bg-gray-50 cursor-pointer text-sm font-medium text-gray-800" data-value="Zephyr">Zephyr</div>
+			                        <div class="voice-option py-3 px-4 rounded-xl hover:bg-gray-50 cursor-pointer text-sm font-medium text-gray-800" data-value="Leda">Leda</div>
+			                        <div class="voice-option py-3 px-4 rounded-xl hover:bg-gray-50 cursor-pointer text-sm font-medium text-gray-800" data-value="Fenrir">Fenrir</div>
+			                    </div>
+			                </div>
+			            </div>
+			
+			            <div class="bg-gray-100 rounded-2xl p-6 shadow-sm space-y-8">
+			                <div class="space-y-3">
+			                    <input type="range" id="settings-thinking" min="1" max="3" step="1" oninput="updateSliderLabels(); saveSettings()" 
+			                        class="w-full h-2 bg-gray-50 rounded-lg appearance-none cursor-pointer accent-blue-600">
+			                    <div class="flex justify-between text-xs text-gray-400 px-1 font-bold tracking-widest uppercase">
+			                        <span>Low Thinking</span>
+			                        <span id="label-thinking" class="text-gray-800">MEDIUM</span>
+			                        <span>High Thinking</span>
+			                    </div>
+			                </div>
+			                
+			                <div class="space-y-3">
+			                    <input type="range" id="settings-tokens" min="1024" max="65536" step="1024" oninput="updateSliderLabels(); saveSettings()" 
+			                        class="w-full h-2 bg-gray-50 rounded-lg appearance-none cursor-pointer accent-blue-600">
+			                    <div class="flex justify-between text-xs text-gray-400 px-1 font-bold tracking-widest uppercase">
+			                        <span>Min Token</span>
+			                        <span id="label-tokens" class="text-gray-800">65536</span>
+			                        <span>Max Token</span>
+			                    </div>
+			                </div>
+			            </div>
+			
+			            <textarea id="settings-prompt" rows="6" oninput="saveSettings()" 
+			                class="w-full bg-gray-100 border-none rounded-2xl px-5 py-5 text-[15px] font-medium text-gray-700 shadow-sm outline-none resize-none leading-relaxed" 
+			                placeholder="Tulis instruksi sistem di sini..." onblur="window.scrollTo(0,0)"></textarea>
+			
+			            <div class="bg-gray-100 rounded-2xl p-6 shadow-sm space-y-1">
+			                <div class="flex items-center justify-between py-4 px-1 border-b border-gray-100">
+			                    <span class="text-xs font-bold text-gray-400 uppercase tracking-tight">Mode Gambar</span>
+			                    <label class="relative inline-flex items-center cursor-pointer">
+			                        <input type="checkbox" id="switch-image" class="sr-only peer" onchange="saveSettings()">
+			                        <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full"></div>
+			                    </label>
+			                </div>
+			                <div class="flex items-center justify-between py-4 px-1 border-b border-gray-100">
+			                    <span class="text-xs font-bold text-gray-400 uppercase tracking-tight">Mode Video</span>
+			                    <label class="relative inline-flex items-center cursor-pointer">
+			                        <input type="checkbox" id="switch-video" class="sr-only peer" onchange="saveSettings()">
+			                        <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full"></div>
+			                    </label>
+			                </div>
+			                <div class="flex items-center justify-between py-4 px-1 border-b border-gray-100">
+			                    <span class="text-xs font-bold text-gray-400 uppercase tracking-tight">Mode Suara</span>
+			                    <label class="relative inline-flex items-center cursor-pointer">
+			                        <input type="checkbox" id="switch-voice" class="sr-only peer" onchange="saveSettings()">
+			                        <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full"></div>
+			                    </label>
+			                </div>
+			                <div class="flex items-center justify-between py-4 px-1">
+			                    <span class="text-xs font-bold text-gray-400 uppercase tracking-tight">Mode Upload</span>
+			                    <label class="relative inline-flex items-center cursor-pointer">
+			                        <input type="checkbox" id="switch-upload" class="sr-only peer" onchange="saveSettings()">
+			                        <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full"></div>
+			                    </label>
+			                </div>
+			            </div>
+			
+			        </div>
+			    </div>
+			</main>
 		</div>
 
         <!-- Voice Overlay -->
@@ -664,7 +670,7 @@
 			    </button>
 			
 			    <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-			        <span class="text-[14px] font-bold tracking-[0.5em] text-slate-800 uppercase">LIVE VOICE</span>
+			        <span class="text-[14px] font-bold tracking-[0.2em] text-slate-800 uppercase">LIVE VOICE</span>
 			    </div>
 			
 			    <button id="btn-voice-cam" onclick="toggleVoiceCamera()" class="relative z-10 p-2.5 ml-auto text-gray-300 active:scale-90 transition-transform">
@@ -683,7 +689,7 @@
             
             <footer class="flex-none bg-white border-none px-4 py-4" style="padding-bottom: calc(env(safe-area-inset-bottom, 20px) + 20px);">
                 <div class="max-w-3xl mx-auto flex flex-col items-center gap-4">
-                    <div id="voice-timer" class="text-slate-400 font-mono text-sm tracking-[0.3em] font-bold">00:00:00</div>
+                    <div id="voice-timer" class="text-slate-400 font-mono text-sm tracking-[0.2em] font-medium">00:00:00</div>
                     <button onclick="closeVoiceMode()" 
                         class="w-14 h-14 bg-red-50 text-red-500 rounded-full flex items-center justify-center border border-red-100 active:scale-90 transition-all">
                         <i data-lucide="phone-off" class="w-6 h-6"></i>
@@ -692,26 +698,22 @@
             </footer>
         </div>
     </div>
-	<div id="history-modal" class="fixed inset-0 z-[300] hidden flex items-center justify-center p-4">
-    <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onclick="closeHistory()"></div>
+	<div id="history-modal" class="fixed inset-0 z-[300] hidden flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
+    <div class="absolute inset-0" onclick="closeHistory()"></div>
     
-    <div class="relative w-full max-w-sm bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[70vh] fade-in border border-slate-100">
+    <div class="relative w-full max-w-sm bg-white rounded-[28px] shadow-2xl overflow-hidden flex flex-col h-[420px] border border-slate-100 fade-in">
         
-        <div class="h-[70px] flex-none flex items-center justify-center px-5">
-            <div class="inline-block border-b-[1px] border-slate-200 pb-1">
-                <h3 class="text-sm font-extrabold tracking-widest text-slate-800 uppercase m-0">History Percakapan</h3>
-            </div>
+        <div class="h-[60px] flex-none flex items-center justify-center border-b border-slate-50">
+            <h3 class="text-[14px] font-bold tracking-[0.2em] text-slate-500 uppercase m-0">Histori Percakapan</h3>
         </div>
 
-        <div id="history-list-container" class="flex-1 overflow-y-auto px-5 py-2 flex flex-col gap-2">
-        </div>
+        <div id="history-list-container" class="flex-1 overflow-y-auto px-4 py-3 flex flex-col gap-1 bg-white"></div>
 
-        <div class="h-[80px] flex-none flex items-center justify-center px-5 pb-2">
-            <button onclick="closeHistory()" class="w-full bg-gray-700 text-white rounded-2xl p-3 text-sm font-extrabold tracking-[0.2em] uppercase active:scale-95 transition-all outline-none border-none cursor-pointer shadow-sm">
+        <div class="h-[60px] flex-none flex items-center justify-center px-5 border-t border-slate-50">
+            <button onclick="closeHistory()" class="w-full bg-transparent text-slate-400 py-3 text-[14px] font-bold tracking-[0.2em] uppercase active:scale-95 transition-all outline-none border-none cursor-pointer">
                 Tutup
             </button>
         </div>
-
     </div>
 </div>
 <script>
@@ -737,7 +739,13 @@
 	const _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 	
 	const GAS_URL = "https://script.google.com/macros/s/AKfycbyy11l11E0bkI6Vznog-4YjnhVQtlARwaK0GRz4mebLT1xV8q_IOT-JRSVDHfZYdVH5/exec";
-	const PERMANENT_PROMPT = "Jika pengguna meminta pembuatan PowerPoint (PPT), Anda bisa membuat PowerPoint dengan menulis bahan PowerPoint ke dalam tag [PPT] ... [/PPT]. jangan pernah menawarkan diri kecuali user secara eksplisit memintanya, jangan menukis apapun setelah tag [/PPT].";
+	const SPT_URL = "https://script.google.com/macros/s/AKfycbyGznxTi3KMB3a-N7-v_V7HubI5esZegBDzjtuUy6C03pT0x4rKZLiehf5_2jksvR0/exec";
+	
+	const PERMANENT_PROMPT = `
+	- PowerPoint: [PPT] materi [/PPT]. Jangan membuat dokumen jika bahan belum sesuai dengan peemintaan user!!!.
+	- SPT: [WORD] { "pegawai_tugas": "1. Nama (Jabatan Tim) 2. Nama (Jabatan Tim)", "pejabat_penandatangan": "...","jenis_pengawasan": "...","opd_tujuan": "...","wilayah_tugas": "...","tgl_mulai": "...","tgl_selesai": "..." }[/WORD]. Jangan membuat dokumem jika data yang dibutuhkan belum lengkap!!!.
+	- Catatan: Jabatan Tim seperti Penanggung Jawab, Pengendali Teknis, Ketua Tim, atau Anggota. 
+	- Jangan pernah menawarkan diri jika user tidak memintanya secara eksplisit.`;
 	
 	// DOM Elements
 	const authView = document.getElementById('auth-view');
@@ -786,6 +794,7 @@
 	let activeVoiceSources = [];
 	let voiceEnabled = false;
 	let voiceSessionId = 0;
+	let energyCounter = 0;
 	
 	// Stop Respon
 	let isGenerating = false;
@@ -814,37 +823,81 @@
 	    const container = document.getElementById('history-list-container');
 	    container.innerHTML = '';
 	
-	    const sortedIds = chatIds.sort((a, b) => allChats[b].timestamp - allChats[a].timestamp);
+	    const resetAllDeleteButtons = () => {
+	        container.querySelectorAll('.del-btn').forEach(btn => {
+	            btn.style.opacity = '0';
+	            btn.style.transition = 'none'; // Matikan transisi agar instan
+	            btn.style.color = '#cbd5e1'; 
+	            btn.removeAttribute('data-confirm');
+	        });
+	    };
 	
-	    sortedIds.forEach(id => {
-	        const chat = allChats[id];
-	        const card = document.createElement('div');
-	        
+	    modal.querySelector('.relative.w-full.max-w-sm').onclick = (e) => {
+	        if (!e.target.closest('.rounded-2xl.cursor-pointer')) {
+	            resetAllDeleteButtons();
+	        }
+	    };
+	
+	    const customIcon = (color) => `
+	        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;">
+	            <path d="M16 10a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 14.286V4a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+	            <path d="M20 9a2 2 0 0 1 2 2v10.286a.71.71 0 0 1-1.212.502l-2.202-2.202A2 2 0 0 0 17.172 19H10a2 2 0 0 1-2-2v-1"/>
+	        </svg>`;
+	
+	    Object.keys(allChats).sort((a,b) => allChats[b].timestamp - allChats[a].timestamp).forEach(id => {
 	        const isActive = (id === currentChatId);
+	        const card = document.createElement('div');
+	        card.className = "flex items-center justify-between px-4 h-[56px] flex-none rounded-2xl cursor-pointer bg-slate-50 border-none transition-all";
 	        
-	        const fontWeight = isActive ? 'font-extrabold' : 'font-bold';
-	        const textColor = isActive ? 'text-black' : 'text-slate-400';
-	        
-	        card.className = "w-full bg-gray-50 rounded-[8px] p-2.5 flex items-center justify-between cursor-pointer flex-shrink-0 border-none shadow-sm";
-	        card.onclick = () => loadChat(id);
-	        
+	        card.onclick = (e) => {
+	            const btn = card.querySelector('.del-btn');
+	            if (e.target.closest('.del-btn')) return;
+	
+	            if (btn.style.opacity === '1') {
+	                loadChat(id);
+	            } else {
+	                resetAllDeleteButtons();
+	                btn.style.transition = 'opacity 0.2s'; // Hanya opacity yang halus
+	                btn.style.opacity = '1';
+	            }
+	        };
+	
 	        card.innerHTML = `
-	            <span class="text-sm ${fontWeight} ${textColor} truncate mr-3 flex-1 text-left">
-	                ${chat.title || 'Percakapan Baru'}
-	            </span>
-	            <button onclick="event.stopPropagation(); deleteChat('${id}')" class="bg-transparent border-none p-1 text-slate-300 hover:text-red-500 transition-colors cursor-pointer flex items-center justify-center shrink-0">
-	                <i data-lucide="trash-2" class="w-4 h-4"></i>
-	            </button>
+	            <div class="flex items-center gap-3 overflow-hidden flex-1 pointer-events-none">
+	                ${customIcon(isActive ? '#3b82f6' : '#94a3b8')}
+	                <span class="text-[14px] font-medium text-slate-700 truncate">${allChats[id].title || 'Percakapan Baru'}</span>
+	            </div>
+	            <div class="w-8 flex justify-end">
+	                <button onclick="handleTwoStepDelete(this, event, '${id}')" 
+	                    class="del-btn bg-transparent border-none cursor-pointer p-1 outline-none" 
+	                    style="opacity: 0; color: #cbd5e1; transition: none;">
+	                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+	                </button>
+	            </div>
 	        `;
 	        container.appendChild(card);
 	    });
 	
 	    modal.classList.remove('hidden');
-	    modal.classList.add('active');
 	    modal.style.display = 'flex';
-	    lucide.createIcons();
+	    if (window.lucide) lucide.createIcons();
 	}
 	
+	function handleTwoStepDelete(btn, event, id) {
+	    event.stopPropagation();
+	    if (btn.getAttribute('data-confirm') === 'true') {
+	        delete allChats[id];
+	        localStorage.setItem('all_chats', JSON.stringify(allChats));
+	        if (currentChatId === id) createNewChat();
+	        if (Object.keys(allChats).length === 0) closeHistory();
+	        else openHistory();
+	    } else {
+	        btn.setAttribute('data-confirm', 'true');
+	        btn.style.transition = 'none'; // Paksa instan
+	        btn.style.color = '#ef4444'; 
+	    }
+	}
+
 	function closeHistory() {
 	    const modal = document.getElementById('history-modal');
 	    modal.style.display = 'none';
@@ -1129,76 +1182,79 @@
 	// ============================
 	
 	function createBubble(role, content = '', files = [], isPlaceholder = false, showTyping = false) {
-	    const isAI = role === 'assistant' || role === 'model';
-	    const roleLabel = isAI ? '<span class="ai-gradient">AURA</span>' : 'USER';
-	    const now = new Date();
-	    const timeStr = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
-	    const div = document.createElement('div');
-	    div.className = "w-full animate-in fade-in duration-300 mb-4";
-	
-	    let filesHtml = '';
-	    if (files && files.length > 0) {
-	        const aiFile = files.find(f => f.isAI || f.isVideo);
-	        if (aiFile) {
-	            filesHtml = `
-	                <div class="mt-3 w-full ai-image-container">
-	                    <div class="file-placeholder w-full h-48 bg-gray-200 rounded-xl animate-pulse flex items-center justify-center" data-file-id="${aiFile.fileId}">
-	                        <i data-lucide="${aiFile.isVideo ? 'video' : 'image'}" class="w-8 h-8 text-gray-400"></i>
-	                    </div>
-	                </div>`;
-	        } else {
-	            filesHtml = '<div class="grid grid-cols-2 md:grid-cols-4 gap-2 mt-3 file-grid-container">';
-	            files.forEach(f => {
-	                const ext = f.name.split('.').pop().toLowerCase();
-	                let visual = isPlaceholder 
-	                    ? `<div class="file-placeholder w-10 h-10 flex items-center justify-center bg-gray-200 rounded-lg" data-file-id="${f.fileId || ''}"></div>`
-	                    : (f.mime && f.mime.startsWith('image/')) 
-	                        ? `<img src="data:${f.mime};base64,${f.base64}" class="w-10 h-10 object-cover rounded-lg">` 
-	                        : getFileIcon(ext);
-	                
-	                filesHtml += `
-	                    <div onclick="downloadFile('${f.fileId}')" class="cursor-pointer active:scale-95 transition-all bg-gray-200 rounded-2xl p-3 flex items-center gap-2 relative w-full min-h-[64px] border-none">
-	                        <div class="w-10 h-10 flex-none flex items-center justify-center overflow-hidden shrink-0">${visual}</div>
-	                        <div class="flex-1 flex flex-col justify-center min-w-0 h-10">
-	                            <div class="text-[13px] font-bold text-gray-700 truncate leading-none mb-1">${f.name}</div>
-	                            <div class="text-[11px] text-gray-400 font-medium leading-none">${f.size || ''}</div>
-	                        </div>
-	                    </div>`;
-	            });
-	            filesHtml += '</div>';
-	        }
-	    }
-	
-	    div.innerHTML = `
-	        <div class="w-full bg-gray-100 rounded-2xl px-5 pt-3 pb-5 text-slate-800">
-	            <div class="flex justify-between items-center pb-1 border-b border-gray-200">
-	                <span class="text-[11px] font-bold uppercase tracking-widest">${roleLabel}</span>
-	                <span class="text-[11px] font-medium text-gray-400">${timeStr}</span>
-	            </div>
-	            <div class="prose prose-sm max-w-none msg-content text-base leading-relaxed font-medium mt-1">
-	                <div class="text-body-container">${content ? marked.parse(content.replace(/\[\[.*?\]\]/g, '')) : ''}</div>
-	                <div class="files-wrapper-area">${filesHtml}</div>
-	                ${isAI && showTyping ? `
-	                <div class="typing-indicator flex items-center gap-1.5 py-1 text-gray-500 mt-2">
-	                    <span class="text-sm font-medium italic">Thinking</span>
-	                    <span class="flex leading-none mb-0.5 ml-0.5">
-	                        <span style="animation: blink 1.4s infinite both; animation-delay: 0s;">.</span>
-	                        <span style="animation: blink 1.4s infinite both; animation-delay: 0.2s;">.</span>
-	                        <span style="animation: blink 1.4s infinite both; animation-delay: 0.4s;">.</span>
-	                    </span>
-	                </div>` : ''}
-	            </div>
-	        </div>
-	    `;
-	    messageList.appendChild(div);
-	    lucide.createIcons();
-	    scrollToBottom();
-	    return { 
-	        textElement: div.querySelector('.text-body-container'), 
-	        filesElement: div.querySelector('.files-wrapper-area'),
-	        typingElement: div.querySelector('.typing-indicator') 
-	    };
-	}
+    const isAI = role === 'assistant' || role === 'model';
+    const roleLabel = isAI ? '<span class="ai-gradient">AURA</span>' : 'USER';
+    const now = new Date();
+    const timeStr = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+    const div = document.createElement('div');
+    div.className = "w-full animate-in fade-in duration-300 mb-4";
+
+    let filesHtml = '';
+    if (files && files.length > 0) {
+        const aiFile = files.find(f => f.isAI || f.isVideo);
+        if (aiFile) {
+            filesHtml = `
+                <div class="mt-2 w-full ai-image-container">
+                    <div class="file-placeholder w-full h-48 bg-gray-200 rounded-xl animate-pulse flex items-center justify-center" data-file-id="${aiFile.fileId}">
+                        <i data-lucide="${aiFile.isVideo ? 'video' : 'image'}" class="w-8 h-8 text-gray-400"></i>
+                    </div>
+                </div>`;
+        } else {
+            filesHtml = '<div class="grid grid-cols-2 md:grid-cols-4 gap-2 mt-2 file-grid-container">';
+            files.forEach(f => {
+                const ext = f.name.split('.').pop().toLowerCase();
+                let visual = isPlaceholder 
+                    ? `<div class="file-placeholder w-10 h-10 flex items-center justify-center bg-gray-200 rounded-lg" data-file-id="${f.fileId || ''}"></div>`
+                    : (f.mime && f.mime.startsWith('image/')) 
+                        ? `<img src="data:${f.mime};base64,${f.base64}" class="w-10 h-10 object-cover rounded-lg">` 
+                        : getFileIcon(ext);
+                
+                filesHtml += `
+                    <div onclick="downloadFile('${f.fileId}')" class="cursor-pointer active:scale-[0.98] transition-all bg-gray-200 rounded-2xl p-3 flex items-center gap-2 relative w-full min-h-[64px] border-none">
+                        <div class="w-10 h-10 flex-none flex items-center justify-center overflow-hidden shrink-0">${visual}</div>
+                        <div class="flex-1 flex flex-col justify-center min-w-0 h-10">
+                            <div class="text-[13px] font-bold text-gray-700 truncate leading-none mb-1">${f.name}</div>
+                            <div class="text-[11px] text-gray-400 font-medium leading-none">${f.size || ''}</div>
+                        </div>
+                    </div>`;
+            });
+            filesHtml += '</div>';
+        }
+    }
+
+    div.innerHTML = `
+        <div class="w-full bg-gray-100 rounded-2xl px-5 pt-3 pb-8 text-slate-800 msg-bubble-container">
+            <div class="flex justify-between items-center pb-1 border-b border-gray-200">
+                <span class="text-[11px] font-bold uppercase tracking-widest">${roleLabel}</span>
+                <span class="text-[11px] font-medium text-gray-400">${timeStr}</span>
+            </div>
+            <div class="prose prose-sm max-w-none msg-content text-base leading-relaxed font-medium mt-1">
+                <div class="text-body-container">${content ? marked.parse(content.replace(/\[\[.*?\]\]/g, '')) : ''}</div>
+                <div class="files-wrapper-area">${filesHtml}</div>
+                ${isAI && showTyping ? `
+                <div class="typing-indicator flex items-center gap-1.5 py-0 text-gray-500 mt-1">
+                    <span class="text-sm font-medium italic">Thinking</span>
+                    <span class="flex leading-none mb-0.5 ml-0.5">
+                        <span style="animation: blink 1.4s infinite both; animation-delay: 0s;">.</span>
+                        <span style="animation: blink 1.4s infinite both; animation-delay: 0.2s;">.</span>
+                        <span style="animation: blink 1.4s infinite both; animation-delay: 0.4s;">.</span>
+                    </span>
+                </div>` : ''}
+            </div>
+            <button onclick="copyMessageText(this)" class="copy-msg-btn">
+                <i data-lucide="copy" class="w-4 h-4"></i>
+            </button>
+        </div>
+    `;
+    messageList.appendChild(div);
+    if (window.lucide) lucide.createIcons();
+    scrollToBottom();
+    return { 
+        textElement: div.querySelector('.text-body-container'), 
+        filesElement: div.querySelector('.files-wrapper-area'),
+        typingElement: div.querySelector('.typing-indicator') 
+    };
+}
 	
 	async function clearChat() {
 	    chatHistory = [];
@@ -1428,82 +1484,119 @@
 	}
 	
 	async function handleImageGeneration(prompt, imgObj = null) {
-	    const isEdit = prompt.toLowerCase().startsWith('/edit');
-	    const cleanPrompt = prompt.replace(/^\/(gambar|edit)\s+/i, '').trim();
-	    const imageModel = 'gemini-2.5-flash-image'; 
-	    
-	    const aiBubble = createBubble('assistant', '', [], false, false); 
-	    const targetId = 'gen_' + Date.now();
-	    aiBubble.textElement.id = targetId;
-	    
-	    aiBubble.textElement.innerHTML = `
-	        <div class="flex items-center gap-1 py-0.5 text-gray-500">
-	            <span class="text-sm font-medium italic">${isEdit ? 'mengedit gambar' : 'membuat gambar'}</span>
-	            <div class="flex items-end mb-0.5">
-	                <svg viewBox="0 0 16 16" class="w-3 h-3 animate-brush" fill="currentColor">
-	                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-	                        <g transform="translate(0.000000, 1.000000)" fill="currentColor">
-	                            <path d="M15.172,3.244 C14.715,3.785 10.553,8.014 8.326,9.666 L7.413,8.799 C8.703,6.288 12.154,1.507 12.609,0.967 C13.204,0.263 14.646,-0.248 15.416,0.298 C16.428,1.014 15.766,2.538 15.172,3.244 Z"></path>
-	                            <path d="M6.607,9.702 C6.607,9.702 4.515,9.149 3.259,11.296 C2.004,13.443 0.808,12.708 0.27,12.524 C-0.268,12.34 1.526,14.794 2.363,14.794 C3.181,14.794 6.752,15.969 7.631,11.36 C7.649,11.259 7.703,9.877 6.607,9.702 L6.607,9.702 Z"></path>
-	                        </g>
-	                    </g>
-	                </svg>
-	                <span class="flex ml-0.5 leading-none">
-	                    <span style="animation: blink 1.4s infinite both; animation-delay: 0s;">.</span>
-	                    <span style="animation: blink 1.4s infinite both; animation-delay: 0.2s;">.</span>
-	                    <span style="animation: blink 1.4s infinite both; animation-delay: 0.4s;">.</span>
-	                </span>
-	            </div>
-	        </div>
-	    `;
-	    
-	    if (window.lucide) lucide.createIcons();
-	
-	    try {
-	        const endpoint = `${SUPABASE_URL}/functions/v1/ai-proxy-v2?model=${imageModel}&action=generateContent`;
-	        const response = await fetch(endpoint, {
-	            method: 'POST',
-	            headers: { 
-	                'Content-Type': 'application/json', 
-	                'apikey': SUPABASE_KEY,
-	                'Authorization': `Bearer ${SUPABASE_KEY}` 
-	            },
-	            body: JSON.stringify({ 
-	                contents: [{ parts: imgObj ? [imgObj, { text: cleanPrompt }] : [{ text: cleanPrompt }] }],
-	                generationConfig: { response_modalities: ["IMAGE"] }
-	            })
-	        });
-	
-	        if (!response.ok) {
-			    const errText = await response.text();
-			    throw new Error(`Server Error (${response.status}): ${errText.substring(0, 50)}...`);
-			}
-			const data = await response.json();
-	        const b64 = data.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData?.data;
-	
-	        if (b64) {
-	            const mime = 'image/jpeg';
-	            const imgId = 'ai_gen_' + Date.now();
-	            await saveToLocal(imgId, { mime, base64: b64, name: 'AI Generated', size: 'AI' });
-	            renderImageToBubble(targetId, b64, mime);
-	            chatHistory.push({ 
-	                role: "model", 
-	                parts: [{ text: `[[CONFIRM_IMAGE_CREATED]] Saya telah berhasil membuatkan gambar dengan deskripsi: "${cleanPrompt}". Gambar tersebut sudah muncul di layar chat di atas.` }],
-	                _ui: { 
-	                    val: "", 
-	                    filesForStorage: [{ name: 'AI_Generated.jpg', size: 'AI', fileId: imgId, mime: mime, isAI: true }] 
-	                }
-	            });
-	            localStorage.setItem('chat_history', JSON.stringify(chatHistory));
-	        } else {
-	            throw new Error('Respon tidak mengandung gambar');
-	        }
-	    } catch (e) {
-        aiBubble.textElement.innerHTML = `<span class="text-red-500 font-medium">${e.message}</span>`;
-    	} finally {
-	        sendBtn.disabled = false;
-	    }
-	}
+    const isEdit = prompt.toLowerCase().startsWith('/edit');
+    const cleanPrompt = prompt.replace(/^\/(gambar|edit)\s+/i, '').trim();
+    const imageModel = 'gemini-2.5-flash-image'; 
+    
+    const aiBubble = createBubble('assistant', '', [], false, false); 
+    const targetId = 'gen_' + Date.now();
+    aiBubble.filesElement.id = targetId;
+    
+    aiBubble.filesElement.innerHTML = `
+        <div class="flex items-center gap-1 py-0.5 text-gray-500 mt-1">
+            <span class="text-sm font-medium italic">${isEdit ? 'mengedit gambar' : 'membuat gambar'}</span>
+            <div class="flex items-end mb-0.5">
+                <svg viewBox="0 0 16 16" class="w-3 h-3 animate-brush" fill="currentColor">
+                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                        <g transform="translate(0.000000, 1.000000)" fill="currentColor">
+                            <path d="M15.172,3.244 C14.715,3.785 10.553,8.014 8.326,9.666 L7.413,8.799 C8.703,6.288 12.154,1.507 12.609,0.967 C13.204,0.263 14.646,-0.248 15.416,0.298 C16.428,1.014 15.766,2.538 15.172,3.244 Z"></path>
+                            <path d="M6.607,9.702 C6.607,9.702 4.515,9.149 3.259,11.296 C2.004,13.443 0.808,12.708 0.27,12.524 C-0.268,12.34 1.526,14.794 2.363,14.794 C3.181,14.794 6.752,15.969 7.631,11.36 C7.649,11.259 7.703,9.877 6.607,9.702 L6.607,9.702 Z"></path>
+                        </g>
+                    </g>
+                </svg>
+                <span class="flex ml-0.5 leading-none">
+                    <span style="animation: blink 1.4s infinite both; animation-delay: 0s;">.</span>
+                    <span style="animation: blink 1.4s infinite both; animation-delay: 0.2s;">.</span>
+                    <span style="animation: blink 1.4s infinite both; animation-delay: 0.4s;">.</span>
+                </span>
+            </div>
+        </div>
+    `;
+    
+    if (window.lucide) lucide.createIcons();
+
+    try {
+        const endpoint = `${SUPABASE_URL}/functions/v1/ai-proxy-v2?model=${imageModel}&action=generateContent`;
+        const response = await fetch(endpoint, {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json', 
+                'apikey': SUPABASE_KEY,
+                'Authorization': `Bearer ${SUPABASE_KEY}` 
+            },
+            body: JSON.stringify({ 
+                contents: [{ parts: imgObj ? [imgObj, { text: cleanPrompt }] : [{ text: cleanPrompt }] }],
+                generationConfig: { response_modalities: ["IMAGE"] }
+            })
+        });
+
+        if (!response.ok) {
+            const errText = await response.text();
+            throw new Error(`Server Error (${response.status}): ${errText.substring(0, 50)}...`);
+        }
+        const data = await response.json();
+        const b64 = data.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData?.data;
+
+        if (b64) {
+            const mime = 'image/jpeg';
+            const imgId = 'ai_gen_' + Date.now();
+            await saveToLocal(imgId, { mime, base64: b64, name: 'AI Generated', size: 'AI' });
+            renderImageToBubble(targetId, b64, mime);
+            chatHistory.push({ 
+                role: "model", 
+                parts: [{ text: `[[CONFIRM_IMAGE_CREATED]] Saya telah berhasil membuatkan gambar dengan deskripsi: "${cleanPrompt}". Gambar tersebut sudah muncul di layar chat di atas.` }],
+                _ui: { 
+                    val: "", 
+                    filesForStorage: [{ name: 'AI_Generated.jpg', size: 'AI', fileId: imgId, mime: mime, isAI: true }] 
+                }
+            });
+            localStorage.setItem('chat_history', JSON.stringify(chatHistory));
+            saveCurrentChatToHistory();
+        } else {
+            throw new Error('Respon tidak mengandung gambar');
+        }
+    } catch (e) {
+        aiBubble.filesElement.innerHTML = `<span class="text-red-500 font-medium">${e.message}</span>`;
+    } finally {
+        sendBtn.disabled = false;
+    }
+}
+
+function renderImageToBubble(targetId, b64, mime) {
+    const el = document.getElementById(targetId);
+    if (!el) return;
+    el.innerHTML = '';
+    
+    const imageUrl = `data:${mime};base64,${b64}`;
+    const wrapper = document.createElement('div');
+    wrapper.className = "mt-1 w-full image-container";
+    wrapper.style.position = "relative";
+    wrapper.style.display = "inline-block";
+
+    wrapper.onclick = function(e) {
+        e.stopPropagation();
+        this.classList.toggle('show-dl');
+    };
+
+    wrapper.innerHTML = `
+        <img src="${imageUrl}" class="w-full h-auto rounded-xl shadow-md border border-gray-100 block">
+        <button class="download-btn" style="position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); border: none; border-radius: 6px; padding: 4px; color: white; cursor: pointer; display: none; align-items: center; justify-content: center; z-index: 10;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M15 11a1 1 0 0 0 1 1h2.939a1 1 0 0 1 .75 1.811l-6.835 6.836a1.207 1.207 0 0 1-1.707 0L4.31 13.81a1 1 0 0 1 .75-1.811H8a1 1 0 0 0 1-1V9a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1z"/>
+                <path d="M9 4h6"/>
+            </svg>
+        </button>
+    `;
+    
+    const btn = wrapper.querySelector('.download-btn');
+    btn.onclick = (e) => {
+        e.stopPropagation();
+        downloadAIImage(imageUrl);
+    };
+    
+    el.appendChild(wrapper);
+    scrollToBottom();
+}
 	
 	// ============================
 	// FUNGSI VIDEO MODE
@@ -1530,117 +1623,155 @@
 	}
 	
 	async function handleVideoGeneration(prompt, imageObj = null) {
-	    const aiBubble = createBubble('assistant', '', [], false, false);
-	    const targetId = 'video_' + Date.now();
-	    aiBubble.textElement.id = targetId;
-	    
-	    aiBubble.textElement.innerHTML = `
-	        <div class="flex items-center gap-2 py-1">
-	            <span id="status-text-${targetId}" class="text-sm font-medium text-gray-500 italic">Membuat video (0s)</span>
-	            <div class="flex items-end mb-1">
-	                <span class="flex leading-none text-gray-400">
-	                    <span style="animation: blink 1.4s infinite both; animation-delay: 0s;">.</span>
-	                    <span style="animation: blink 1.4s infinite both; animation-delay: 0.2s;">.</span>
-	                    <span style="animation: blink 1.4s infinite both; animation-delay: 0.4s;">.</span>
-	                </span>
-	            </div>
-	        </div>
-	    `;
-	
-	    try {
-	        let instance = { prompt: prompt };
-	        if (imageObj) {
-	            instance.image = { bytesBase64Encoded: imageObj.inline_data.data, mimeType: imageObj.inline_data.mime_type };
-	        }
-	
-	        const res = await fetch(`${VEO_PROXY}/api/generate`, {
-	            method: 'POST',
-	            headers: { 'Content-Type': 'application/json' },
-	            body: JSON.stringify({
-	                model: "veo-3.1-generate-preview",
-	                instances: [instance],
-	                parameters: { sampleCount: 1, aspectRatio: "16:9" }
-	            })
-	        });
-	
-	        const data = await res.json();
-	        if (!res.ok) throw new Error(data.error?.message || "Gagal memanggil AI Video.");
-	
-	        startVideoPolling(data.name, targetId);
-	
-	    } catch (e) {
-        aiBubble.textElement.innerHTML = `<span class="text-red-500 font-medium">${e.message}</span>`;
-    	} finally {
-	        sendBtn.disabled = false;
-	    }
-	}
-	
-	function startVideoPolling(fullName, targetId) {
-	    const statusEl = document.getElementById(`status-text-${targetId}`);
-	    let startTime = Date.now();
-	    
-	    const pollInterval = setInterval(async () => {
-	        try {
-	            const elapsed = Math.round((Date.now() - startTime) / 1000);
-	            
-	            if (statusEl) statusEl.innerText = `Membuat video... (${elapsed}s)`;
-	
-	            const res = await fetch(`${VEO_PROXY}/api/status?name=${encodeURIComponent(fullName)}`);
-	            const data = await res.json();
-	
-	            if (data.error) {
-	                const container = document.getElementById(targetId);
-	                container.innerHTML = `<div class="text-red-500 text-xs">Error: ${data.error.message}</div>`;
-	                clearInterval(pollInterval);
-	                return;
-	            }
-	
-	            if (data.done) {
-	                clearInterval(pollInterval);
-	                const videoUri = data.response?.generateVideoResponse?.generatedSamples?.[0]?.video?.uri;
-	                
-	                if (videoUri) {
-	                    if (statusEl) statusEl.innerText = "Video selesai, menyimpan...";
-	                    
-	                    const resp = await fetch(videoUri);
-	                    const blob = await resp.blob();
-	                    const reader = new FileReader();
-	                    
-	                    reader.onloadend = async () => {
-	                        const base64Video = reader.result.split(',')[1];
-	                        const videoId = 'vid_gen_' + Date.now();
-	                        const mime = "video/mp4";
-	
-	                        await saveToLocal(videoId, { 
-	                            mime: mime, base64: base64Video, name: 'AI-Video.mp4', size: formatBytes(blob.size) 
-	                        });
-	
-	                        renderVideoToBubble(targetId, base64Video, mime);
-	
-	                        chatHistory.push({ 
-	                            role: "model", 
-	                            parts: [{ text: `[[CONFIRM_VIDEO_CREATED]] Saya telah berhasil membuatkan video sesuai permintaan terakhir Anda: "${prompt}". Video sudah siap diputar di atas.` }],
-	                            _ui: { 
-	                                val: "", 
-	                                filesForStorage: [{ 
-	                                    name: 'AURA-VIDEO.mp4', size: formatBytes(blob.size), 
-	                                    fileId: videoId, mime: mime, isVideo: true, isAI: true 
-	                                }] 
-	                            }
-	                        });
-	                        localStorage.setItem('chat_history', JSON.stringify(chatHistory));
-	                    };
-	                    reader.readAsDataURL(blob);
-	                } else {
-	                    const container = document.getElementById(targetId);
-	                    container.innerHTML = `<div class="text-yellow-600 text-xs">Render selesai, tapi diblokir filter keamanan.</div>`;
-	                }
-	            }
-	        } catch (e) { 
-	            console.error("Polling error:", e); 
-	        }
-	    }, 5000);
-	}
+    const aiBubble = createBubble('assistant', '', [], false, false);
+    const targetId = 'video_' + Date.now();
+    aiBubble.filesElement.id = targetId;
+    
+    aiBubble.filesElement.innerHTML = `
+        <div class="flex items-center gap-2 py-1 mt-1">
+            <span id="status-text-${targetId}" class="text-sm font-medium text-gray-500 italic">Membuat video (0s)</span>
+            <div class="flex items-end mb-1">
+                <span class="flex leading-none text-gray-400">
+                    <span style="animation: blink 1.4s infinite both; animation-delay: 0s;">.</span>
+                    <span style="animation: blink 1.4s infinite both; animation-delay: 0.2s;">.</span>
+                    <span style="animation: blink 1.4s infinite both; animation-delay: 0.4s;">.</span>
+                </span>
+            </div>
+        </div>
+    `;
+
+    try {
+        let instance = { prompt: prompt };
+        if (imageObj) {
+            instance.image = { bytesBase64Encoded: imageObj.inline_data.data, mimeType: imageObj.inline_data.mime_type };
+        }
+
+        const res = await fetch(`${VEO_PROXY}/api/generate`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                model: "veo-3.1-generate-preview",
+                instances: [instance],
+                parameters: { sampleCount: 1, aspectRatio: "16:9" }
+            })
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error?.message || "Gagal memanggil AI Video.");
+
+        startVideoPolling(data.name, targetId, prompt);
+
+    } catch (e) {
+        aiBubble.filesElement.innerHTML = `<span class="text-red-500 font-medium">${e.message}</span>`;
+    } finally {
+        sendBtn.disabled = false;
+    }
+}
+
+function renderVideoToBubble(targetId, b64, mime) {
+    const el = document.getElementById(targetId);
+    if (!el) return;
+    
+    el.innerHTML = '';
+    
+    const videoUrl = `data:${mime};base64,${b64}`;
+    const wrapper = document.createElement('div');
+    wrapper.className = "mt-1 w-full image-container";
+    wrapper.style.position = "relative";
+    wrapper.style.display = "inline-block";
+    
+    wrapper.onclick = function(e) {
+        e.stopPropagation();
+        this.classList.toggle('show-dl');
+    };
+
+    wrapper.innerHTML = `
+        <video src="${videoUrl}" controls playsinline class="w-full rounded-xl shadow-md border border-gray-100 block"></video>
+        <button class="download-btn" style="position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); border: none; border-radius: 6px; padding: 4px; color: white; cursor: pointer; display: none; align-items: center; justify-content: center; z-index: 20;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M15 11a1 1 0 0 0 1 1h2.939a1 1 0 0 1 .75 1.811l-6.835 6.836a1.207 1.207 0 0 1-1.707 0L4.31 13.81a1 1 0 0 1 .75-1.811H8a1 1 0 0 0 1-1V9a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1z"/>
+                <path d="M9 4h6"/>
+            </svg>
+        </button>
+    `;
+    
+    const btn = wrapper.querySelector('.download-btn');
+    btn.onclick = (e) => {
+        e.stopPropagation();
+        downloadAIImage(videoUrl);
+    };
+    
+    el.appendChild(wrapper);
+    scrollToBottom();
+}
+
+function startVideoPolling(fullName, targetId, videoPrompt) {
+    const statusEl = document.getElementById(`status-text-${targetId}`);
+    let startTime = Date.now();
+    
+    const pollInterval = setInterval(async () => {
+        try {
+            const elapsed = Math.round((Date.now() - startTime) / 1000);
+            
+            if (statusEl) statusEl.innerText = `Membuat video (${elapsed}s)`;
+
+            const res = await fetch(`${VEO_PROXY}/api/status?name=${encodeURIComponent(fullName)}`);
+            const data = await res.json();
+
+            if (data.error) {
+                const container = document.getElementById(targetId);
+                container.innerHTML = `<div class="text-red-500 text-xs">Error: ${data.error.message}</div>`;
+                clearInterval(pollInterval);
+                return;
+            }
+
+            if (data.done) {
+                clearInterval(pollInterval);
+                const videoUri = data.response?.generateVideoResponse?.generatedSamples?.[0]?.video?.uri;
+                
+                if (videoUri) {
+                    if (statusEl) statusEl.innerText = "Video selesai, menyimpan...";
+                    
+                    const resp = await fetch(videoUri);
+                    const blob = await resp.blob();
+                    const reader = new FileReader();
+                    
+                    reader.onloadend = async () => {
+                        const base64Video = reader.result.split(',')[1];
+                        const videoId = 'vid_gen_' + Date.now();
+                        const mime = "video/mp4";
+
+                        await saveToLocal(videoId, { 
+                            mime: mime, base64: base64Video, name: 'AI-Video.mp4', size: formatBytes(blob.size) 
+                        });
+
+                        renderVideoToBubble(targetId, base64Video, mime);
+
+                        chatHistory.push({ 
+                            role: "model", 
+                            parts: [{ text: `[[CONFIRM_VIDEO_CREATED]] Saya telah berhasil membuatkan video sesuai permintaan terakhir Anda: "${videoPrompt}". Video sudah siap diputar di atas.` }],
+                            _ui: { 
+                                val: "", 
+                                filesForStorage: [{ 
+                                    name: 'AURA-VIDEO.mp4', size: formatBytes(blob.size), 
+                                    fileId: videoId, mime: mime, isVideo: true, isAI: true 
+                                }] 
+                            }
+                        });
+                        localStorage.setItem('chat_history', JSON.stringify(chatHistory));
+                        saveCurrentChatToHistory();
+                    };
+                    reader.readAsDataURL(blob);
+                } else {
+                    const container = document.getElementById(targetId);
+                    container.innerHTML = `<div class="text-yellow-600 text-xs">Render selesai, tapi diblokir filter keamanan.</div>`;
+                }
+            }
+        } catch (e) { 
+            console.error("Polling error:", e); 
+        }
+    }, 5000);
+}
 	
 	// ============================
 	// FUNGSI VOICE MODE
@@ -1742,55 +1873,65 @@
 	        closeVoiceMode();
 	    }
 	}
-	
+
 	async function initVoiceAudio() {
 	    voiceInCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 16000 });
 	    voiceOutCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 24000 });
 	    
 	    aiAnalyser = voiceOutCtx.createAnalyser();
 	    aiAnalyser.fftSize = 1024;
+	    aiAnalyser.connect(voiceOutCtx.destination);
 	    
-	    voiceStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-	    const source = voiceInCtx.createMediaStreamSource(voiceStream);
-	    
-	    voiceAnalyser = voiceInCtx.createAnalyser();
-	    voiceAnalyser.fftSize = 1024;
-	    voiceDataArray = new Uint8Array(voiceAnalyser.frequencyBinCount);
-	    source.connect(voiceAnalyser);
+	    try {
+	        voiceStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+	        const source = voiceInCtx.createMediaStreamSource(voiceStream);
+	        
+	        voiceAnalyser = voiceInCtx.createAnalyser();
+	        voiceAnalyser.fftSize = 1024;
+	        voiceDataArray = new Uint8Array(voiceAnalyser.frequencyBinCount);
+	        source.connect(voiceAnalyser);
 	
-	    await voiceInCtx.audioWorklet.addModule('data:application/javascript,' + encodeURIComponent(`
-	        class P extends AudioWorkletProcessor {
-	            process(inputs) { if (inputs[0][0]) this.port.postMessage(inputs[0][0]); return true; }
-	        }; registerProcessor('p', P);`));
+	        await voiceInCtx.audioWorklet.addModule('data:application/javascript,' + encodeURIComponent(`
+	            class P extends AudioWorkletProcessor {
+	                process(inputs) { if (inputs[0][0]) this.port.postMessage(inputs[0][0]); return true; }
+	            }; registerProcessor('p', P);`));
 	
-	    const node = new AudioWorkletNode(voiceInCtx, 'p');
-	    node.port.onmessage = (e) => {
-	        if (voiceWs && voiceWs.readyState === WebSocket.OPEN) {
-	            let sum = 0;
-	            for (let i = 0; i < e.data.length; i++) sum += Math.abs(e.data[i]);
-	            let energy = sum / e.data.length;
+	        const node = new AudioWorkletNode(voiceInCtx, 'p');
+	        node.port.onmessage = (e) => {
+	            if (voiceWs && voiceWs.readyState === WebSocket.OPEN) {
+	                let sum = 0;
+	                for (let i = 0; i < e.data.length; i++) sum += Math.abs(e.data[i]);
+	                let energy = sum / e.data.length;
 	
-	            if (energy > 0.01 && voiceInterrupted) {
-	                voiceInterrupted = false;
-	                voiceSessionId++; 
-	            }
-	
-	            if (!isAISpeaking && !voiceInterrupted) {
-	                const int16 = new Int16Array(e.data.length);
-	                for (let i = 0; i < e.data.length; i++) {
-	                    int16[i] = Math.max(-1, Math.min(1, e.data[i])) * 0x7FFF;
-	                }
-	                voiceWs.send(JSON.stringify({
-	                    type: 'audio',
-	                    data: {
-	                        data: btoa(String.fromCharCode(...new Uint8Array(int16.buffer))),
-	                        mimeType: 'audio/pcm;rate=16000'
+	                // Auto-interrupt jika user bicara saat AI bersuara
+	                if (isAISpeaking && energy > 0.02) {
+	                    energyCounter++;
+	                    if (energyCounter > 5) {
+	                        interruptVoice();
+	                        energyCounter = 0;
 	                    }
-	                }));
+	                } else { energyCounter = 0; }
+	
+	                if (energy > 0.01 && voiceInterrupted) {
+	                    voiceInterrupted = false;
+	                    voiceSessionId++; 
+	                }
+	
+	                if (!voiceInterrupted && !isAISpeaking) {
+	                    const int16 = new Int16Array(e.data.length);
+	                    for (let i = 0; i < e.data.length; i++) int16[i] = e.data[i] * 0x7FFF;
+	                    voiceWs.send(JSON.stringify({ 
+	                        type: 'audio', 
+	                        data: { 
+	                            data: btoa(String.fromCharCode(...new Uint8Array(int16.buffer))), 
+	                            mimeType: 'audio/pcm;rate=16000' 
+	                        } 
+	                    }));
+	                }
 	            }
-	        }
-	    };
-	    source.connect(node);
+	        };
+	        source.connect(node);
+	    } catch (err) { console.error(err); }
 	}
 	
 	function playVoiceAudio(base64, sid) {
@@ -1800,6 +1941,7 @@
 	    const bytes = new Uint8Array(binary.length);
 	    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
 	    const int16 = new Int16Array(bytes.buffer);
+	    
 	    const buf = voiceOutCtx.createBuffer(1, int16.length, 24000);
 	    const data = buf.getChannelData(0);
 	    for (let i = 0; i < int16.length; i++) data[i] = int16[i] / 32768.0;
@@ -1807,7 +1949,6 @@
 	    const source = voiceOutCtx.createBufferSource();
 	    source.buffer = buf;
 	    source.connect(aiAnalyser);
-	    source.connect(voiceOutCtx.destination);
 	    
 	    const now = voiceOutCtx.currentTime;
 	    if (voiceNextTime < now) voiceNextTime = now;
@@ -1818,14 +1959,13 @@
 	
 	    source.onended = () => { 
 	        activeVoiceSources = activeVoiceSources.filter(s => s !== source);
-	        if (voiceOutCtx.currentTime >= voiceNextTime - 0.1) isAISpeaking = false;
+	        if (voiceOutCtx.currentTime >= voiceNextTime - 0.1) isAISpeaking = false; 
 	    };
 	}
-	
+
 	function interruptVoice() {
 	    voiceInterrupted = true;
 	    isAISpeaking = false;
-	    voiceFirstChunk = true;
 	    voiceSessionId++;
 	
 	    activeVoiceSources.forEach(source => {
@@ -1916,25 +2056,55 @@
 	}
 	
 	async function toggleVoiceCamera() {
-		const btn = document.getElementById('btn-voice-cam');
-		const largeVid = document.getElementById('voice-large-video');
-		const voiceCanvas = document.getElementById('voice-canvas');
-	
-		if (!isVoiceCamOn) {
-			try {
-				voiceCamStream = await navigator.mediaDevices.getUserMedia({
-					video: { facingMode: facingMode, width: { ideal: 1280 }, height: { ideal: 720 } }
-				});
-				largeVid.srcObject = voiceCamStream;
-				document.getElementById('voice-hidden-video').srcObject = voiceCamStream;
-				voiceCanvas.style.display = 'none';
-				largeVid.classList.remove('hidden');
-				isVoiceCamOn = true;
-				btn.classList.replace('text-gray-300', 'text-blue-600');
-				if (voiceCamInterval) clearInterval(voiceCamInterval);
-				voiceCamInterval = setInterval(sendVoiceFrame, 1000);
-			} catch (e) { alert("Gagal kamera: " + e.message); }
-		} else { stopVoiceCamera(); }
+    const btn = document.getElementById('btn-voice-cam');
+    const video = document.getElementById('voice-large-video');
+    const canvas = document.getElementById('voice-canvas');
+
+    if (!isVoiceCamOn) {
+        try {
+            voiceCamStream = await navigator.mediaDevices.getUserMedia({
+                video: { 
+                    facingMode: facingMode, 
+                    width: { ideal: 640 }, // Diperkecil agar upload lebih cepat
+                    height: { ideal: 360 } 
+                }
+            });
+            video.srcObject = voiceCamStream;
+            canvas.style.display = 'none';
+            video.classList.remove('hidden');
+            isVoiceCamOn = true;
+            btn.classList.replace('text-gray-300', 'text-blue-600');
+            
+            // Interval pengiriman frame
+            if (voiceCamInterval) clearInterval(voiceCamInterval);
+            voiceCamInterval = setInterval(sendVoiceFrame, 1000);
+        } catch (e) { alert("Gagal akses kamera: " + e.message); }
+    } else { 
+        stopVoiceCamera(); 
+    }
+}
+
+	function sendVoiceFrame() {
+	    if (voiceWs && voiceWs.readyState === WebSocket.OPEN && isVoiceCamOn) {
+	        const video = document.getElementById('voice-large-video');
+	        const canvas = document.getElementById('voice-frame-canvas');
+	        const ctx = canvas.getContext('2d');
+	        
+	        if (video.videoWidth > 0) {
+	            // Set ukuran canvas hanya jika berbeda (lebih efisien)
+	            if (canvas.width !== 320) {
+	                canvas.width = 320; 
+	                canvas.height = (video.videoHeight / video.videoWidth) * 320;
+	            }
+	            
+	            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+	            const base64 = canvas.toDataURL('image/jpeg', 0.5).split(',')[1];
+	            voiceWs.send(JSON.stringify({ 
+	                type: 'image', 
+	                data: { mimeType: "image/jpeg", data: base64 } 
+	            }));
+	        }
+	    }
 	}
 	
 	function stopVoiceCamera() {
@@ -1948,20 +2118,7 @@
 		const btn = document.getElementById('btn-voice-cam');
 		btn.classList.replace('text-blue-600', 'text-slate-300');
 	}
-	
-	function sendVoiceFrame() {
-		if (voiceWs && voiceWs.readyState === WebSocket.OPEN && isVoiceCamOn) {
-			const vid = document.getElementById('voice-large-video');
-			const canvas = document.getElementById('voice-frame-canvas');
-			if (vid.videoWidth > 0) {
-				canvas.width = vid.videoWidth; canvas.height = vid.videoHeight;
-				canvas.getContext('2d').drawImage(vid, 0, 0);
-				const base64 = canvas.toDataURL('image/jpeg', 0.5).split(',')[1];
-				voiceWs.send(JSON.stringify({ type: 'image', data: { mimeType: "image/jpeg", data: base64 } }));
-			}
-		}
-	}
-	
+		
 	function closeVoiceMode() {
 	    const overlay = document.getElementById('voice-overlay');
 	    
@@ -2022,80 +2179,6 @@
 	// ============================
 	// FUNGSI RENDER MEDIA
 	// ============================
-	
-	function renderImageToBubble(targetId, b64, mime) {
-	    const el = document.getElementById(targetId);
-	    if (!el) return;
-	    el.innerHTML = '';
-	    
-	    const imageUrl = `data:${mime};base64,${b64}`;
-	    const wrapper = document.createElement('div');
-	    wrapper.className = "mt-2 w-full image-container";
-	    wrapper.style.position = "relative";
-	    wrapper.style.display = "inline-block";
-	
-	    wrapper.onclick = function(e) {
-	        e.stopPropagation();
-	        this.classList.toggle('show-dl');
-	    };
-	
-	    wrapper.innerHTML = `
-	        <img src="${imageUrl}" class="w-full h-auto rounded-xl shadow-md border border-gray-100 block">
-	        <button class="download-btn" style="position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); border: none; border-radius: 6px; padding: 4px; color: white; cursor: pointer; display: none; align-items: center; justify-content: center; z-index: 10;">
-	            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-	                <path d="M15 11a1 1 0 0 0 1 1h2.939a1 1 0 0 1 .75 1.811l-6.835 6.836a1.207 1.207 0 0 1-1.707 0L4.31 13.81a1 1 0 0 1 .75-1.811H8a1 1 0 0 0 1-1V9a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1z"/>
-	                <path d="M9 4h6"/>
-	            </svg>
-	        </button>
-	    `;
-	    
-	    const btn = wrapper.querySelector('.download-btn');
-	    btn.onclick = (e) => {
-	        e.stopPropagation();
-	        downloadAIImage(imageUrl);
-	    };
-	    
-	    el.appendChild(wrapper);
-	    scrollToBottom();
-	}
-	
-	function renderVideoToBubble(targetId, b64, mime) {
-	    const el = document.getElementById(targetId);
-	    if (!el) return;
-	    
-	    const container = el.closest('.ai-image-container') || el;
-	    container.innerHTML = '';
-	    
-	    const videoUrl = `data:${mime};base64,${b64}`;
-	    const wrapper = document.createElement('div');
-	    wrapper.className = "mt-2 w-full image-container";
-	    wrapper.style.position = "relative";
-	    wrapper.style.display = "inline-block";
-	    
-	    wrapper.onclick = function(e) {
-	        e.stopPropagation();
-	        this.classList.toggle('show-dl');
-	    };
-	
-	    wrapper.innerHTML = `
-	        <video src="${videoUrl}" controls playsinline class="w-full rounded-xl shadow-md border border-gray-100 block"></video>
-	        <button class="download-btn" style="position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); border: none; border-radius: 6px; padding: 4px; color: white; cursor: pointer; display: none; align-items: center; justify-content: center; z-index: 20;">
-	            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-	                <path d="M15 11a1 1 0 0 0 1 1h2.939a1 1 0 0 1 .75 1.811l-6.835 6.836a1.207 1.207 0 0 1-1.707 0L4.31 13.81a1 1 0 0 1 .75-1.811H8a1 1 0 0 0 1-1V9a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1z"/>
-	                <path d="M9 4h6"/>
-	            </svg>
-	        </button>
-	    `;
-	    
-	    const btn = wrapper.querySelector('.download-btn');
-	    btn.onclick = (e) => {
-	        e.stopPropagation();
-	        downloadAIImage(videoUrl);
-	    };
-	    
-	    container.appendChild(wrapper);
-	    scrollToBottom();
-	}
 	
 	async function downloadAIImage(url) {
 	    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
@@ -2195,226 +2278,265 @@
 	// ===================== //
 	
 	function initUI() {
-    const modelLabels = {
-        'gemini-3-flash-preview': 'Gemini 3 Flash',
-        'gemini-3-pro-preview': 'Gemini 3 Pro',
-        'gemini-3-deep-think-preview': 'Gemini 3 Deep Think'
-    };
-    
-    selectedModelText.innerText = modelLabels[currentModel] || 'Gemini 3 Flash';
-    settingsPrompt.value = systemPrompt;
-    
-    const thinkingRevMap = { "LOW": "1", "MEDIUM": "2", "HIGH": "3" };
-    settingsThinking.value = thinkingRevMap[currentThinking] || "2";
-    settingsTokens.value = maxTokens;
-    
-    updateSliderLabels();
-    
-    if (allChats[currentChatId]) {
-        chatHistory = allChats[currentChatId].history || [];
-    } else {
-        chatHistory = [];
-    }
-    
-    loadSavedChat();
-    lucide.createIcons();
-    document.getElementById('selected-voice-text').innerText = currentVoice;
-	document.getElementById('switch-image').checked = localStorage.getItem('enable_image') !== 'false';
-    document.getElementById('switch-video').checked = localStorage.getItem('enable_video') !== 'false';
-    document.getElementById('switch-voice').checked = localStorage.getItem('enable_voice') !== 'false';
-	document.getElementById('switch-upload').checked = localStorage.getItem('enable_upload') !== 'false';
-    
-    updateMainButtonsUI();
+	    const modelLabels = {
+	        'gemini-3-flash-preview': 'Gemini 3 Flash',
+	        'gemini-3-pro-preview': 'Gemini 3 Pro',
+	        'gemini-3-deep-think-preview': 'Gemini 3 Deep Think'
+	    };
+	    
+	    selectedModelText.innerText = modelLabels[currentModel] || 'Gemini 3 Flash';
+	    settingsPrompt.value = systemPrompt;
+	    
+	    const thinkingRevMap = { "LOW": "1", "MEDIUM": "2", "HIGH": "3" };
+	    settingsThinking.value = thinkingRevMap[currentThinking] || "2";
+	    settingsTokens.value = maxTokens;
+	    
+	    updateSliderLabels();
+	    
+	    if (allChats[currentChatId]) {
+	        chatHistory = allChats[currentChatId].history || [];
+	    } else {
+	        chatHistory = [];
+	    }
+	    
+	    loadSavedChat();
+	    lucide.createIcons();
+	    document.getElementById('selected-voice-text').innerText = currentVoice;
+		document.getElementById('switch-image').checked = localStorage.getItem('enable_image') !== 'false';
+	    document.getElementById('switch-video').checked = localStorage.getItem('enable_video') !== 'false';
+	    document.getElementById('switch-voice').checked = localStorage.getItem('enable_voice') !== 'false';
+		document.getElementById('switch-upload').checked = localStorage.getItem('enable_upload') !== 'false';
+	    
+	    updateMainButtonsUI();
+		
+	}
 	
-}
+	function updateMainButtonsUI() {
+	    const imgE = localStorage.getItem('enable_image') !== 'false';
+	    const vidE = localStorage.getItem('enable_video') !== 'false';
+	    const voiE = localStorage.getItem('enable_voice') !== 'false';
+	    const uplE = localStorage.getItem('enable_upload') !== 'false';
+	
+	    document.getElementById('btn-mode-image').style.opacity = imgE ? '1' : '0.3';
+	    document.getElementById('btn-mode-video').style.opacity = vidE ? '1' : '0.3';
+	    document.getElementById('btn-mode-voice').style.opacity = voiE ? '1' : '0.3';
+	    
+	    const btnUpload = document.querySelector('button[onclick*="file-input"]');
+	    if (btnUpload) btnUpload.style.opacity = uplE ? '1' : '0.3';
+	}
+	
+	async function deleteCurrentChat() {
+	    if (confirm('Hapus percakapan ini secara permanen?')) {
+	        delete allChats[currentChatId];
+	        localStorage.setItem('all_chats', JSON.stringify(allChats));
+	        await clearLocalDB();
+	        createNewChat();
+	    }
+	}
+	
+	async function onSend(e) {
+	    if (e) e.preventDefault();
+	    if (!originalSendBtnContent) originalSendBtnContent = sendBtn.innerHTML;
+	    if (isGenerating) { isGenerating = false; return; }
+	
+	    const val = input.value.trim();
+	    if (!val && pendingFiles.length === 0) return;
+	
+	    const setButtonState = (state) => {
+	        if (state === 'loading') {
+	            sendBtn.innerHTML = originalSendBtnContent; 
+	            sendBtn.disabled = true; 
+	            isGenerating = false;
+	        } else if (state === 'streaming') {
+	            sendBtn.innerHTML = `<i data-lucide="square" class="w-5 h-5 fill-current text-red-500"></i>`;
+	            sendBtn.disabled = false; 
+	            isGenerating = true;
+	        } else {
+	            sendBtn.innerHTML = originalSendBtnContent;
+	            sendBtn.disabled = false;
+	            isGenerating = false;
+	        }
+	        if (window.lucide) lucide.createIcons();
+	    };
+	
+	    try {
+	        setButtonState('loading');
+	
+	        if (isVideoMode) {
+	            if (!val) throw new Error("Deskripsi video kosong.");
+	            createBubble('user', val, pendingFiles.map(f => ({ ...f })));
+	            let imgObj = null;
+	            if (pendingFiles.length > 0) {
+	                const firstImg = pendingFiles.find(f => f.mime && f.mime.startsWith('image/'));
+	                if (firstImg) imgObj = { inline_data: { mime_type: firstImg.mime, data: firstImg.base64 } };
+	            }
+	            input.value = ''; adjustInput(input); pendingFiles = []; renderPreviews();
+	            await handleVideoGeneration(val, imgObj);
+	            toggleVideoMode(); setButtonState('idle'); return;
+	        }
+	
+	        if (isImageMode) {
+	            createBubble('user', val || "Memproses gambar...", pendingFiles.map(f => ({ ...f })));
+	            let imgObj = null;
+	            if (pendingFiles.length > 0) {
+	                const firstImg = pendingFiles.find(f => f.mime && f.mime.startsWith('image/'));
+	                if (firstImg) imgObj = { inline_data: { mime_type: firstImg.mime, data: firstImg.base64 } };
+	            }
+	            input.value = ''; adjustInput(input); pendingFiles = []; renderPreviews();
+	            await handleImageGeneration((pendingFiles.length > 0 ? '/edit ' : '/gambar ') + val, imgObj);
+	            toggleImageMode(); setButtonState('idle'); return;
+	        }
+	
+	        const { filesForUI, filesForStorage, apiParts, officeTextContext } = await processPendingFiles();
+	        createBubble('user', val, filesForUI);
+	        
+	        chatHistory.push({ 
+	            role: "user", 
+	            parts: [{ text: val || "Analisis lampiran ini." }], 
+	            _ui: { val, filesForStorage } 
+	        });
+	        
+	        saveCurrentChatToHistory();
+	
+	        const currentTurnText = (val || "Analisis lampiran ini.") + (officeTextContext ? "\n\nKONTEKS DOKUMEN:\n" + officeTextContext : "");
+	        input.value = ''; adjustInput(input); pendingFiles = []; renderPreviews();
+	
+	        const aiBubble = createBubble('assistant', '', [], false, true);
+	        const endpoint = `${SUPABASE_URL}/functions/v1/ai-proxy-v2?model=${currentModel}&action=generateContent&version=v1beta`;
+	        const cleanContents = chatHistory.map(h => ({ role: h.role, parts: h.parts }));
+	        cleanContents[cleanContents.length - 1].parts = [...apiParts, { text: currentTurnText }];
+	
+	        const response = await fetch(endpoint, {
+	            method: 'POST',
+	            headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` },
+	            body: JSON.stringify({ 
+	                contents: cleanContents, 
+	                systemInstruction: { parts: [{ text: systemPrompt + "\n\n" + PERMANENT_PROMPT }] },
+	                generationConfig: { temperature: 1, maxOutputTokens: maxTokens, response_modalities: ["TEXT"] },
+	                tools: [{ google_search: {} }] 
+	            })
+	        });
+	
+	        const data = await response.json();
+	        const parts = data.candidates?.[0]?.content?.parts || [];
+	        if (aiBubble.typingElement) { aiBubble.typingElement.remove(); aiBubble.typingElement = null; }
+	
+	        let fullAIResponse = "";
+	        parts.forEach(p => { if(p.text) fullAIResponse += p.text; });
+	
+	        let displayChatText = fullAIResponse;
+	        let pptMaterial = null;
+	        let wordMaterial = null;
+	
+	        const pptRegex = /\[PPT\]([\s\S]*?)\[\/PPT\]/;
+	        const wordRegex = /\[WORD\]([\s\S]*?)\[\/WORD\]/;
+	        
+	        const pptMatch = fullAIResponse.match(pptRegex);
+	        const wordMatch = fullAIResponse.match(wordRegex);
+	
+	        if (pptMatch) {
+	            pptMaterial = pptMatch[1].trim();
+	            displayChatText = displayChatText.replace(pptRegex, "").trim();
+	        }
+	        
+	        if (wordMatch) {
+	            wordMaterial = wordMatch[1].trim();
+	            displayChatText = displayChatText.replace(wordRegex, "").trim();
+	        }
+	
+	        if (!displayChatText) {
+	            if (pptMaterial) displayChatText = "Baik, saya sedang menyusun file PowerPoint untuk Anda...";
+	            if (wordMaterial) displayChatText = "Baik, saya sedang memproses dokumen SPT Anda...";
+	        }
+	
+	        let finalSavedText = "";
+	        let aiFilesForStorage = []; 
+	
+	        if (displayChatText || pptMaterial || wordMaterial) {
+	            setButtonState('streaming');
+	            
+	            if (displayChatText) finalSavedText = await streamText(aiBubble.textElement, displayChatText);
+	
+	            if (pptMaterial) {
+	                const statusDiv = document.createElement('div');
+	                statusDiv.className = "typing-indicator flex items-center gap-1.5 text-gray-500 mt-1";
+	                
+	                statusDiv.innerHTML = `
+	                    <span class="text-sm font-bold italic">Membuat PowerPoint</span>
+	                    <span class="flex leading-none mb-0.5 ml-0.5">
+	                        <span style="animation: blink 1.4s infinite both; animation-delay: 0s;">.</span>
+	                        <span style="animation: blink 1.4s infinite both; animation-delay: 0.2s;">.</span>
+	                        <span style="animation: blink 1.4s infinite both; animation-delay: 0.4s;">.</span>
+	                    </span>`;
+	                aiBubble.textElement.appendChild(statusDiv);
+	                scrollToBottom();
+	
+	                const pptFileData = await handlePowerPoint(pptMaterial);
+	                statusDiv.remove();
+	
+	                if (pptFileData) {
+	                    aiFilesForStorage.push(pptFileData);
+	                    renderFileCard(aiBubble.filesElement, pptFileData, "icon/ppt-file-icon.svg");
+	                }
+	            }
+	
+	            if (wordMaterial) {
+	                const statusDiv = document.createElement('div');
+	                statusDiv.className = "typing-indicator flex items-center gap-1.5 text-gray-500 mt-1";
+	                
+	                statusDiv.innerHTML = `
+	                    <span class="text-sm font-bold italic">Membuat Dokumen SPT</span>
+	                    <span class="flex leading-none mb-0.5 ml-0.5">
+	                        <span style="animation: blink 1.4s infinite both; animation-delay: 0s;">.</span>
+	                        <span style="animation: blink 1.4s infinite both; animation-delay: 0.2s;">.</span>
+	                        <span style="animation: blink 1.4s infinite both; animation-delay: 0.4s;">.</span>
+	                    </span>`;
+	                aiBubble.textElement.appendChild(statusDiv);
+	                scrollToBottom();
+	
+	                const docFileData = await handleWordDocument(wordMaterial);
+	                statusDiv.remove();
+	
+	                if (docFileData) {
+	                    aiFilesForStorage.push(docFileData);
+	                    renderFileCard(aiBubble.filesElement, docFileData, "icon/docx-file-icon.svg");
+	                }
+	            }
+	        }
 
-function updateMainButtonsUI() {
-    const imgE = localStorage.getItem('enable_image') !== 'false';
-    const vidE = localStorage.getItem('enable_video') !== 'false';
-    const voiE = localStorage.getItem('enable_voice') !== 'false';
-    const uplE = localStorage.getItem('enable_upload') !== 'false';
+	        if (finalSavedText || aiFilesForStorage.length > 0) {
+	            chatHistory.push({ 
+	                role: "model", 
+	                parts: [{ text: finalSavedText }],
+	                _ui: { val: displayChatText, filesForStorage: aiFilesForStorage } 
+	            });
+	            saveCurrentChatToHistory();
+	        }
+	
+	    } catch (err) {
+	        createBubble('assistant', `<span class="text-red-500">${err.message}</span>`);
+	    } finally { setButtonState('idle'); scrollToBottom(); }
+	}
 
-    document.getElementById('btn-mode-image').style.opacity = imgE ? '1' : '0.3';
-    document.getElementById('btn-mode-video').style.opacity = vidE ? '1' : '0.3';
-    document.getElementById('btn-mode-voice').style.opacity = voiE ? '1' : '0.3';
-    
-    const btnUpload = document.querySelector('button[onclick*="file-input"]');
-    if (btnUpload) btnUpload.style.opacity = uplE ? '1' : '0.3';
-}
-
-async function deleteCurrentChat() {
-    if (confirm('Hapus percakapan ini secara permanen?')) {
-        delete allChats[currentChatId];
-        localStorage.setItem('all_chats', JSON.stringify(allChats));
-        await clearLocalDB();
-        createNewChat();
+	function renderFileCard(container, fileData, iconPath) {
+    let grid = container.querySelector('.file-grid-container');
+    if (!grid) {
+        container.innerHTML = '<div class="grid grid-cols-2 md:grid-cols-4 gap-2 mt-2 file-grid-container"></div>';
+        grid = container.querySelector('.file-grid-container');
     }
-}
-
-async function onSend(e) {
-    if (e) e.preventDefault();
-    if (!originalSendBtnContent) originalSendBtnContent = sendBtn.innerHTML;
-    if (isGenerating) { isGenerating = false; return; }
-
-    const val = input.value.trim();
-    if (!val && pendingFiles.length === 0) return;
-
-    const setButtonState = (state) => {
-        if (state === 'loading') {
-            sendBtn.innerHTML = originalSendBtnContent; 
-            sendBtn.disabled = true; 
-            isGenerating = false;
-        } else if (state === 'streaming') {
-            sendBtn.innerHTML = `<i data-lucide="square" class="w-5 h-5 fill-current text-red-500"></i>`;
-            sendBtn.disabled = false; 
-            isGenerating = true;
-        } else {
-            sendBtn.innerHTML = originalSendBtnContent;
-            sendBtn.disabled = false;
-            isGenerating = false;
-        }
-        if (window.lucide) lucide.createIcons();
-    };
-
-    try {
-        setButtonState('loading');
-
-        if (isVideoMode) {
-            if (!val) throw new Error("Deskripsi video kosong.");
-            createBubble('user', val, pendingFiles.map(f => ({ ...f })));
-            let imgObj = null;
-            if (pendingFiles.length > 0) {
-                const firstImg = pendingFiles.find(f => f.mime && f.mime.startsWith('image/'));
-                if (firstImg) imgObj = { inline_data: { mime_type: firstImg.mime, data: firstImg.base64 } };
-            }
-            input.value = ''; adjustInput(input); pendingFiles = []; renderPreviews();
-            await handleVideoGeneration(val, imgObj);
-            toggleVideoMode(); setButtonState('idle'); return;
-        }
-
-        if (isImageMode) {
-            createBubble('user', val || "Memproses gambar...", pendingFiles.map(f => ({ ...f })));
-            let imgObj = null;
-            if (pendingFiles.length > 0) {
-                const firstImg = pendingFiles.find(f => f.mime && f.mime.startsWith('image/'));
-                if (firstImg) imgObj = { inline_data: { mime_type: firstImg.mime, data: firstImg.base64 } };
-            }
-            input.value = ''; adjustInput(input); pendingFiles = []; renderPreviews();
-            await handleImageGeneration((pendingFiles.length > 0 ? '/edit ' : '/gambar ') + val, imgObj);
-            toggleImageMode(); setButtonState('idle'); return;
-        }
-
-        const { filesForUI, filesForStorage, apiParts, officeTextContext } = await processPendingFiles();
-        createBubble('user', val, filesForUI);
-        
-        chatHistory.push({ 
-            role: "user", 
-            parts: [{ text: val || "Analisis lampiran ini." }], 
-            _ui: { val, filesForStorage } 
-        });
-        
-        saveCurrentChatToHistory();
-
-        const currentTurnText = (val || "Analisis lampiran ini.") + (officeTextContext ? "\n\nKONTEKS DOKUMEN:\n" + officeTextContext : "");
-        input.value = ''; adjustInput(input); pendingFiles = []; renderPreviews();
-
-        const aiBubble = createBubble('assistant', '', [], false, true);
-        const endpoint = `${SUPABASE_URL}/functions/v1/ai-proxy-v2?model=${currentModel}&action=generateContent&version=v1beta`;
-        const cleanContents = chatHistory.map(h => ({ role: h.role, parts: h.parts }));
-        cleanContents[cleanContents.length - 1].parts = [...apiParts, { text: currentTurnText }];
-
-        const response = await fetch(endpoint, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` },
-            body: JSON.stringify({ 
-                contents: cleanContents, 
-                systemInstruction: { parts: [{ text: systemPrompt + "\n\n" + PERMANENT_PROMPT }] },
-                generationConfig: { temperature: 1, maxOutputTokens: maxTokens, response_modalities: ["TEXT"] },
-                tools: [{ google_search: {} }] 
-            })
-        });
-
-        const data = await response.json();
-        const parts = data.candidates?.[0]?.content?.parts || [];
-        if (aiBubble.typingElement) { aiBubble.typingElement.remove(); aiBubble.typingElement = null; }
-
-        let fullAIResponse = "";
-        parts.forEach(p => { if(p.text) fullAIResponse += p.text; });
-
-        let displayChatText = fullAIResponse;
-        let pptMaterial = null;
-
-        const pptRegex = /\[PPT\]([\s\S]*?)\[\/PPT\]/;
-        const match = fullAIResponse.match(pptRegex);
-
-        if (match) {
-            pptMaterial = match[1].trim();
-            displayChatText = fullAIResponse.replace(pptRegex, "").trim();
-        }
-
-        if (!displayChatText && pptMaterial) {
-            displayChatText = "Baik, saya sedang menyusun file PowerPoint untuk Anda...";
-        }
-
-        let finalSavedText = "";
-        let aiFilesForStorage = []; 
-
-        if (displayChatText || pptMaterial) {
-            setButtonState('streaming');
-            if (displayChatText) finalSavedText = await streamText(aiBubble.textElement, displayChatText);
-
-            if (pptMaterial) {
-                const statusDiv = document.createElement('div');
-                statusDiv.className = "typing-indicator flex items-center gap-1.5 py-2 text-gray-500";
-                statusDiv.innerHTML = `
-                    <span class="text-sm font-bold italic">Membuat PowerPoint</span>
-                    <span class="flex leading-none mb-0.5">
-                        <span style="animation: blink 1.4s infinite both; animation-delay: 0s;">.</span>
-                        <span style="animation: blink 1.4s infinite both; animation-delay: 0.2s;">.</span>
-                        <span style="animation: blink 1.4s infinite both; animation-delay: 0.4s;">.</span>
-                    </span>`;
-                aiBubble.textElement.appendChild(statusDiv);
-                scrollToBottom();
-
-                const pptFileData = await handlePowerPoint(pptMaterial);
-                statusDiv.remove();
-
-                if (pptFileData) {
-                    aiFilesForStorage.push(pptFileData);
-                    let grid = aiBubble.filesElement.querySelector('.file-grid-container');
-                    if (!grid) {
-                        aiBubble.filesElement.innerHTML = '<div class="grid grid-cols-2 md:grid-cols-4 gap-2 mt-3 file-grid-container"></div>';
-                        grid = aiBubble.filesElement.querySelector('.file-grid-container');
-                    }
-                    const card = document.createElement('div');
-                    card.onclick = () => downloadFile(pptFileData.fileId);
-                    card.className = "cursor-pointer active:scale-95 transition-all bg-gray-200 rounded-2xl p-3 flex items-center gap-2 relative w-full min-h-[64px] border-none shadow-sm";
-                    card.innerHTML = `
-                        <div class="w-10 h-10 flex-none flex items-center justify-center overflow-hidden shrink-0">
-                            <img src="icon/ppt-file-icon.svg" class="w-7 h-7 object-contain">
-                        </div>
-                        <div class="flex-1 flex flex-col justify-center min-w-0 h-10">
-                            <div class="text-[13px] font-bold text-gray-700 truncate leading-none mb-1">${pptFileData.name}</div>
-                            <div class="text-[11px] text-gray-400 font-medium leading-none">${pptFileData.size}</div>
-                        </div>`;
-                    grid.appendChild(card);
-                    scrollToBottom();
-                }
-            }
-        }
-
-        if (finalSavedText || aiFilesForStorage.length > 0) {
-            chatHistory.push({ 
-                role: "model", 
-                parts: [{ text: finalSavedText }],
-                _ui: { val: displayChatText, filesForStorage: aiFilesForStorage } 
-            });
-            saveCurrentChatToHistory();
-        }
-
-    } catch (err) {
-        createBubble('assistant', `<span class="text-red-500">${err.message}</span>`);
-    } finally { setButtonState('idle'); scrollToBottom(); }
+    const card = document.createElement('div');
+    card.onclick = () => downloadFile(fileData.fileId);
+    card.className = "cursor-pointer active:scale-[0.98] transition-all bg-gray-200 rounded-2xl p-3 flex items-center gap-2 relative w-full min-h-[64px] border-none shadow-sm";
+    card.innerHTML = `
+        <div class="w-10 h-10 flex-none flex items-center justify-center overflow-hidden shrink-0">
+            <img src="${iconPath}" class="w-7 h-7 object-contain">
+        </div>
+        <div class="flex-1 flex flex-col justify-center min-w-0 h-10">
+            <div class="text-[13px] font-bold text-gray-700 truncate leading-none mb-1">${fileData.name}</div>
+            <div class="text-[11px] text-gray-400 font-medium leading-none">${fileData.size}</div>
+        </div>`;
+    grid.appendChild(card);
+    scrollToBottom();
 }
 		
 	async function streamText(element, text, speed = 5) {
@@ -2479,6 +2601,38 @@ async function onSend(e) {
 	        return null;
 	    }
 	}
+	
+	async function handleWordDocument(rawText) {
+	    try {
+	        const response = await fetch(SPT_URL, {
+	            method: 'POST',
+	            body: rawText,
+	            headers: { 'Content-Type': 'text/plain' }
+	        });
+	
+	        if (!response.ok) {
+	            const errorText = await response.text();
+	            throw new Error(`HTTP ${response.status}: ${errorText || response.statusText}`);
+	        }
+	
+	        const b64 = await response.text();
+	        if (b64.startsWith("Error")) throw new Error(b64);
+	        
+	        const fileId = 'ai_spt_' + Date.now();
+	        const fileName = `SPT_${Date.now()}.docx`;
+	        const fileSize = formatBytes((b64.length * 3) / 4);
+	        
+	        await saveToLocal(fileId, { 
+	            mime: "application/vnd.openxmlformats-officedocument.wordprocessingml.document", 
+	            base64: b64, name: fileName, size: fileSize 
+	        });
+	        
+	        return { name: fileName, size: fileSize, fileId: fileId, isAI: false };
+	    } catch (e) {
+	        console.error("Detail Error SPT:", e.message);
+	        return null;
+	    }
+	}
 		
 	async function downloadFile(fileId) {
 	    if (!fileId) return;
@@ -2519,6 +2673,29 @@ async function onSend(e) {
 	        console.error('Gagal menyalin:', err);
 	    }
 	}
+	
+	async function copyMessageText(btn) {
+    const container = btn.closest('.msg-bubble-container');
+    const textElement = container.querySelector('.text-body-container');
+    const textToCopy = textElement.innerText.trim();
+
+    if (!textToCopy) return;
+
+    try {
+        await navigator.clipboard.writeText(textToCopy);
+        
+        const originalIcon = btn.innerHTML;
+        btn.innerHTML = '<i data-lucide="check" class="w-4 h-4 text-green-500"></i>';
+        if (window.lucide) lucide.createIcons();
+
+        setTimeout(() => {
+            btn.innerHTML = originalIcon;
+            if (window.lucide) lucide.createIcons();
+        }, 2000);
+    } catch (err) {
+        console.error('Gagal menyalin teks:', err);
+    }
+}
 	
 	// ============================
 	// EVENT LISTENERS
@@ -2677,6 +2854,26 @@ async function onSend(e) {
 	    }
 	    lastTouch = now;
 	}, false);
+	
+	// Sembunyikan frame yang "rusak" saat rotasi layar
+	window.addEventListener('resize', () => {
+	    const video = document.getElementById('voice-large-video');
+	    
+	    if (isVoiceCamOn && video) {
+	        video.classList.add('hidden');
+	        video.style.opacity = '0';
+	        
+	        clearTimeout(window.resizeVoiceTimeout);
+	        window.resizeVoiceTimeout = setTimeout(() => {
+	            resizeVoiceCanvas(); 
+	            video.classList.remove('hidden');
+	            setTimeout(() => {
+	                video.style.transition = 'opacity 0.4s ease-in-out';
+	                video.style.opacity = '1';
+	            }, 50);
+	        }, 700);
+	    }
+	});
 	
 	// ============================
 	// INISIALISASI APLIKASI
