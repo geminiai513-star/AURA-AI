@@ -515,11 +515,7 @@
 							</button>
                             <input type="file" id="file-input" multiple accept="image/*,application/pdf,.docx,.xlsx,.xls,.pptx,.js,.css,.java,.html,.xml,.py,.sql,.ts,.cpp,.h,.hpp,.lua,.swift" class="hidden" onchange="handleFileSelect(event)">
                             
-                            <textarea id="chat-input" rows="1" placeholder="Tulis pesan..." 
-							    oninput="adjustInput(this)" 
-							    onblur="window.scrollTo(0,0)"
-							    style="flex: 1; background: transparent; border: none; outline: none; resize: none; padding: 10px 4px; font-size: 16px; font-weight: 500; color: #1f2937; line-height: 20px; min-height: 40px; display: block; overflow: hidden;">
-							</textarea>
+                            <textarea id="chat-input" rows="1" placeholder="Tulis pesan..." oninput="adjustInput(this)" onblur="window.scrollTo(0,0)" style="flex: 1; background: transparent; border: none; outline: none; resize: none; padding: 10px 4px; font-size: 16px; font-weight: 500; color: #1f2937; line-height: 20px; min-height: 40px; display: block; overflow: hidden;"></textarea>
                             
                             <button id="send-btn" onclick="onSend()" 
                                 style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: #374151; background: none; border: none; cursor: pointer; flex-shrink: 0;">
@@ -2744,6 +2740,10 @@ function startVideoPolling(fullName, targetId, videoPrompt) {
 	});
 	
 	document.addEventListener('pointerdown', (e) => {
+	    if (scroller.contains(e.target) || messageList.contains(e.target)) {
+	        input.blur();
+	    }
+	
 	    if (headerMenuTrigger && headerDropdown) {
 	        if (!headerMenuTrigger.contains(e.target) && !headerDropdown.contains(e.target)) {
 	            closeHeaderDropdown();
