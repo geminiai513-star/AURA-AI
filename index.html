@@ -450,89 +450,99 @@
 
         <div id="chat-view" class="view-container">
             <header class="h-16 px-4 flex justify-between items-center bg-white shrink-0 border-b border-gray-100 py-0 relative">
-                <div class="flex items-center h-full">
-                    <img src="icon/icon.png" alt="Logo" class="h-14 w-auto object-contain block py-0">
-                    <div style="display: flex; flex-direction: column; justify-content: center; margin-left: 4px; gap: 3px;">
-                        <span style="font-size: 18px; font-weight: 800; letter-spacing: -0.5px; line-height: 1; background: linear-gradient(90deg, #2563eb 0%, #06b6d4 70%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">AURA</span>
-                        <span style="font-size: 10px; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1;">ARTIFICIAL INTELLIGENCE</span>
-                    </div>
-                </div>
-                <div class="flex items-center relative">
-                    <button id="header-menu-trigger" class="p-2.5 text-gray-500 active:scale-90 transition-transform outline-none">
-                        <i data-lucide="settings-2" stroke-width="2.5" class="w-5 h-5"></i>
-                    </button>
-                    <div id="header-dropdown" class="hidden absolute right-0 top-full mt-4 w-56 bg-white rounded-2xl shadow-xl border border-gray-100 p-1.5 z-[150] fade-in">
-                        <div class="flex flex-col">
-                            <div onclick="createNewChat(); closeHeaderDropdown()" class="flex items-center justify-end gap-3 py-3 px-4 rounded-xl hover:bg-gray-50 cursor-pointer transition-colors border-b border-gray-100 text-slate-600">
-                                <span class="text-xs font-bold tracking-wider uppercase">Percakapan Baru</span>
-                                <i data-lucide="message-square-plus" class="w-4 h-4 text-slate-500"></i>
-                            </div>
-                            <div onpointerdown="event.stopPropagation(); closeHeaderDropdown(); setTimeout(openHistory, 10);" class="flex items-center justify-end gap-3 py-3 px-4 rounded-xl hover:bg-gray-50 cursor-pointer transition-colors border-b border-gray-100 text-slate-600">
-                                <span class="text-xs font-bold tracking-wider uppercase">Histori</span>
-                                <i data-lucide="history" class="w-4 h-4 text-slate-500"></i>
-                            </div>
-                            <div id="admin-settings-btn" onclick="showView('settings'); closeHeaderDropdown()" class="hidden items-center justify-end gap-3 py-3 px-4 rounded-xl hover:bg-gray-50 cursor-pointer transition-colors border-b border-gray-100 text-slate-600">
-							    <span class="text-xs font-bold tracking-wider uppercase">Pengaturan</span>
-							    <i data-lucide="settings" class="w-4 h-4 text-slate-500"></i>
-							</div>
-                            <div onclick="handleLogout(); closeHeaderDropdown()" class="flex items-center justify-end gap-3 py-3 px-4 rounded-xl hover:bg-gray-50 cursor-pointer transition-colors text-red-500">
-                                <span class="text-xs font-bold tracking-wider uppercase">Logout</span>
-                                <i data-lucide="log-out" class="w-4 h-4"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </header>
+			    <div class="flex items-center h-full">
+			        <img src="icon/icon.png" alt="Logo" class="h-14 w-auto object-contain block py-0">
+			        <div style="display: flex; flex-direction: column; justify-content: center; margin-left: 4px; gap: 3px;">
+			            <span style="font-size: 18px; font-weight: 800; letter-spacing: -0.5px; line-height: 1; background: linear-gradient(90deg, #2563eb 0%, #06b6d4 70%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">AURA</span>
+			            <span style="font-size: 10px; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1;">ARTIFICIAL INTELLIGENCE</span>
+			        </div>
+			    </div>
+			    <button onclick="openHistory()" class="p-2.5 text-gray-500 active:scale-90 transition-transform outline-none bg-transparent border-none cursor-pointer">
+			        <i data-lucide="menu" stroke-width="2.5" class="w-6 h-6"></i>
+			    </button>
+			</header>
+			
+			<div id="history-modal" class="fixed inset-0 z-[300] hidden">
+			    <div class="absolute inset-0 bg-slate-900/10 backdrop-blur-sm transition-opacity" onclick="closeHistory()"></div>
+			    <div id="history-panel" class="absolute left-0 top-0 bottom-0 w-[260px] bg-white flex flex-col transform -translate-x-full transition-transform duration-300 ease-out border-r border-slate-100">
+			        
+			        <div class="h-16 flex-none flex items-center px-5 border-b border-slate-50">
+			            <div class="flex items-center gap-2.5 overflow-hidden">
+			                <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center flex-none">
+			                    <i data-lucide="user" class="w-4 h-4 text-slate-500"></i>
+			                </div>
+			                <span id="user-display-email" class="text-[13px] font-bold text-slate-700 truncate">User</span>
+			            </div>
+			        </div>
+			
+			        <div id="history-list-container" class="flex-1 overflow-y-auto px-3 pt-2 pb-4 space-y-0.5 custom-scroll">
+			            </div>
+			
+			        <div class="p-3 border-t border-slate-50 flex-none space-y-0.5">
+			            <button onclick="createNewChat(); closeHistory()" class="w-full h-9 px-2 bg-transparent text-slate-600 text-[14px] font-medium flex items-center gap-3 border-none hover:bg-slate-50 transition-all cursor-pointer rounded-lg">
+			                <i data-lucide="message-square-plus" class="w-4 h-4 text-slate-400"></i>
+			                <span>Percakapan Baru</span>
+			            </button>
+			            <button id="sidebar-settings-btn" onclick="showView('settings'); closeHistory()" class="w-full h-9 px-2 bg-transparent text-slate-600 text-[14px] font-medium flex items-center gap-3 border-none hover:bg-slate-50 transition-all cursor-pointer rounded-lg">
+			                <i data-lucide="settings" class="w-4 h-4 text-slate-400"></i> 
+			                <span>Pengaturan</span>
+			            </button>
+			            <button onclick="handleLogout()" class="w-full h-9 px-2 bg-transparent text-red-500 text-[14px] font-medium flex items-center gap-3 border-none hover:bg-red-50/50 transition-all cursor-pointer rounded-lg">
+			                <i data-lucide="log-out" class="w-4 h-4"></i> 
+			                <span>Keluar Aplikasi</span>
+			            </button>
+			        </div>
+			    </div>
+			</div>
             <main id="chat-scroller">
                 <div id="message-list" class="max-w-3xl mx-auto space-y-4 pb-2"></div>
             </main>
-            <footer style="background-color: #ffffff; padding: 16px 16px; padding-bottom: calc(env(safe-area-inset-bottom, 10px) + 18px);">
-                <div style="max-width: 48rem; margin-left: auto; margin-right: auto;">
-                    <div id="file-preview-container" class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4"></div>
-                    <div id="capsule-container" style="background-color: #f3f4f6; border-radius: 14px; padding: 4px; transition: all 0.2s ease; border: 1px solid transparent;">
-                        <div id="input-row-1" style="display: flex; align-items: center; gap: 4px; margin-bottom: 2px;">
-                            <button onclick="if(isUploadEnabled) document.getElementById('file-input').click()" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: #9ca3af; background: none; border: none; cursor: pointer; flex-shrink: 0;">
-                                <i data-lucide="plus" class="w-5 h-5"></i>
-                            </button>
-                            <input type="file" id="file-input" multiple accept="image/*,application/pdf,.docx,.xlsx,.xls,.pptx,.js,.css,.java,.html,.xml,.py,.sql,.ts,.cpp,.h,.hpp,.lua,.swift" class="hidden" onchange="handleFileSelect(event)">
-                            <textarea id="chat-input" rows="1" placeholder="Tulis pesan..." oninput="adjustInput(this)" onblur="window.scrollTo(0,0)" style="flex: 1; background: transparent; border: none; outline: none; resize: none; padding: 10px 4px; font-size: 15px; font-weight: 500; color: #1f2937; line-height: 20px; min-height: 40px; display: block;"></textarea>
-                            <button id="send-btn" onpointerdown="onSend(event)" 
-							    style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: #374151; background: none; border: none; cursor: pointer; flex-shrink: 0;">
-							    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width: 20px; height: 20px;" fill="currentColor">
-							        <path d="M21.66,12a2,2,0,0,1-1.14,1.81L5.87,20.75A2.08,2.08,0,0,1,5,21a2,2,0,0,1-1.82-2.82L5.46,13H11a1,1,0,0,0,0-2H5.46L3.18,5.87A2,2,0,0,1,5.86,3.25h0l14.65,6.94A2,2,0,0,1,21.66,12Z"></path>
-							    </svg>
-							</button>
-                        </div>
-                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px;">
-						    <button id="btn-mode-image" onclick="toggleImageMode()" 
-						        style="height: 32px; display: flex; align-items: center; justify-content: center; color: #9ca3af; background-color: #f9fafb; border-radius: 10px; border: none; transition: all 0.2s; cursor: pointer;">
-						        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-						            <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
-						            <circle cx="9" cy="9" r="2"/>
-						            <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0 L6 21"/>
-						        </svg>
-						    </button>
-						    
-						    <button id="btn-mode-video" onclick="toggleVideoMode()" 
-						        style="height: 32px; display: flex; align-items: center; justify-content: center; color: #9ca3af; background-color: #f9fafb; border-radius: 10px; border: none; transition: all 0.2s; cursor: pointer;">
-						        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-						            <path d="M20.2 6 3 11l-.9-2.4c-.3-1.1.3-2.2 1.3-2.5l13.5-4c1.1-.3 2.2.3 2.5 1.3Z"/>
-						            <path d="m6.2 5.3 3.1 3.9"/>
-						            <path d="m12.4 3.4 3.1 4"/>
-						            <path d="M3 11h18v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/>
-						        </svg>
-						    </button>
-						    
-						    <button id="btn-mode-voice" onclick="openVoiceMode()" 
-						        style="height: 32px; display: flex; align-items: center; justify-content: center; color: #9ca3af; background-color: #f9fafb; border-radius: 10px; border: none; transition: all 0.2s; cursor: pointer;">
-						        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-						            <path d="M2 10v3"/><path d="M6 6v11"/><path d="M10 3v18"/><path d="M14 8v7"/><path d="M18 5v13"/><path d="M22 10v3"/>
-						        </svg>
-						    </button>
-						</div>
-                    </div>
-                </div>
-            </footer>
+            <footer style="background-color: #ffffff; padding: 12px 16px; padding-bottom: calc(env(safe-area-inset-bottom, 10px) + 16px);">
+			    <div style="max-width: 48rem; margin-left: auto; margin-right: auto;">
+			        <div id="file-preview-container" class="grid grid-cols-2 md:grid-cols-4 gap-2 empty:hidden mt-1 mb-4"></div>
+			        
+			        <div id="capsule-container" style="background-color: #f3f4f6; border-radius: 14px; padding: 4px; transition: all 0.2s ease; border: 1px solid transparent;">
+			            <div id="input-row-1" style="display: flex; align-items: center; gap: 4px; margin-bottom: 4px;">
+			                <button onclick="if(isUploadEnabled) document.getElementById('file-input').click()" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: #9ca3af; background: none; border: none; cursor: pointer; flex-shrink: 0;">
+			                    <i data-lucide="plus" class="w-5 h-5"></i>
+			                </button>
+			                <input type="file" id="file-input" multiple accept="image/*,application/pdf,.docx,.xlsx,.xls,.pptx,.js,.css,.java,.html,.xml,.py,.sql,.ts,.cpp,.h,.hpp,.lua,.swift" class="hidden" onchange="handleFileSelect(event)">
+			                <textarea id="chat-input" rows="1" placeholder="Tulis pesan..." oninput="adjustInput(this)" onblur="window.scrollTo(0,0)" style="flex: 1; background: transparent; border: none; outline: none; resize: none; padding: 10px 4px; font-size: 15px; font-weight: 500; color: #1f2937; line-height: 20px; min-height: 40px; display: block;"></textarea>
+			                <button id="send-btn" onpointerdown="onSend(event)" 
+			                    style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: #374151; background: none; border: none; cursor: pointer; flex-shrink: 0;">
+			                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width: 20px; height: 20px;" fill="currentColor">
+			                        <path d="M21.66,12a2,2,0,0,1-1.14,1.81L5.87,20.75A2.08,2.08,0,0,1,5,21a2,2,0,0,1-1.82-2.82L5.46,13H11a1,1,0,0,0,0-2H5.46L3.18,5.87A2,2,0,0,1,5.86,3.25h0l14.65,6.94A2,2,0,0,1,21.66,12Z"></path>
+			                    </svg>
+			                </button>
+			            </div>
+			            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px;">
+			                <button id="btn-mode-image" onclick="toggleImageMode()" 
+			                    style="height: 34px; display: flex; align-items: center; justify-content: center; color: #9ca3af; background-color: #f9fafb; border-radius: 10px; border: none; transition: all 0.2s; cursor: pointer;">
+			                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+			                        <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
+			                        <circle cx="9" cy="9" r="2"/>
+			                        <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0 L6 21"/>
+			                    </svg>
+			                </button>
+			                <button id="btn-mode-video" onclick="toggleVideoMode()" 
+			                    style="height: 34px; display: flex; align-items: center; justify-content: center; color: #9ca3af; background-color: #f9fafb; border-radius: 10px; border: none; transition: all 0.2s; cursor: pointer;">
+			                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+			                        <path d="M20.2 6 3 11l-.9-2.4c-.3-1.1.3-2.2 1.3-2.5l13.5-4c1.1-.3 2.2.3 2.5 1.3Z"/>
+			                        <path d="m6.2 5.3 3.1 3.9"/>
+			                        <path d="m12.4 3.4 3.1 4"/>
+			                        <path d="M3 11h18v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/>
+			                    </svg>
+			                </button>
+			                <button id="btn-mode-voice" onclick="openVoiceMode()" 
+			                    style="height: 34px; display: flex; align-items: center; justify-content: center; color: #9ca3af; background-color: #f9fafb; border-radius: 10px; border: none; transition: all 0.2s; cursor: pointer;">
+			                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+			                        <path d="M2 10v3"/><path d="M6 6v11"/><path d="M10 3v18"/><path d="M14 8v7"/><path d="M18 5v13"/><path d="M22 10v3"/>
+			                    </svg>
+			                </button>
+			            </div>
+			        </div>
+			    </div>
+			</footer>
         </div>
 
         <div id="settings-view" class="view-container bg-white">
@@ -730,6 +740,9 @@
 	- PowerPoint: [PPT] materi [/PPT]. Jangan membuat dokumen jika bahan belum sesuai dengan peemintaan user!!!.
 	- SPT: [WORD] { "pegawai_tugas": "1. Nama (Jabatan Tim) 2. Nama (Jabatan Tim)", "pejabat_penandatangan": "...","jenis_pengawasan": "...","opd_tujuan": "...","wilayah_tugas": "...","tgl_mulai": "...","tgl_selesai": "..." }[/WORD]. Jangan membuat dokumem jika data yang dibutuhkan belum lengkap!!!.
 	- Catatan: Jabatan Tim seperti Penanggung Jawab, Pengendali Teknis, Ketua Tim, atau Anggota. 
+	- PENTING: Jika Anda sudah berhasil mengirimkan kode [PPT] atau [WORD] di pesan sebelumnya, JANGAN mengulangi kode tersebut di pesan berikutnya. 
+	- Jika user hanya berterima kasih atau memberi respon singkat, cukup balas dengan sopan tanpa menyertakan ulang kode dokumen.
+	- Hanya buat ulang atau revisi kode jika user memintanya secara eksplisit.
 	- Jangan pernah menawarkan diri jika user tidak memintanya secara eksplisit.`;
 	
 	// DOM Elements
@@ -1009,12 +1022,29 @@ async function toggleFreezeUser(userId, currentStatus) {
 	    window.scrollTo(0, 0);
 	}
 	
-	async function openHistory() {
+	// Fungsi Helper untuk Pengelompokan Waktu
+function getChatGroupLabel(date) {
+    const now = new Date();
+    const chatDate = new Date(date);
+    const diffInDays = Math.floor((now - chatDate) / (1000 * 60 * 60 * 24));
+
+    if (diffInDays === 0) return "Hari Ini";
+    if (diffInDays === 1) return "Kemarin";
+    if (diffInDays <= 7) return "7 Hari Terakhir";
+    if (diffInDays <= 30) return "30 Hari Terakhir";
+    return "Sebelumnya";
+}
+
+async function openHistory() {
     const { data: { session } } = await _supabase.auth.getSession();
     if (!session) return;
 
     const modal = document.getElementById('history-modal');
+    const panel = document.getElementById('history-panel');
     const container = document.getElementById('history-list-container');
+    const userEmailEl = document.getElementById('user-display-email');
+    
+    if (userEmailEl) userEmailEl.innerText = session.user.email;
     container.innerHTML = '';
 
     const { data: chats } = await _supabase
@@ -1023,24 +1053,37 @@ async function toggleFreezeUser(userId, currentStatus) {
         .eq('user_id', session.user.id)
         .order('updated_at', { ascending: false });
 
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    setTimeout(() => panel.classList.remove('-translate-x-full'), 10);
+
     if (!chats || chats.length === 0) {
-        container.innerHTML = `<div class="p-10 text-center text-slate-400 text-[10px] font-bold uppercase tracking-widest">Tidak ada histori</div>`;
+        container.innerHTML = `<div class="text-slate-300 text-[12px] font-medium italic px-3 py-4">Kosong</div>`;
     } else {
+        let currentGroup = "";
         chats.forEach(chat => {
+            const groupLabel = getChatGroupLabel(chat.updated_at);
+            
+            // Jarak label yang konsisten dengan list
+            if (groupLabel !== currentGroup) {
+                currentGroup = groupLabel;
+                const labelDiv = document.createElement('div');
+                labelDiv.className = "text-[10px] font-bold text-slate-400 uppercase tracking-widest px-3 pt-5 pb-1";
+                labelDiv.innerText = groupLabel;
+                container.appendChild(labelDiv);
+            }
+
             const isActive = (chat.id === currentChatId);
             const card = document.createElement('div');
-            card.className = "flex items-center justify-between px-3 h-[50px] flex-none rounded-xl bg-slate-50 mb-2 transition-all";
+            card.className = "flex items-center justify-between h-8 group transition-all cursor-pointer px-3 rounded-md hover:bg-slate-50";
             
             card.innerHTML = `
-                <div class="flex items-center gap-2 overflow-hidden flex-1 cursor-pointer" onclick="loadChat('${chat.id}'); document.getElementById('history-modal').classList.replace('flex', 'hidden')">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M16 10a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 14.286V4a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/><path d="M20 9a2 2 0 0 1 2 2v10.286a.71.71 0 0 1-1.212.502l-2.202-2.202A2 2 0 0 0 17.172 19H10a2 2 0 0 1-2-2v-1"/>
-                    </svg>
-                    <span class="text-[14px] font-medium ${isActive ? 'text-blue-600' : 'text-slate-700'} truncate">${chat.title}</span>
+                <div class="flex-1 overflow-hidden" onclick="loadChat('${chat.id}')">
+                    <span class="text-[13px] font-medium ${isActive ? 'text-blue-600' : 'text-slate-500'} truncate block">${chat.title}</span>
                 </div>
-                <div class="w-7 flex justify-end">
-                    <button onclick="handleTwoStepDelete(this, event, '${chat.id}')" class="del-btn text-slate-200 bg-transparent border-none cursor-pointer p-1 outline-none transition-colors">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <div class="w-5 flex justify-end ${isActive ? 'hidden' : 'opacity-0 group-hover:opacity-100'} transition-opacity">
+                    <button onclick="handleTwoStepDelete(this, event, '${chat.id}')" class="text-slate-300 hover:text-red-500 border-none bg-transparent cursor-pointer p-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M22 13V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v12c0 1.1.9 2 2 2h9"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/><path d="m17 17 4 4"/><path d="m21 17-4 4"/>
                         </svg>
                     </button>
@@ -1049,46 +1092,36 @@ async function toggleFreezeUser(userId, currentStatus) {
             container.appendChild(card);
         });
     }
-    modal.classList.replace('hidden', 'flex');
+    if (window.lucide) lucide.createIcons();
 }
-	
-	function closeHistory() {
-	    const modal = document.getElementById('history-modal');
-	    modal.classList.add('hidden');
-	    modal.classList.remove('flex');
-	}
 
-	let deleteTimers = {};
-
+let deleteTimers = {};
 async function handleTwoStepDelete(btn, event, chatId) {
     event.stopPropagation();
     
+    // Perbaikan Bug: Pastikan state warna merah terdeteksi dengan benar
     if (btn.classList.contains('text-red-500')) {
-        if (deleteTimers[chatId]) clearTimeout(deleteTimers[chatId]);
-        
-        const container = document.getElementById('history-list-container');
-        const itemCount = container.querySelectorAll('.bg-slate-50').length;
-        
         const { error } = await _supabase.from('chats').delete().eq('id', chatId);
-        
         if (!error) {
-            if (itemCount <= 1) {
-                createNewChat();
-                const modal = document.getElementById('history-modal');
-                modal.classList.replace('flex', 'hidden');
-            } else {
-                if (currentChatId === chatId) createNewChat();
-                openHistory();
-            }
+            if (currentChatId === chatId) createNewChat();
+            openHistory(); // Refresh list secara instan
         }
     } else {
-        btn.classList.replace('text-slate-200', 'text-red-500');
-        
-        if (deleteTimers[chatId]) clearTimeout(deleteTimers[chatId]);
-        deleteTimers[chatId] = setTimeout(() => {
-            if (btn) btn.classList.replace('text-red-500', 'text-slate-200');
+        btn.classList.replace('text-slate-400', 'text-red-500');
+        setTimeout(() => {
+            if (btn) btn.classList.replace('text-red-500', 'text-slate-400');
         }, 3000);
     }
+}
+
+function closeHistory() {
+    const modal = document.getElementById('history-modal');
+    const panel = document.getElementById('history-panel');
+    panel.classList.add('-translate-x-full');
+    setTimeout(() => {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }, 300);
 }
 
 	// ============================
@@ -1337,10 +1370,16 @@ async function getFromLocal(id) {
 	    showView('auth');
 	}
 	
-	_supabase.auth.onAuthStateChange((ev) => {
-	    if (ev === 'SIGNED_IN') showView('chat');
-	    if (ev === 'SIGNED_OUT') showView('auth');
-	});
+	_supabase.auth.onAuthStateChange(async (ev) => {
+    if (ev === 'SIGNED_IN') {
+        initUI().catch(console.error);
+        showView('chat');
+    } else if (ev === 'SIGNED_OUT') {
+        showView('auth');
+        if (messageList) messageList.innerHTML = '';
+        chatHistory = [];
+    }
+});
 	
 	// ============================
 	// FUNGSI PENGATURAN
@@ -1382,91 +1421,107 @@ async function getFromLocal(id) {
 	}
 
 	async function initUI() {
-	    const { data: { session } } = await _supabase.auth.getSession();
-	    const settingsBtn = document.getElementById('admin-settings-btn');
-	    const userMgmtCard = document.getElementById('user-mgmt-card');
-	    
-	    if (session) {
-	        if (session.user.email === ADMIN_EMAIL) {
-	            if (settingsBtn) settingsBtn.classList.replace('hidden', 'flex');
-	            if (userMgmtCard) {
-	                userMgmtCard.classList.remove('hidden');
-	                loadUserManagement();
-	            }
-	        } else {
-	            if (settingsBtn) settingsBtn.classList.replace('flex', 'hidden');
-	            if (userMgmtCard) userMgmtCard.classList.add('hidden');
-	            
-	            const { data: profile } = await _supabase
-	                .from('profiles')
-	                .select('is_frozen')
-	                .eq('id', session.user.id)
-	                .single();
-	
-	            if (profile && profile.is_frozen) {
-	                alert("Akses ditangguhkan: Akun anda dibekukan oleh Admin.");
-	                handleLogout();
-	                return;
-	            }
-	        }
-	
-	        const { data: globalData } = await _supabase
-	            .from('global_config')
-	            .select('config')
-	            .eq('id', 1)
-	            .single();
-	
-	        if (globalData && globalData.config) {
-	            const cfg = globalData.config;
-	            currentModel = cfg.ai_model || currentModel;
-	            systemPrompt = cfg.system_prompt || systemPrompt;
-	            currentThinking = cfg.ai_thinking || currentThinking;
-	            maxTokens = cfg.ai_tokens || maxTokens;
-	            currentVoice = cfg.v_voice || currentVoice;
-	            isImageEnabled = cfg.enable_image;
-	            isVideoEnabled = cfg.enable_video;
-	            isVoiceEnabled = cfg.enable_voice;
-	            isUploadEnabled = cfg.enable_upload;
-	        }
-	        const { data: lastChat, error: chatErr } = await _supabase
-	            .from('chats')
-	            .select('id')
-	            .eq('user_id', session.user.id)
-	            .order('updated_at', { ascending: false })
-	            .limit(1)
-	            .single();
-	
-	        if (lastChat && lastChat.id) {
-	            await loadChat(lastChat.id);
-	        } else {
-	            createNewChat();
-	        }
-	    }
-	
-	    const modelLabels = {
-	        'gemini-3-flash-preview': 'Gemini 3 Flash',
-	        'gemini-3-pro-preview': 'Gemini 3 Pro',
-	        'gemini-3-deep-think-preview': 'Gemini 3 Deep Think'
-	    };
-	    
-	    selectedModelText.innerText = modelLabels[currentModel] || 'Gemini 3 Flash';
-	    settingsPrompt.value = systemPrompt;
-	    
-	    const thinkingRevMap = { "LOW": "1", "MEDIUM": "2", "HIGH": "3" };
-	    settingsThinking.value = thinkingRevMap[currentThinking] || "2";
-	    settingsTokens.value = maxTokens;
-	    
-	    updateSliderLabels();
-	
-	    document.getElementById('selected-voice-text').innerText = currentVoice;
-	    document.getElementById('switch-image').checked = isImageEnabled;
-	    document.getElementById('switch-video').checked = isVideoEnabled;
-	    document.getElementById('switch-voice').checked = isVoiceEnabled;
-	    document.getElementById('switch-upload').checked = isUploadEnabled;
-	    
-	    updateSettingCards();
-	    updateMainButtonsUI();
-	}
+    try {
+        const { data: { session } } = await _supabase.auth.getSession();
+        if (!session) return;
+
+        const settingsBtn = document.getElementById('admin-settings-btn');
+        const userMgmtCard = document.getElementById('user-mgmt-card');
+        
+        // Pengecekan Admin
+        if (session.user.email === ADMIN_EMAIL) {
+            if (settingsBtn) settingsBtn.classList.replace('hidden', 'flex');
+            if (userMgmtCard) {
+                userMgmtCard.classList.remove('hidden');
+                loadUserManagement();
+            }
+        } else {
+            if (settingsBtn) settingsBtn.classList.replace('flex', 'hidden');
+            if (userMgmtCard) userMgmtCard.classList.add('hidden');
+            
+            // Cek Status Frozen - Menggunakan limit(1) agar tidak crash jika kosong
+            const { data: profiles } = await _supabase
+                .from('profiles')
+                .select('is_frozen')
+                .eq('id', session.user.id)
+                .limit(1);
+
+            if (profiles && profiles.length > 0 && profiles[0].is_frozen) {
+                alert("Akses ditangguhkan.");
+                handleLogout();
+                return;
+            }
+        }
+
+        // Muat Konfigurasi Global
+        const { data: globalConfigData } = await _supabase
+            .from('global_config')
+            .select('config')
+            .eq('id', 1)
+            .limit(1);
+
+        if (globalConfigData && globalConfigData.length > 0) {
+            const cfg = globalConfigData[0].config;
+            currentModel = cfg.ai_model || currentModel;
+            systemPrompt = cfg.system_prompt || systemPrompt;
+            currentThinking = cfg.ai_thinking || currentThinking;
+            maxTokens = cfg.ai_tokens || maxTokens;
+            currentVoice = cfg.v_voice || currentVoice;
+            isImageEnabled = cfg.enable_image;
+            isVideoEnabled = cfg.enable_video;
+            isVoiceEnabled = cfg.enable_voice;
+            isUploadEnabled = cfg.enable_upload;
+        }
+
+        // Muat Chat Terakhir - Menggunakan limit(1) agar tidak crash
+        const { data: chats } = await _supabase
+            .from('chats')
+            .select('id')
+            .eq('user_id', session.user.id)
+            .order('updated_at', { ascending: false })
+            .limit(1);
+
+        if (chats && chats.length > 0) {
+            await loadChat(chats[0].id);
+        } else {
+            createNewChat();
+        }
+
+        // Update UI Pengaturan dengan aman (Null Check)
+        const modelLabels = {
+            'gemini-3-flash-preview': 'Gemini 3 Flash',
+            'gemini-3-pro-preview': 'Gemini 3 Pro',
+            'gemini-3-deep-think-preview': 'Gemini 3 Deep Think'
+        };
+        
+        if (selectedModelText) selectedModelText.innerText = modelLabels[currentModel] || 'Gemini 3 Flash';
+        if (settingsPrompt) settingsPrompt.value = systemPrompt;
+        
+        const thinkingRevMap = { "LOW": "1", "MEDIUM": "2", "HIGH": "3" };
+        if (settingsThinking) settingsThinking.value = thinkingRevMap[currentThinking] || "2";
+        if (settingsTokens) settingsTokens.value = maxTokens;
+        
+        updateSliderLabels();
+        const voiceText = document.getElementById('selected-voice-text');
+        if (voiceText) voiceText.innerText = currentVoice;
+        
+        const swImg = document.getElementById('switch-image');
+        const swVid = document.getElementById('switch-video');
+        const swVoi = document.getElementById('switch-voice');
+        const swUpl = document.getElementById('switch-upload');
+
+        if (swImg) swImg.checked = isImageEnabled;
+        if (swVid) swVid.checked = isVideoEnabled;
+        if (swVoi) swVoi.checked = isVoiceEnabled;
+        if (swUpl) swUpl.checked = isUploadEnabled;
+        
+        updateSettingCards();
+        updateMainButtonsUI();
+
+    } catch (err) {
+        console.error("Kesalahan initUI:", err);
+    }
+}
 
 	function updateMainButtonsUI() {
 	    document.getElementById('btn-mode-image').style.opacity = isImageEnabled ? '1' : '0.3';
@@ -1481,15 +1536,14 @@ async function getFromLocal(id) {
 	// FUNGSI CHAT & MESSAGES
 	// ============================
 	
-	async function processPendingFiles() {
-    const filesForUI = [];
+	async function processPendingFiles(filesArray) {
     const filesForStorage = [];
     const apiParts = [];
     let officeTextContext = "";
     const codeExts = ['js', 'css', 'java', 'html', 'xml', 'py', 'sql', 'ts', 'cpp', 'h', 'hpp', 'lua', 'swift'];
 
-    for (const f of pendingFiles) {
-        const fileId = 'file_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+    for (const f of filesArray) {
+        const fileId = f.fileId || ('file_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5));
         
         await saveToLocal(fileId, { 
             mime: f.mime, 
@@ -1497,9 +1551,6 @@ async function getFromLocal(id) {
             name: f.name, 
             size: f.size 
         });
-        
-        f.fileId = fileId; 
-        filesForUI.push({ ...f });
         
         filesForStorage.push({ 
             name: f.name, 
@@ -1512,15 +1563,13 @@ async function getFromLocal(id) {
         
         if (f.mime.startsWith('image/') || ext === 'pdf') {
             apiParts.push({ inline_data: { mime_type: f.mime, data: f.base64 } });
-        } 
-        else if (codeExts.includes(ext)) {
+        } else if (codeExts.includes(ext)) {
             officeTextContext += await readCodeFile(f);
-        } 
-        else {
+        } else {
             officeTextContext += await extractTextFromOffice(f);
         }
     }
-    return { filesForUI, filesForStorage, apiParts, officeTextContext };
+    return { filesForStorage, apiParts, officeTextContext };
 }
 
 function createBubble(role, content = '', files = [], isPlaceholder = false, showTyping = false) {
@@ -2661,8 +2710,6 @@ function createBubble(role, content = '', files = [], isPlaceholder = false, sho
 
     input.blur();
 
-    if (!originalSendBtnContent) originalSendBtnContent = sendBtn.innerHTML;
-    
     if (isGenerating) { 
         isGenerating = false; 
         if (abortController) abortController.abort();
@@ -2673,15 +2720,10 @@ function createBubble(role, content = '', files = [], isPlaceholder = false, sho
     const setButtonState = (state) => {
         if (state === 'loading' || state === 'streaming') {
             sendBtn.innerHTML = `<i data-lucide="square" class="w-4 h-4 fill-current text-red-500"></i>`;
-            sendBtn.disabled = false; 
             isGenerating = true;
             if (window.lucide) lucide.createIcons();
         } else {
-            sendBtn.innerHTML = `
-                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width: 20px; height: 20px;" fill="currentColor">
-                    <path d="M21.66,12a2,2,0,0,1-1.14,1.81L5.87,20.75A2.08,2.08,0,0,1,5,21a2,2,0,0,1-1.82-2.82L5.46,13H11a1,1,0,0,0,0-2H5.46L3.18,5.87A2,2,0,0,1,5.86,3.25h0l14.65,6.94A2,2,0,0,1,21.66,12Z"></path>
-                </svg>`;
-            sendBtn.disabled = false;
+            sendBtn.innerHTML = `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width: 20px; height: 20px;" fill="currentColor"><path d="M21.66,12a2,2,0,0,1-1.14,1.81L5.87,20.75A2.08,2.08,0,0,1,5,21a2,2,0,0,1-1.82-2.82L5.46,13H11a1,1,0,0,0,0-2H5.46L3.18,5.87A2,2,0,0,1,5.86,3.25h0l14.65,6.94A2,2,0,0,1,21.66,12Z"></path></svg>`;
             isGenerating = false;
         }
     };
@@ -2691,47 +2733,47 @@ function createBubble(role, content = '', files = [], isPlaceholder = false, sho
         abortController = new AbortController();
         setButtonState('loading');
 
-        const { filesForUI, filesForStorage, apiParts, officeTextContext } = await processPendingFiles();
+        const filesToProcess = [...pendingFiles];
+        pendingFiles = [];
+        renderPreviews();
+        input.value = '';
+        adjustInput(input);
+
+        createBubble('user', val, filesToProcess);
+
+        const filesData = await processPendingFiles(filesToProcess);
         
         if (!isGenerating) return;
 
         if (isVideoMode) {
-            createBubble('user', val, pendingFiles.map(f => ({ ...f })));
             let imgObj = null;
-            if (pendingFiles.length > 0) {
-                const firstImg = pendingFiles.find(f => f.mime && f.mime.startsWith('image/'));
-                if (firstImg) imgObj = { inline_data: { mime_type: firstImg.mime, data: firstImg.base64 } };
-            }
-            input.value = ''; adjustInput(input); pendingFiles = []; renderPreviews();
+            const firstImg = filesToProcess.find(f => f.mime && f.mime.startsWith('image/'));
+            if (firstImg) imgObj = { inline_data: { mime_type: firstImg.mime, data: firstImg.base64 } };
             await handleVideoGeneration(val, imgObj);
             toggleVideoMode(); setButtonState('idle'); return;
         }
 
         if (isImageMode) {
-            createBubble('user', val || "Memproses gambar...", pendingFiles.map(f => ({ ...f })));
             let imgObj = null;
-            if (pendingFiles.length > 0) {
-                const firstImg = pendingFiles.find(f => f.mime && f.mime.startsWith('image/'));
-                if (firstImg) imgObj = { inline_data: { mime_type: firstImg.mime, data: firstImg.base64 } };
-            }
-            input.value = ''; adjustInput(input); pendingFiles = []; renderPreviews();
+            const firstImg = filesToProcess.find(f => f.mime && f.mime.startsWith('image/'));
+            if (firstImg) imgObj = { inline_data: { mime_type: firstImg.mime, data: firstImg.base64 } };
             toggleImageMode();
-            await handleImageGeneration((pendingFiles.length > 0 ? '/edit ' : '/gambar ') + val, imgObj);
-            setButtonState('idle'); 
-            return;
+            await handleImageGeneration((filesToProcess.length > 0 ? '/edit ' : '/gambar ') + val, imgObj);
+            setButtonState('idle'); return;
         }
 
-        createBubble('user', val, filesForUI);
-        chatHistory.push({ role: "user", parts: [{ text: val || "Analisis lampiran ini." }], _ui: { val, filesForStorage } });
-        saveCurrentChatToHistory();
+        const currentTurnText = (val || "Analisis lampiran ini.") + (filesData.officeTextContext ? "\n\nKONTEKS DOKUMEN:\n" + filesData.officeTextContext : "");
         
-        const currentTurnText = (val || "Analisis lampiran ini.") + (officeTextContext ? "\n\nKONTEKS DOKUMEN:\n" + officeTextContext : "");
-        input.value = ''; adjustInput(input); pendingFiles = []; renderPreviews();
+        chatHistory.push({ 
+            role: "user", 
+            parts: [...filesData.apiParts, { text: currentTurnText }], 
+            _ui: { val, filesForStorage: filesData.filesForStorage } 
+        });
+        saveCurrentChatToHistory();
 
         const aiBubble = createBubble('assistant', '', [], false, true);
         const endpoint = `${SUPABASE_URL}/functions/v1/ai-proxy-v2?model=${currentModel}&action=generateContent&version=v1beta`;
         const cleanContents = chatHistory.map(h => ({ role: h.role, parts: h.parts }));
-        cleanContents[cleanContents.length - 1].parts = [...apiParts, { text: currentTurnText }];
 
         const response = await fetch(endpoint, {
             method: 'POST',
@@ -2747,95 +2789,52 @@ function createBubble(role, content = '', files = [], isPlaceholder = false, sho
 
         const data = await response.json();
         const parts = data.candidates?.[0]?.content?.parts || [];
-        if (aiBubble.typingElement) { aiBubble.typingElement.remove(); aiBubble.typingElement = null; }
+        if (aiBubble.typingElement) aiBubble.typingElement.remove();
 
         let fullAIResponse = "";
         parts.forEach(p => { if(p.text) fullAIResponse += p.text; });
+        
         let displayChatText = fullAIResponse;
-        let pptMaterial = null;
-        let wordMaterial = null;
         const pptRegex = /\[PPT\]([\s\S]*?)\[\/PPT\]/;
         const wordRegex = /\[WORD\]([\s\S]*?)\[\/WORD\]/;
         const pptMatch = fullAIResponse.match(pptRegex);
         const wordMatch = fullAIResponse.match(wordRegex);
 
-        if (pptMatch) { pptMaterial = pptMatch[1].trim(); displayChatText = displayChatText.replace(pptRegex, "").trim(); }
-        if (wordMatch) { wordMaterial = wordMatch[1].trim(); displayChatText = displayChatText.replace(wordRegex, "").trim(); }
+        if (pptMatch) displayChatText = displayChatText.replace(pptRegex, "").trim();
+        if (wordMatch) displayChatText = displayChatText.replace(wordRegex, "").trim();
 
-        let finalSavedText = "";
-        let aiFilesForStorage = []; 
-        let historyConfirmation = "";
+        let finalSavedText = await streamText(aiBubble.textElement, displayChatText);
 
-        if (displayChatText || pptMaterial || wordMaterial) {
-            if (displayChatText) finalSavedText = await streamText(aiBubble.textElement, displayChatText);
-            
-            if (!isGenerating) {
-                if (finalSavedText) {
-                    chatHistory.push({ 
-                        role: "model", 
-                        parts: [{ text: finalSavedText + "\n\n[Respon dihentikan oleh pengguna]" }], 
-                        _ui: { val: finalSavedText, filesForStorage: [] } 
-                    });
-                    saveCurrentChatToHistory();
-                }
-                setButtonState('idle');
-                return;
+        let aiFilesForStorage = [];
+        if (pptMatch && isGenerating) {
+            const pptData = await handlePowerPoint(pptMatch[1].trim());
+            if (pptData) {
+                aiFilesForStorage.push(pptData);
+                renderFileCard(aiBubble.filesElement, pptData, "icon/ppt-file-icon.svg");
             }
-
-            if (pptMaterial) {
-                const pptStatus = document.createElement('div');
-                pptStatus.className = "flex items-center gap-2 py-1 mt-1 text-gray-500 italic text-sm";
-                pptStatus.innerHTML = `<span>Membuat PowerPoint</span><span class="flex leading-none"><span style="animation: blink 1.4s infinite both; animation-delay: 0s;">.</span><span style="animation: blink 1.4s infinite both; animation-delay: 0.2s;">.</span><span style="animation: blink 1.4s infinite both; animation-delay: 0.4s;">.</span></span>`;
-                aiBubble.filesElement.appendChild(pptStatus);
-
-                const pptFileData = await handlePowerPoint(pptMaterial);
-                pptStatus.remove();
-
-                if (pptFileData && isGenerating) { 
-                    aiFilesForStorage.push(pptFileData); 
-                    renderFileCard(aiBubble.filesElement, pptFileData, "icon/ppt-file-icon.svg");
-                    downloadFile(pptFileData.fileId, pptFileData.name);
-                    historyConfirmation += "\n[[CONFIRM_PPT_CREATED]]";
-                }
-            }
-
-            if (wordMaterial) {
-                const wordStatus = document.createElement('div');
-                wordStatus.className = "flex items-center gap-2 py-1 mt-1 text-gray-500 italic text-sm";
-                wordStatus.innerHTML = `<span>Membuat Microsoft Word</span><span class="flex leading-none"><span style="animation: blink 1.4s infinite both; animation-delay: 0s;">.</span><span style="animation: blink 1.4s infinite both; animation-delay: 0.2s;">.</span><span style="animation: blink 1.4s infinite both; animation-delay: 0.4s;">.</span></span>`;
-                aiBubble.filesElement.appendChild(wordStatus);
-
-                const docFileData = await handleWordDocument(wordMaterial);
-                wordStatus.remove();
-
-                if (docFileData && isGenerating) { 
-                    aiFilesForStorage.push(docFileData); 
-                    renderFileCard(aiBubble.filesElement, docFileData, "icon/docx-file-icon.svg");
-                    downloadFile(docFileData.fileId, docFileData.name);
-                    historyConfirmation += "\n[[CONFIRM_WORD_CREATED]]";
-                }
+        }
+        if (wordMatch && isGenerating) {
+            const wordData = await handleWordDocument(wordMatch[1].trim());
+            if (wordData) {
+                aiFilesForStorage.push(wordData);
+                renderFileCard(aiBubble.filesElement, wordData, "icon/docx-file-icon.svg");
             }
         }
 
-        if ((finalSavedText || aiFilesForStorage.length > 0) && isGenerating) {
-            chatHistory.push({ 
-                role: "model", 
-                parts: [{ text: finalSavedText + historyConfirmation }], 
-                _ui: { val: displayChatText, filesForStorage: aiFilesForStorage } 
-            });
-            saveCurrentChatToHistory();
-        }
-
+        if (isGenerating) {
+		    const historyText = displayChatText || fullAIResponse;
+		    chatHistory.push({ 
+		        role: "model", 
+		        parts: [{ text: historyText }], 
+		        _ui: { val: displayChatText, filesForStorage: aiFilesForStorage } 
+		    });
+		    saveCurrentChatToHistory();
+		}
     } catch (err) {
-        if (err.name === 'AbortError') {
-            if (aiBubble && aiBubble.typingElement) aiBubble.typingElement.remove();
-        } else {
-            createBubble('assistant', `<span class="text-red-500">${err.message}</span>`);
-        }
+        if (err.name !== 'AbortError') createBubble('assistant', `<span class="text-red-500">${err.message}</span>`);
     } finally { 
         setButtonState('idle'); 
         abortController = null;
-        if (window.lucide) lucide.createIcons();
         scrollToBottom(); 
     }
 }
