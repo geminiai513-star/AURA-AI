@@ -52,10 +52,23 @@
 		    -ms-user-select: none;
 		    user-select: none;
         }
-
-        * {
-            -webkit-tap-highlight-color: transparent;
-        }
+		
+		* {
+		    -webkit-tap-highlight-color: transparent;
+		    -webkit-touch-callout: none;
+		    -webkit-user-drag: none;
+		}
+		
+		img, svg, i {
+		    -webkit-user-drag: none;
+		    -webkit-touch-callout: none;
+		    pointer-events: none;
+		    user-select: none;
+		}
+		
+		button img, button svg, div img, div svg {
+		    pointer-events: none;
+		}
 
         /* App Layout */
         #app-root {
@@ -1468,82 +1481,124 @@ async function getFromLocal(id) {
 	// FUNGSI CHAT & MESSAGES
 	// ============================
 	
-	function createBubble(role, content = '', files = [], isPlaceholder = false, showTyping = false) {
-	    const isAI = role === 'assistant' || role === 'model';
-	    const roleLabel = isAI ? '<span class="ai-gradient">AURA</span>' : 'USER';
-	    const now = new Date();
-	    const timeStr = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
-	    const div = document.createElement('div');
-	    div.className = "w-full animate-in fade-in duration-300 mb-4";
-	
-	    let filesHtml = '';
-	    if (files && files.length > 0) {
-	        const aiFile = files.find(f => f.isAI || f.isVideo);
-	        if (aiFile) {
-	            filesHtml = `
-	                <div class="mt-2 w-full ai-image-container">
-	                    <div class="file-placeholder w-full h-48 bg-gray-200 rounded-xl animate-pulse flex items-center justify-center" data-file-id="${aiFile.fileId}">
-	                        <i data-lucide="${aiFile.isVideo ? 'video' : 'image'}" class="w-8 h-8 text-gray-400"></i>
-	                    </div>
-	                </div>`;
-	        } else {
-	            filesHtml = '<div class="grid grid-cols-2 md:grid-cols-4 gap-2 mt-2 file-grid-container">';
-	            files.forEach(f => {
-	                const ext = f.name.split('.').pop().toLowerCase();
-	                let visual = isPlaceholder 
-					    ? `<div class="file-placeholder w-10 h-10 flex items-center justify-center bg-gray-200 rounded-lg transition-all duration-300" data-file-id="${f.fileId || ''}"></div>`
-					    : (f.mime && f.mime.startsWith('image/')) 
-					        ? `<img src="data:${f.mime};base64,${f.base64}" class="w-10 h-10 object-cover rounded-lg">` 
-					        : getFileIcon(ext);
-	                
-	                filesHtml += `
-	                    <div onclick="event.stopPropagation(); downloadFile('${f.fileId}', '${f.name}')" class="cursor-pointer active:scale-95 transition-all bg-gray-200 rounded-2xl p-3 flex items-center gap-2 relative w-full min-h-[64px] border-none">
-	                        <div class="w-10 h-10 flex-none flex items-center justify-center overflow-hidden shrink-0">${visual}</div>
-	                        <div class="flex-1 flex flex-col justify-center min-w-0 h-10">
-	                            <div class="text-[13px] font-bold text-gray-700 truncate leading-none mb-1">${f.name}</div>
-	                            <div class="text-[11px] text-gray-400 font-medium leading-none">${f.size || ''}</div>
-	                        </div>
-	                    </div>`;
-	            });
-	            filesHtml += '</div>';
-	        }
-	    }
-	
-	    div.innerHTML = `
-	        <div class="w-full bg-gray-100 rounded-2xl px-5 pt-3 pb-8 text-slate-800 msg-bubble-container">
-	            <div class="flex justify-between items-center pb-1 border-b border-gray-200">
-	                <span class="text-[11px] font-bold uppercase tracking-widest">${roleLabel}</span>
-	                <span class="text-[11px] font-medium text-gray-400">${timeStr}</span>
-	            </div>
-	            <div class="prose prose-sm max-w-none msg-content text-[15px] leading-relaxed font-medium mt-1">
-	                <div class="text-body-container" style="${isAI ? '' : 'white-space: pre-wrap;'}">${
-	                    content ? (isAI ? marked.parse(content.replace(/\[\[.*?\]\]/g, '')) : escapeHTML(content)) : ''
-	                }</div>
-	                <div class="files-wrapper-area">${filesHtml}</div>
-	                ${isAI && showTyping ? `
-	                <div class="typing-indicator flex items-center gap-1.5 py-0 text-gray-500 mt-1">
-	                    <span class="text-sm font-medium">Thinking</span>
-	                    <span class="flex leading-none mb-0.5 ml-0.5">
-	                        <span style="animation: blink 1.4s infinite both; animation-delay: 0s;">.</span>
-	                        <span style="animation: blink 1.4s infinite both; animation-delay: 0.2s;">.</span>
-	                        <span style="animation: blink 1.4s infinite both; animation-delay: 0.4s;">.</span>
-	                    </span>
-	                </div>` : ''}
-	            </div>
-	            <button onclick="copyMessageText(this)" class="copy-msg-btn">
-	                <i data-lucide="copy" class="w-4 h-4"></i>
-	            </button>
-	        </div>
-	    `;
-	    messageList.appendChild(div);
-	    if (window.lucide) lucide.createIcons();
-	    scrollToBottom();
-	    return { 
-	        textElement: div.querySelector('.text-body-container'), 
-	        filesElement: div.querySelector('.files-wrapper-area'),
-	        typingElement: div.querySelector('.typing-indicator') 
-	    };
-	}
+	async function processPendingFiles() {
+    const filesForUI = [];
+    const filesForStorage = [];
+    const apiParts = [];
+    let officeTextContext = "";
+    const codeExts = ['js', 'css', 'java', 'html', 'xml', 'py', 'sql', 'ts', 'cpp', 'h', 'hpp', 'lua', 'swift'];
+
+    for (const f of pendingFiles) {
+        const fileId = 'file_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+        
+        await saveToLocal(fileId, { 
+            mime: f.mime, 
+            base64: f.base64, 
+            name: f.name, 
+            size: f.size 
+        });
+        
+        f.fileId = fileId; 
+        filesForUI.push({ ...f });
+        
+        filesForStorage.push({ 
+            name: f.name, 
+            size: f.size, 
+            fileId: fileId, 
+            mime: f.mime 
+        });
+        
+        const ext = f.name.split('.').pop().toLowerCase();
+        
+        if (f.mime.startsWith('image/') || ext === 'pdf') {
+            apiParts.push({ inline_data: { mime_type: f.mime, data: f.base64 } });
+        } 
+        else if (codeExts.includes(ext)) {
+            officeTextContext += await readCodeFile(f);
+        } 
+        else {
+            officeTextContext += await extractTextFromOffice(f);
+        }
+    }
+    return { filesForUI, filesForStorage, apiParts, officeTextContext };
+}
+
+function createBubble(role, content = '', files = [], isPlaceholder = false, showTyping = false) {
+    const isAI = role === 'assistant' || role === 'model';
+    const roleLabel = isAI ? '<span class="ai-gradient">AURA</span>' : 'USER';
+    const now = new Date();
+    const timeStr = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+    const div = document.createElement('div');
+    div.className = "w-full animate-in fade-in duration-300 mb-4";
+
+    let filesHtml = '';
+    if (files && files.length > 0) {
+        const aiFile = files.find(f => f.isAI || f.isVideo);
+        if (aiFile) {
+            filesHtml = `
+                <div class="mt-2 w-full ai-image-container">
+                    <div class="file-placeholder w-full h-48 bg-gray-200 rounded-xl animate-pulse flex items-center justify-center" data-file-id="${aiFile.fileId}">
+                        <i data-lucide="${aiFile.isVideo ? 'video' : 'image'}" class="w-8 h-8 text-gray-400"></i>
+                    </div>
+                </div>`;
+        } else {
+            filesHtml = '<div class="grid grid-cols-2 md:grid-cols-4 gap-2 mt-2 file-grid-container">';
+            files.forEach(f => {
+                const ext = f.name.split('.').pop().toLowerCase();
+                let visual = isPlaceholder 
+                    ? `<div class="file-placeholder w-10 h-10 flex items-center justify-center bg-gray-200 rounded-lg transition-all duration-300" data-file-id="${f.fileId || ''}"></div>`
+                    : (f.mime && f.mime.startsWith('image/')) 
+                        ? `<img src="data:${f.mime};base64,${f.base64}" class="w-10 h-10 object-cover rounded-lg">` 
+                        : getFileIcon(ext);
+                
+                filesHtml += `
+                    <div onclick="event.stopPropagation(); downloadFile('${f.fileId}', '${f.name}')" class="cursor-pointer active:scale-95 transition-all bg-gray-200 rounded-2xl p-3 flex items-center gap-2 relative w-full min-h-[64px] border-none">
+                        <div class="w-10 h-10 flex-none flex items-center justify-center overflow-hidden shrink-0">${visual}</div>
+                        <div class="flex-1 flex flex-col justify-center min-w-0 h-10">
+                            <div class="text-[13px] font-bold text-gray-700 truncate leading-none mb-1">${f.name}</div>
+                            <div class="text-[11px] text-gray-400 font-medium leading-none">${f.size || ''}</div>
+                        </div>
+                    </div>`;
+            });
+            filesHtml += '</div>';
+        }
+    }
+
+    div.innerHTML = `
+        <div class="w-full bg-gray-100 rounded-2xl px-5 pt-3 pb-8 text-slate-800 msg-bubble-container">
+            <div class="flex justify-between items-center pb-1 border-b border-gray-200">
+                <span class="text-[11px] font-bold uppercase tracking-widest">${roleLabel}</span>
+                <span class="text-[11px] font-medium text-gray-400">${timeStr}</span>
+            </div>
+            <div class="prose prose-sm max-w-none msg-content text-[15px] leading-relaxed font-medium mt-1">
+                <div class="text-body-container" style="${isAI ? '' : 'white-space: pre-wrap;'}">${
+                    content ? (isAI ? marked.parse(content.replace(/\[\[.*?\]\]/g, '')) : escapeHTML(content)) : ''
+                }</div>
+                <div class="files-wrapper-area">${filesHtml}</div>
+                ${isAI && showTyping ? `
+                <div class="typing-indicator flex items-center gap-1.5 py-0 text-gray-500 mt-1">
+                    <span class="text-sm font-medium">Thinking</span>
+                    <span class="flex leading-none mb-0.5 ml-0.5">
+                        <span style="animation: blink 1.4s infinite both; animation-delay: 0s;">.</span>
+                        <span style="animation: blink 1.4s infinite both; animation-delay: 0.2s;">.</span>
+                        <span style="animation: blink 1.4s infinite both; animation-delay: 0.4s;">.</span>
+                    </span>
+                </div>` : ''}
+            </div>
+            <button onclick="copyMessageText(this)" class="copy-msg-btn">
+                <i data-lucide="copy" class="w-4 h-4"></i>
+            </button>
+        </div>
+    `;
+    messageList.appendChild(div);
+    if (window.lucide) lucide.createIcons();
+    scrollToBottom();
+    return { 
+        textElement: div.querySelector('.text-body-container'), 
+        filesElement: div.querySelector('.files-wrapper-area'),
+        typingElement: div.querySelector('.typing-indicator') 
+    };
+}
 	
 	// ============================
 	// FUNGSI FILE HANDLING
@@ -1692,47 +1747,6 @@ async function getFromLocal(id) {
 	        container.appendChild(card);
 	    });
 	}
-	
-	async function processPendingFiles() {
-    const filesForUI = [];
-    const filesForStorage = [];
-    const apiParts = [];
-    let officeTextContext = "";
-    const codeExts = ['js', 'css', 'java', 'html', 'xml', 'py', 'sql', 'ts', 'cpp', 'h', 'hpp', 'lua', 'swift'];
-
-    for (const f of pendingFiles) {
-        const fileId = 'file_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
-        
-        await saveToLocal(fileId, { 
-            mime: f.mime, 
-            base64: f.base64, 
-            name: f.name, 
-            size: f.size 
-        });
-        
-        filesForUI.push({ ...f });
-        
-        filesForStorage.push({ 
-            name: f.name, 
-            size: f.size, 
-            fileId: fileId, 
-            mime: f.mime 
-        });
-        
-        const ext = f.name.split('.').pop().toLowerCase();
-        
-        if (f.mime.startsWith('image/') || ext === 'pdf') {
-            apiParts.push({ inline_data: { mime_type: f.mime, data: f.base64 } });
-        } 
-        else if (codeExts.includes(ext)) {
-            officeTextContext += await readCodeFile(f);
-        } 
-        else {
-            officeTextContext += await extractTextFromOffice(f);
-        }
-    }
-    return { filesForUI, filesForStorage, apiParts, officeTextContext };
-}
 	
 	// ============================
 	// FUNGSI IMAGE MODE
