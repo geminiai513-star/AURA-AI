@@ -482,7 +482,7 @@
 					        <span class="text-[14px] font-semibold">Percakapan Baru</span>
 					    </button>
 					
-					    <button onclick="openSettings()" class="w-full flex items-center gap-3 h-9 px-3 text-slate-600 rounded-lg transition-colors group">
+					    <button id="admin-settings-btn" onclick="openSettings()" class="hidden w-full flex items-center gap-3 h-9 px-3 text-slate-600 rounded-lg transition-colors group">
 					        <div class="w-7 h-7 flex items-center justify-center">
 					            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m14.305 19.53.923-.382"/><path d="m15.228 16.852-.923-.383"/><path d="m16.852 15.228-.383-.923"/><path d="m16.852 20.772-.383.924"/><path d="m19.148 15.228.383-.923"/><path d="m19.53 21.696-.382-.924"/><path d="M2 21a8 8 0 0 1 10.434-7.62"/><path d="m20.772 16.852.924-.383"/><path d="m20.772 19.148.924.383"/><circle cx="10" cy="8" r="5"/><circle cx="18" cy="18" r="3"/></svg>
 					        </div>
@@ -507,14 +507,14 @@
 			        
 			        <div id="capsule-container" style="background-color: #f3f4f6; border-radius: 14px; padding: 4px; transition: all 0.2s ease; border: 1px solid transparent;">
 			            <div id="input-row-1" style="display: flex; align-items: center; gap: 4px; margin-bottom: 4px;">
-			                <button onclick="if(isUploadEnabled) document.getElementById('file-input').click()" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: #9ca3af; background: none; border: none; cursor: pointer; flex-shrink: 0;">
-			                    <i data-lucide="plus" class="w-5 h-5"></i>
+			                <button onclick="if(isUploadEnabled) document.getElementById('file-input').click()" style="width: 46px; height: 46px; display: flex; align-items: center; justify-content: center; color: #9ca3af; background: none; border: none; cursor: pointer; flex-shrink: 0;">
+			                    <i data-lucide="plus" class="w-6 h-6"></i>
 			                </button>
 			                <input type="file" id="file-input" multiple accept="image/*,application/pdf,.docx,.xlsx,.xls,.pptx,.js,.css,.java,.html,.xml,.py,.sql,.ts,.cpp,.h,.hpp,.lua,.swift" class="hidden" onchange="handleFileSelect(event)">
-			                <textarea id="chat-input" rows="1" placeholder="Tulis pesan..." oninput="adjustInput(this)" onblur="window.scrollTo(0,0)" style="flex: 1; background: transparent; border: none; outline: none; resize: none; padding: 10px 4px; font-size: 15px; font-weight: 500; color: #1f2937; line-height: 20px; min-height: 40px; display: block;"></textarea>
+			                <textarea id="chat-input" rows="1" placeholder="Tulis pesan..." oninput="adjustInput(this)" onblur="window.scrollTo(0,0)" style="flex: 1; background: transparent; border: none; outline: none; resize: none; padding: 12px 4px; font-size: 15px; font-weight: 500; color: #1f2937; line-height: 20px; min-height: 46px; display: block;"></textarea>
 			                <button id="send-btn" onpointerdown="onSend(event)" 
-			                    style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: #374151; background: none; border: none; cursor: pointer; flex-shrink: 0;">
-			                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width: 20px; height: 20px;" fill="currentColor">
+			                    style="width: 46px; height: 46px; display: flex; align-items: center; justify-content: center; color: #374151; background: none; border: none; cursor: pointer; flex-shrink: 0;">
+			                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width: 24px; height: 24px;" fill="currentColor">
 			                        <path d="M21.66,12a2,2,0,0,1-1.14,1.81L5.87,20.75A2.08,2.08,0,0,1,5,21a2,2,0,0,1-1.82-2.82L5.46,13H11a1,1,0,0,0,0-2H5.46L3.18,5.87A2,2,0,0,1,5.86,3.25h0l14.65,6.94A2,2,0,0,1,21.66,12Z"></path>
 			                    </svg>
 			                </button>
@@ -786,6 +786,8 @@ let currentChatId = null;
 // Action Timers
 let actionTimers = {};
 let deleteTimers = {};
+
+let chatCache = [];
 
 // ===========================================================================
 // 2. FUNGSI UTILITAS UMUM
@@ -1318,35 +1320,18 @@ async function saveCurrentChatToHistory() {
         upsertData.title = "Percakapan Baru";
     } else {
         upsertData.id = currentChatId;
-        
-        const { data: existingChat } = await _supabase
-            .from('chats')
-            .select('title')
-            .eq('id', currentChatId)
-            .single();
-        
+        const { data: existingChat } = await _supabase.from('chats').select('title').eq('id', currentChatId).single();
         if (existingChat && existingChat.title && existingChat.title !== "Percakapan Baru") {
             delete upsertData.title;
         }
     }
 
-    const { data, error } = await _supabase
-        .from('chats')
-        .upsert(upsertData, { onConflict: 'id' })
-        .select()
-        .single();
-
-    if (error) {
-        console.error("Error upsert chat:", error.message);
-        return null;
-    }
-
-    if (data && isTempId) {
-        currentChatId = data.id;
-    }
+    const { data, error } = await _supabase.from('chats').upsert(upsertData, { onConflict: 'id' }).select().single();
+    if (error) return null;
+    if (data && isTempId) currentChatId = data.id;
 
     const lastMsg = chatHistory[chatHistory.length - 1];
-    const { error: msgError } = await _supabase.from('messages').insert({
+    await _supabase.from('messages').insert({
         chat_id: currentChatId,
         user_id: session.user.id,
         role: lastMsg.role,
@@ -1354,10 +1339,7 @@ async function saveCurrentChatToHistory() {
         metadata: lastMsg._ui || {}
     });
 
-    if (msgError) {
-        console.error("Error insert message:", msgError.message);
-    }
-
+    refreshChatCache(); 
     return currentChatId;
 }
 
@@ -1373,37 +1355,46 @@ function getChatGroupLabel(date) {
     return "Sebelumnya";
 }
 
-async function openHistory() {
-    const { data: { session } } = await _supabase.auth.getSession();
-    if (!session) return;
+async function refreshChatCache() {
+    try {
+        const { data: { session } } = await _supabase.auth.getSession();
+        if (!session) return;
 
+        const { data: chats, error } = await _supabase
+            .from('chats')
+            .select('*')
+            .eq('user_id', session.user.id)
+            .order('updated_at', { ascending: false });
+
+        if (!error && chats) {
+            chatCache = chats;
+            renderHistoryFromCache();
+        }
+    } catch (err) {
+        console.error("Gagal sinkronisasi cache:", err);
+    }
+}
+
+function openHistory() {
     const modal = document.getElementById('history-modal');
     const panel = document.getElementById('history-panel');
-    const container = document.getElementById('history-list-container');
-    const userEmailEl = document.getElementById('user-display-email');
     
-    if (userEmailEl) userEmailEl.innerText = session.user.email;
-    container.innerHTML = '';
-
-    const { data: chats } = await _supabase
-        .from('chats')
-        .select('*')
-        .eq('user_id', session.user.id)
-        .order('updated_at', { ascending: false });
-
     modal.classList.remove('hidden');
     modal.classList.add('flex');
     setTimeout(() => panel.classList.remove('-translate-x-full'), 10);
+    
+    renderHistoryFromCache();
+}
 
-    container.onclick = (e) => {
-        if (e.target === container) {
-            document.querySelectorAll('.delete-icon-wrapper').forEach(w => w.classList.add('opacity-0'));
-        }
-    };
+function renderHistoryFromCache() {
+    const container = document.getElementById('history-list-container');
+    if (!container) return;
 
-    if (chats && chats.length > 0) {
+    container.innerHTML = '';
+
+    if (chatCache.length > 0) {
         let currentGroup = "";
-        chats.forEach(chat => {
+        chatCache.forEach(chat => {
             const groupLabel = getChatGroupLabel(chat.updated_at);
             
             if (groupLabel !== currentGroup) {
@@ -1460,17 +1451,13 @@ async function handleTwoStepDelete(btn, event, chatId) {
         const { error } = await _supabase.from('chats').delete().eq('id', chatId);
         
         if (!error) {
-            const { data: { session } } = await _supabase.auth.getSession();
-            const { count } = await _supabase
-                .from('chats')
-                .select('*', { count: 'exact', head: true })
-                .eq('user_id', session.user.id);
-
-            if (count === 0) {
+            chatCache = chatCache.filter(c => c.id !== chatId);
+            
+            if (chatCache.length === 0) {
                 closeHistory();
-            } else {
-                openHistory();
             }
+            
+            renderHistoryFromCache();
 
             if (currentChatId === chatId) {
                 currentChatId = 'chat_' + Date.now();
@@ -1491,7 +1478,7 @@ async function handleTwoStepDelete(btn, event, chatId) {
                 btn.classList.remove('text-red-500');
                 btn.classList.add('text-slate-300');
             }
-        }, 2000);
+        }, 3000);
     }
 }
 
@@ -1502,7 +1489,7 @@ function closeHistory() {
     setTimeout(() => {
         modal.classList.add('hidden');
         modal.classList.remove('flex');
-    }, 300);
+    }, 100);
 }
 
 // ===========================================================================
@@ -1544,29 +1531,29 @@ function createBubble(role, content = '', files = [], isPlaceholder = false, sho
         if (aiFile) {
             filesHtml = `
                 <div class="mt-2 w-full ai-image-container">
-                    <div class="file-placeholder w-full h-48 bg-gray-200 rounded-xl animate-pulse flex items-center justify-center" data-file-id="${aiFile.fileId}">
+                    <div class="file-placeholder w-full h-48 bg-gray-200 rounded-xl animate-pulse flex items-center justify-center">
                         <i data-lucide="${aiFile.isVideo ? 'video' : 'image'}" class="w-8 h-8 text-gray-400"></i>
                     </div>
                 </div>`;
         } else {
             filesHtml = '<div class="grid grid-cols-2 md:grid-cols-4 gap-2 mt-2 file-grid-container">';
-            files.forEach(f => {
-                const ext = f.name.split('.').pop().toLowerCase();
-                let visual = isPlaceholder 
-                    ? `<div class="file-placeholder w-10 h-10 flex items-center justify-center bg-gray-200 rounded-lg transition-all duration-300" data-file-id="${f.fileId || ''}"></div>`
-                    : (f.mime && f.mime.startsWith('image/')) 
-                        ? `<img src="data:${f.mime};base64,${f.base64}" class="w-10 h-10 object-cover rounded-lg">` 
-                        : getFileIcon(ext);
-                
-                filesHtml += `
-                    <div onclick="event.stopPropagation(); downloadFile('${f.fileId}', '${f.name}')" class="cursor-pointer active:scale-95 transition-all bg-gray-200 rounded-2xl p-3 flex items-center gap-2 relative w-full min-h-[64px] border-none">
-                        <div class="w-10 h-10 flex-none flex items-center justify-center overflow-hidden shrink-0">${visual}</div>
-                        <div class="flex-1 flex flex-col justify-center min-w-0 h-10">
-                            <div class="text-[12px] font-bold text-gray-700 truncate leading-none mb-1">${f.name}</div>
-                            <div class="text-[10px] text-gray-400 font-medium leading-none">${f.size || ''}</div>
-                        </div>
-                    </div>`;
-            });
+            files.forEach((f, idx) => {
+			    const ext = f.name.split('.').pop().toLowerCase();
+			    let visual = isPlaceholder 
+			        ? `<div class="file-placeholder w-10 h-10 flex items-center justify-center bg-gray-200 rounded-lg" data-idx="${idx}"></div>`
+			        : (f.mime && f.mime.startsWith('image/')) 
+			            ? `<img src="data:${f.mime};base64,${f.base64}" class="w-10 h-10 object-cover rounded-lg">` 
+			            : getFileIcon(ext);
+			    
+			    filesHtml += `
+			        <div class="cursor-pointer active:scale-95 transition-all bg-gray-200 rounded-2xl p-3 flex items-center gap-2 relative w-full min-h-[64px] border-none shadow-sm file-card-item">
+			            <div class="w-10 h-10 flex-none flex items-center justify-center overflow-hidden shrink-0">${visual}</div>
+			            <div class="flex-1 flex flex-col justify-center min-w-0 h-10">
+			                <div class="text-[12px] font-bold text-gray-700 truncate leading-none mb-1">${f.name}</div>
+			                <div class="text-[10px] text-gray-400 font-medium leading-none">${f.size || ''}</div>
+			            </div>
+			        </div>`;
+			});
             filesHtml += '</div>';
         }
     }
@@ -1604,69 +1591,96 @@ function createBubble(role, content = '', files = [], isPlaceholder = false, sho
     };
 }
 
+function renderFileCard(container, fileData, iconPath) {
+    let grid = container.querySelector('.file-grid-container');
+    if (!grid) {
+        container.innerHTML = '<div class="grid grid-cols-2 md:grid-cols-4 gap-2 mt-2 file-grid-container"></div>';
+        grid = container.querySelector('.file-grid-container');
+    }
+    const card = document.createElement('div');
+    card.className = "cursor-pointer active:scale-95 transition-all bg-gray-200 rounded-2xl p-3 flex items-center gap-2 relative w-full min-h-[64px] border-none shadow-sm";
+    
+    card.onclick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        unifiedDownload(fileData.url, fileData.name);
+    };
+
+    card.innerHTML = `
+        <div class="w-10 h-10 flex-none flex items-center justify-center overflow-hidden shrink-0">
+            <img src="${iconPath}" class="w-7 h-7 object-contain">
+        </div>
+        <div class="flex-1 flex flex-col justify-center min-w-0 h-10">
+            <div class="text-[12px] font-bold text-gray-700 truncate leading-none mb-1">${fileData.name}</div>
+            <div class="text-[10px] text-gray-400 font-medium leading-none">${fileData.size}</div>
+        </div>`;
+    grid.appendChild(card);
+    if (window.lucide) lucide.createIcons();
+    scrollToBottom();
+}
+
 async function loadSavedChat() {
     messageList.innerHTML = '';
     if (!chatHistory || chatHistory.length === 0) return;
 
-    const renderPromises = chatHistory.map(async (msg) => {
+    for (const msg of chatHistory) {
         const role = msg.role === 'model' ? 'assistant' : 'user';
         let text = msg.parts?.[0]?.text || '';
         let files = msg._ui ? (msg._ui.filesForStorage || []) : [];
         if (msg._ui && msg._ui.val) text = msg._ui.val;
 
         const hiddenPatterns = [
-            "[[CONFIRM_IMAGE_CREATED]]",
-            "[[CONFIRM_VIDEO_CREATED]]",
-            "[[CONFIRM_PPT_CREATED]]",
-            "[[CONFIRM_WORD_CREATED]]",
-            "Analisis lampiran ini.",
-            "Memproses gambar...",
+            "[[CONFIRM_IMAGE_CREATED]]", 
+            "[[CONFIRM_VIDEO_CREATED]]", 
+            "[[CONFIRM_PPT_CREATED]]", 
+            "[[CONFIRM_WORD_CREATED]]", 
+            "Analisis lampiran ini.", 
+            "Memproses gambar...", 
             "Analisis dokumen ini"
         ];
 
-        const isHiddenPattern = hiddenPatterns.some(p => text === p);
-        if (isHiddenPattern && files.length === 0) return;
+        const isHidden = hiddenPatterns.some(p => text.trim() === p);
+        if (isHidden && files.length === 0) continue;
 
-        const bubble = createBubble(role, isHiddenPattern ? "" : text, files, true, false);
+        const bubble = createBubble(role, isHidden ? "" : text, files, true, false);
 
         if (files.length > 0) {
-            await Promise.all(files.map(async (fInfo) => {
-                const ph = bubble.textElement.parentElement.querySelector(`[data-file-id="${fInfo.fileId}"]`);
-                if (!ph) return;
-
-                const ext = fInfo.name.split('.').pop().toLowerCase();
-                const isImg = (fInfo.mime && fInfo.mime.startsWith('image/')) || 
-                            ['jpg', 'jpeg', 'png', 'gif', 'webp', 'heic', 'heif'].includes(ext);
-
-                if (!isImg && !fInfo.isVideo && !fInfo.isAI) {
+            const placeholders = bubble.filesElement.querySelectorAll('.file-placeholder');
+            for (let i = 0; i < files.length; i++) {
+                const fInfo = files[i];
+                const ph = placeholders[i];
+                let fileUrl = fInfo.url;
+                if (!fileUrl && fInfo.fileId) {
+                    const localData = await getFromLocal(fInfo.fileId);
+                    if (localData) fileUrl = localData.signedUrl;
+                }
+                if (fInfo.isVideo) {
+                    const container = ph ? ph.parentElement : bubble.filesElement;
+                    const tempId = 'vid_' + Math.random().toString(36).substr(2, 9);
+                    container.id = tempId;
+                    renderVideoToBubble(tempId, fileUrl, fInfo.mime, true);
+                } else if (fInfo.isAI || (fInfo.mime && fInfo.mime.startsWith('image/'))) {
+                    const container = ph ? ph.parentElement : bubble.filesElement;
+                    const tempId = 'img_' + Math.random().toString(36).substr(2, 9);
+                    container.id = tempId;
+                    renderImageToBubble(tempId, fileUrl, fInfo.mime, true);
+                } else if (ph) {
+                    const ext = fInfo.name.split('.').pop().toLowerCase();
                     ph.innerHTML = getFileIcon(ext);
                     ph.classList.remove('bg-gray-200', 'animate-pulse', 'file-placeholder');
-                    return;
-                }
-
-                const fData = await getFromLocal(fInfo.fileId);
-                if (!fData) return;
-
-                if (fInfo.isVideo) {
-                    const container = ph.parentElement;
-                    const tempId = 'vid_' + fInfo.fileId + '_' + Math.random().toString(36).substr(2, 4);
-                    container.id = tempId;
-                    renderVideoToBubble(tempId, fData.signedUrl, fInfo.mime, true);
-                } else if (fInfo.isAI) {
-                    const container = ph.parentElement;
-                    const tempId = 'img_' + fInfo.fileId + '_' + Math.random().toString(36).substr(2, 4);
-                    container.id = tempId;
-                    renderImageToBubble(tempId, fData.signedUrl, fInfo.mime, true);
-                } else if (isImg) {
-                    ph.innerHTML = `<img src="${fData.signedUrl}" class="w-full h-full object-cover rounded-lg">`;
-                    ph.classList.remove('bg-gray-200', 'animate-pulse', 'file-placeholder');
                     ph.style.backgroundColor = 'transparent';
+                    const card = ph.closest('.cursor-pointer');
+                    if (card) {
+                        card.onclick = (e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            unifiedDownload(fileUrl, fInfo.name);
+                        };
+                    }
                 }
-            }));
+            }
         }
-    });
-
-    await Promise.all(renderPromises);
+    }
     document.querySelectorAll('pre code').forEach(block => hljs.highlightElement(block));
     if (window.lucide) lucide.createIcons();
     scrollToBottom();
@@ -1679,43 +1693,50 @@ async function deleteCurrentChat() {
     }
 
     try {
-        const { data: msgs } = await _supabase
+        const { data: msgs, error: fetchError } = await _supabase
             .from('messages')
             .select('metadata')
             .eq('chat_id', currentChatId);
 
+        if (fetchError) throw fetchError;
+
         if (msgs && msgs.length > 0) {
-            const fileIds = [];
+            const pathsToDelete = [];
+            
             msgs.forEach(m => {
                 const files = m.metadata?.filesForStorage || [];
                 files.forEach(f => {
-                    if (f.fileId) fileIds.push(f.fileId);
+                    if (f.url) {
+                        const urlParts = f.url.split('/aura_media/');
+                        if (urlParts.length > 1) {
+                            pathsToDelete.push(urlParts[1]);
+                        }
+                    }
                 });
             });
 
-            if (fileIds.length > 0) {
-                const db = await openDB();
-                const tx = db.transaction(STORE_NAME, 'readwrite');
-                const store = tx.objectStore(STORE_NAME);
+            if (pathsToDelete.length > 0) {
+                const { error: storageError } = await _supabase.storage
+                    .from('aura_media')
+                    .remove(pathsToDelete);
                 
-                for (const fId of fileIds) {
-                    store.delete(fId);
+                if (storageError) {
+                    console.error("Gagal menghapus file di storage:", storageError.message);
                 }
-                await new Promise(res => tx.oncomplete = res);
             }
         }
 
         await _supabase.from('messages').delete().eq('chat_id', currentChatId);
-        const { error } = await _supabase.from('chats').delete().eq('id', currentChatId);
+        const { error: chatError } = await _supabase.from('chats').delete().eq('id', currentChatId);
 
-        if (!error) {
+        if (!chatError) {
             createNewChat();
             if (document.getElementById('history-modal').style.display !== 'none') {
-                openHistory();
+                refreshChatCache();
             }
         }
     } catch (err) {
-        console.error(err);
+        console.error("Gagal menghapus percakapan:", err.message);
     }
 }
 
@@ -1729,23 +1750,36 @@ async function processPendingFiles(filesArray) {
     const codeExts = ['js', 'css', 'java', 'html', 'xml', 'py', 'sql', 'ts', 'cpp', 'h', 'hpp', 'lua', 'swift'];
 
     for (const f of filesArray) {
-        const fileId = f.fileId || ('file_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5));
-        
-        await saveToLocal(fileId, { 
-            mime: f.mime, 
-            base64: f.base64, 
-            name: f.name, 
-            size: f.size 
-        });
-        
+        const ext = f.name.split('.').pop().toLowerCase();
+        const fileName = `${Date.now()}_${Math.random().toString(36).substr(2, 5)}.${ext}`;
+        const filePath = `uploads/${fileName}`;
+
+        const byteCharacters = atob(f.base64);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const blob = new Blob([new Uint8Array(byteNumbers)], { type: f.mime });
+
+        const { data: uploadData, error: uploadError } = await _supabase.storage
+            .from('aura_media')
+            .upload(filePath, blob);
+
+        if (uploadError) {
+            console.error("Upload gagal:", uploadError);
+            continue;
+        }
+
+        const { data: { publicUrl } } = _supabase.storage
+            .from('aura_media')
+            .getPublicUrl(filePath);
+
         filesForStorage.push({ 
             name: f.name, 
             size: f.size, 
-            fileId: fileId, 
+            url: publicUrl, 
             mime: f.mime 
         });
-        
-        const ext = f.name.split('.').pop().toLowerCase();
         
         if (f.mime.startsWith('image/') || ext === 'pdf') {
             apiParts.push({ inline_data: { mime_type: f.mime, data: f.base64 } });
@@ -1924,121 +1958,108 @@ function toggleImageMode() {
     }
 }
 
+async function uploadAiFileToSupabase(base64, fileName, mimeType) {
+    const byteCharacters = atob(base64);
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    const blob = new Blob([new Uint8Array(byteNumbers)], { type: mimeType });
+    const filePath = `ai_generated/${Date.now()}_${fileName}`;
+
+    const { data, error } = await _supabase.storage
+        .from('aura_media')
+        .upload(filePath, blob);
+
+    if (error) throw error;
+
+    const { data: { publicUrl } } = _supabase.storage
+        .from('aura_media')
+        .getPublicUrl(filePath);
+
+    return publicUrl;
+}
+
 async function handleImageGeneration(prompt, imgObj = null) {
     const isEdit = prompt.toLowerCase().startsWith('/edit');
     const cleanPrompt = prompt.replace(/^\/(gambar|edit)\s+/i, '').trim();
     const imageModel = 'gemini-2.5-flash-image';
-    
     const aiBubble = createBubble('assistant', '', [], false, false);
     const targetId = 'gen_' + Date.now();
     aiBubble.filesElement.id = targetId;
-    
+	
     aiBubble.filesElement.innerHTML = `
-        <div class="flex items-center gap-1 py-0.5 text-gray-500 mt-1">
-            <span class="text-sm font-medium italic">${isEdit ? 'mengedit gambar' : 'membuat gambar'}</span>
-            <div class="flex items-end mb-0.5">
-                <svg viewBox="0 0 16 16" class="w-3 h-3 animate-brush" fill="currentColor">
-                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                        <g transform="translate(0.000000, 1.000000)" fill="currentColor">
-                            <path d="M15.172,3.244 C14.715,3.785 10.553,8.014 8.326,9.666 L7.413,8.799 C8.703,6.288 12.154,1.507 12.609,0.967 C13.204,0.263 14.646,-0.248 15.416,0.298 C16.428,1.014 15.766,2.538 15.172,3.244 Z"></path>
-                            <path d="M6.607,9.702 C6.607,9.702 4.515,9.149 3.259,11.296 C2.004,13.443 0.808,12.708 0.27,12.524 C-0.268,12.34 1.526,14.794 2.363,14.794 C3.181,14.794 6.752,15.969 7.631,11.36 C7.649,11.259 7.703,9.877 6.607,9.702 L6.607,9.702 Z"></path>
-                        </g>
-                    </g>
-                </svg>
-                <span class="flex ml-0.5 leading-none">
-                    <span style="animation: blink 1.4s infinite both; animation-delay: 0s;">.</span>
+        <div class="flex items-center gap-2 py-2 mt-1">
+            <svg class="animate-spin h-3.5 w-3.5 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <span class="text-sm font-normal text-slate-500 italic flex items-center">
+                ${isEdit ? 'Mengedit gambar' : 'Membuat gambar'}
+                <span class="flex ml-0.5">
+                    <span style="animation: blink 1.4s infinite both;">.</span>
                     <span style="animation: blink 1.4s infinite both; animation-delay: 0.2s;">.</span>
                     <span style="animation: blink 1.4s infinite both; animation-delay: 0.4s;">.</span>
                 </span>
-            </div>
+            </span>
         </div>
     `;
-    
-    if (window.lucide) lucide.createIcons();
 
     try {
         const endpoint = `${SUPABASE_URL}/functions/v1/ai-proxy-v2?model=${imageModel}&action=generateContent`;
         const response = await fetch(endpoint, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'apikey': SUPABASE_KEY,
-                'Authorization': `Bearer ${SUPABASE_KEY}`
-            },
+            headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` },
             body: JSON.stringify({
                 contents: [{ parts: imgObj ? [imgObj, { text: cleanPrompt }] : [{ text: cleanPrompt }] }],
                 generationConfig: { response_modalities: ["IMAGE"] }
             })
         });
-
-        if (!response.ok) {
-            const errText = await response.text();
-            throw new Error(`Server Error (${response.status}): ${errText.substring(0, 50)}...`);
-        }
         const data = await response.json();
         const b64 = data.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData?.data;
-
         if (b64) {
             const mime = 'image/jpeg';
-            const imgId = 'ai_gen_' + Date.now();
-            await saveToLocal(imgId, { mime, base64: b64, name: 'AI Generated', size: 'AI' });
-            renderImageToBubble(targetId, b64, mime);
+            const fileName = `AI_Gen_${Date.now()}.jpg`;
+            const publicUrl = await uploadAiFileToSupabase(b64, fileName, mime);
+            renderImageToBubble(targetId, publicUrl, mime, true);
             chatHistory.push({
                 role: "model",
-                parts: [{ text: `[[CONFIRM_IMAGE_CREATED]] Saya telah berhasil membuatkan gambar dengan deskripsi: "${cleanPrompt}". Gambar tersebut sudah muncul di layar chat di atas.` }],
-                _ui: {
-                    val: "",
-                    filesForStorage: [{ name: 'AI_Generated.jpg', size: 'AI', fileId: imgId, mime: mime, isAI: true }]
-                }
+                parts: [{ text: `[[CONFIRM_IMAGE_CREATED]]` }],
+                _ui: { val: "", filesForStorage: [{ name: fileName, size: 'AI', url: publicUrl, mime: mime, isAI: true }] }
             });
-            localStorage.setItem('chat_history', JSON.stringify(chatHistory));
             saveCurrentChatToHistory();
-        } else {
-            throw new Error('Respon tidak mengandung gambar');
         }
     } catch (e) {
-        aiBubble.filesElement.innerHTML = `<span class="text-red-500 font-medium">${e.message}</span>`;
-    } finally {
-        sendBtn.disabled = false;
+        aiBubble.filesElement.innerHTML = `<span class="text-red-500 font-medium text-sm italic">${e.message}</span>`;
     }
 }
 
 function renderImageToBubble(targetId, source, mime, isUrl = false) {
     const el = document.getElementById(targetId);
     if (!el) return;
-    
     const imageUrl = isUrl ? source : `data:${mime};base64,${source}`;
-    
     el.innerHTML = '';
     el.classList.remove('bg-gray-200', 'animate-pulse', 'file-placeholder');
     el.style.backgroundColor = 'transparent';
-
     const wrapper = document.createElement('div');
-    wrapper.className = "mt-1 w-full image-container";
-    wrapper.style.position = "relative";
-    wrapper.style.display = "inline-block";
-
-    wrapper.onclick = function(e) {
+    wrapper.className = "mt-1 w-full image-container relative inline-block";
+    wrapper.onclick = (e) => {
+        e.preventDefault();
         e.stopPropagation();
-        this.classList.toggle('show-dl');
+        if (wrapper.classList.contains('show-dl')) {
+		    unifiedDownload(imageUrl, "AURA_Image.png");
+		} else {
+		    wrapper.classList.add('show-dl');
+		}
     };
-
     wrapper.innerHTML = `
         <img src="${imageUrl}" class="w-full h-auto rounded-xl shadow-md border border-gray-100 block">
-        <button class="download-btn" style="position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); border: none; border-radius: 6px; padding: 4px; color: white; cursor: pointer; display: none; align-items: center; justify-content: center; z-index: 10;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M15 11a1 1 0 0 0 1 1h2.939a1 1 0 0 1 .75 1.811l-6.835 6.836a1.207 1.207 0 0 1-1.707 0L4.31 13.81a1 1 0 0 1 .75-1.811H8a1 1 0 0 0 1-1V9a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1z"/>
-                <path d="M9 4h6"/>
+        <button class="download-btn" style="position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); border: none; border-radius: 6px; padding: 6px; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
             </svg>
         </button>
     `;
-    
-    const btn = wrapper.querySelector('.download-btn');
-    btn.onclick = (e) => {
-        e.stopPropagation();
-        downloadAIImage(imageUrl);
-    };
-    
     el.appendChild(wrapper);
     scrollToBottom();
 }
@@ -2070,26 +2091,27 @@ async function handleVideoGeneration(prompt, imageObj = null) {
     const aiBubble = createBubble('assistant', '', [], false, false);
     const targetId = 'video_' + Date.now();
     aiBubble.filesElement.id = targetId;
-    
+
     aiBubble.filesElement.innerHTML = `
-        <div class="flex items-center gap-2 py-1 mt-1">
-            <span id="status-text-${targetId}" class="text-sm font-medium text-gray-500 italic">Membuat video (0s)</span>
-            <div class="flex items-end mb-1">
-                <span class="flex leading-none text-gray-400">
-                    <span style="animation: blink 1.4s infinite both; animation-delay: 0s;">.</span>
+        <div class="flex items-center gap-2 py-2 mt-1">
+            <svg class="animate-spin h-3.5 w-3.5 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <span id="status-text-${targetId}" class="text-sm font-normal text-slate-500 italic flex items-center">
+                Membuat video
+                <span class="flex ml-0.5">
+                    <span style="animation: blink 1.4s infinite both;">.</span>
                     <span style="animation: blink 1.4s infinite both; animation-delay: 0.2s;">.</span>
                     <span style="animation: blink 1.4s infinite both; animation-delay: 0.4s;">.</span>
                 </span>
-            </div>
+            </span>
         </div>
     `;
 
     try {
         let instance = { prompt: prompt };
-        if (imageObj) {
-            instance.image = { bytesBase64Encoded: imageObj.inline_data.data, mimeType: imageObj.inline_data.mime_type };
-        }
-
+        if (imageObj) instance.image = { bytesBase64Encoded: imageObj.inline_data.data, mimeType: imageObj.inline_data.mime_type };
         const res = await fetch(`${VEO_PROXY}/api/generate`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -2099,51 +2121,38 @@ async function handleVideoGeneration(prompt, imageObj = null) {
                 parameters: { sampleCount: 1, aspectRatio: "16:9" }
             })
         });
-
         const data = await res.json();
         if (!res.ok) throw new Error(data.error?.message || "Gagal memanggil AI Video.");
-
         startVideoPolling(data.name, targetId, prompt);
-
     } catch (e) {
-        aiBubble.filesElement.innerHTML = `<span class="text-red-500 font-medium">${e.message}</span>`;
-    } finally {
-        sendBtn.disabled = false;
+        aiBubble.filesElement.innerHTML = `<span class="text-red-500 font-medium text-sm italic">${e.message}</span>`;
     }
 }
 
 function renderVideoToBubble(targetId, source, mime, isUrl = false) {
     const el = document.getElementById(targetId);
     if (!el) return;
-    el.innerHTML = '';
-    
     const videoUrl = isUrl ? source : `data:${mime};base64,${source}`;
+    el.innerHTML = '';
     const wrapper = document.createElement('div');
-    wrapper.className = "mt-1 w-full image-container";
-    wrapper.style.position = "relative";
-    wrapper.style.display = "inline-block";
-    
-    wrapper.onclick = function(e) {
-        e.stopPropagation();
-        this.classList.toggle('show-dl');
+    wrapper.className = "mt-1 w-full image-container relative inline-block";
+    wrapper.onclick = (e) => {
+        if (e.target.closest('button')) return;
+        wrapper.classList.toggle('show-dl');
     };
-
     wrapper.innerHTML = `
         <video src="${videoUrl}" controls playsinline class="w-full rounded-xl shadow-md border border-gray-100 block"></video>
-        <button class="download-btn" style="position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); border: none; border-radius: 6px; padding: 4px; color: white; cursor: pointer; display: none; align-items: center; justify-content: center; z-index: 20;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M15 11a1 1 0 0 0 1 1h2.939a1 1 0 0 1 .75 1.811l-6.835 6.836a1.207 1.207 0 0 1-1.707 0L4.31 13.81a1 1 0 0 1 .75-1.811H8a1 1 0 0 0 1-1V9a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1z"/>
-                <path d="M9 4h6"/>
+        <button class="download-btn" style="position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); border: none; border-radius: 6px; padding: 6px; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 20;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
             </svg>
         </button>
     `;
-    
-    const btn = wrapper.querySelector('.download-btn');
-    btn.onclick = (e) => {
-        e.stopPropagation();
-        downloadAIImage(videoUrl);
+    wrapper.querySelector('.download-btn').onclick = (e) => {
+        e.preventDefault();
+		e.stopPropagation();
+		unifiedDownload(videoUrl, "AURA_Video.mp4");
     };
-    
     el.appendChild(wrapper);
     scrollToBottom();
 }
@@ -2155,63 +2164,60 @@ function startVideoPolling(fullName, targetId, videoPrompt) {
     const pollInterval = setInterval(async () => {
         try {
             const elapsed = Math.round((Date.now() - startTime) / 1000);
-            
-            if (statusEl) statusEl.innerText = `Membuat video (${elapsed}s)`;
+            if (statusEl) {
+                statusEl.innerHTML = `
+                    Membuat video
+                    <span class="flex ml-0.5">
+                        <span style="animation: blink 1.4s infinite both;">.</span>
+                        <span style="animation: blink 1.4s infinite both; animation-delay: 0.2s;">.</span>
+                        <span style="animation: blink 1.4s infinite both; animation-delay: 0.4s;">.</span>
+                    </span>
+                    <span class="ml-1">(${elapsed}s)</span>
+                `;
+            }
 
             const res = await fetch(`${VEO_PROXY}/api/status?name=${encodeURIComponent(fullName)}`);
             const data = await res.json();
 
-            if (data.error) {
-                const container = document.getElementById(targetId);
-                container.innerHTML = `<div class="text-red-500 text-xs">Error: ${data.error.message}</div>`;
-                clearInterval(pollInterval);
-                return;
-            }
-
             if (data.done) {
-                clearInterval(pollInterval);
-                const videoUri = data.response?.generateVideoResponse?.generatedSamples?.[0]?.video?.uri;
-                
-                if (videoUri) {
-                    if (statusEl) statusEl.innerText = "Video selesai, menyimpan";
-                    
-                    const resp = await fetch(videoUri);
-                    const blob = await resp.blob();
-                    const reader = new FileReader();
-                    
-                    reader.onloadend = async () => {
-                        const base64Video = reader.result.split(',')[1];
-                        const videoId = 'vid_gen_' + Date.now();
-                        const mime = "video/mp4";
-
-                        await saveToLocal(videoId, {
-                            mime: mime, base64: base64Video, name: 'AI-Video.mp4', size: formatBytes(blob.size)
-                        });
-
-                        renderVideoToBubble(targetId, base64Video, mime);
-
-                        chatHistory.push({
-                            role: "model",
-                            parts: [{ text: `[[CONFIRM_VIDEO_CREATED]] Saya telah berhasil membuatkan video sesuai permintaan terakhir Anda: "${videoPrompt}". Video sudah siap diputar di atas.` }],
-                            _ui: {
-                                val: "",
-                                filesForStorage: [{
-                                    name: 'AURA-VIDEO.mp4', size: formatBytes(blob.size),
-                                    fileId: videoId, mime: mime, isVideo: true, isAI: true
-                                }]
-                            }
-                        });
-                        localStorage.setItem('chat_history', JSON.stringify(chatHistory));
-                        saveCurrentChatToHistory();
-                    };
-                    reader.readAsDataURL(blob);
-                } else {
-                    const container = document.getElementById(targetId);
-                    container.innerHTML = `<div class="text-yellow-600 text-xs">Render selesai, tapi diblokir filter keamanan.</div>`;
-                }
-            }
-        } catch (e) {
-            console.error("Polling error:", e);
+			    clearInterval(pollInterval);
+			    const videoUri = data.response?.generateVideoResponse?.generatedSamples?.[0]?.video?.uri;
+			    
+			    if (videoUri) {
+			        const resp = await fetch(videoUri);
+			        const blob = await resp.blob();
+			        const reader = new FileReader();
+			        
+			        reader.onloadend = async () => {
+			            const base64Video = reader.result.split(',')[1];
+			            const mime = "video/mp4";
+			            const fileName = `AURA-Video-${Date.now()}.mp4`;
+			            const publicUrl = await uploadAiFileToSupabase(base64Video, fileName, mime);
+			
+			            renderVideoToBubble(targetId, publicUrl, mime, true);
+			
+			            chatHistory.push({
+			                role: "model",
+			                parts: [{ text: `[[CONFIRM_VIDEO_CREATED]]` }],
+			                _ui: {
+			                    val: "",
+			                    filesForStorage: [{ 
+			                        name: fileName, 
+			                        size: formatBytes(blob.size), 
+			                        url: publicUrl, 
+			                        mime: mime, 
+			                        isVideo: true, 
+			                        isAI: true 
+			                    }]
+			                }
+			            });
+			            saveCurrentChatToHistory();
+			        };
+			        reader.readAsDataURL(blob);
+			    }
+			}
+        } catch (e) { 
+            console.error(e); 
         }
     }, 5000);
 }
@@ -2617,56 +2623,45 @@ function syncVoiceToChat(role, text) {
 // ===========================================================================
 // 15. FUNGSI RENDER MEDIA & DOWNLOAD
 // ===========================================================================
-async function downloadAIImage(url) {
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+async function unifiedDownload(url, fileName = '') {
+    if (!url) return;
+
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
                   (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-    const isVideo = url.includes("video/mp4");
-    const fileName = `AURA-${isVideo ? 'VIDEO' : 'ART'}-${Date.now()}.${isVideo ? 'mp4' : 'png'}`;
-    
+
     try {
         const response = await fetch(url);
         const blob = await response.blob();
-        const file = new File([blob], fileName, { type: blob.type });
-
-        if (isIOS && navigator.share) {
-            await navigator.share({ files: [file] });
-        } else {
-            const a = document.createElement('a');
-            a.href = window.URL.createObjectURL(blob);
-            a.download = fileName;
-            a.click();
+        
+        let finalName = fileName;
+        if (!finalName) {
+            const mimeParts = blob.type.split('/');
+            const ext = mimeParts[1] ? mimeParts[1].split('+')[0] : 'bin';
+            finalName = `AURA-File-${Date.now()}.${ext}`;
         }
-    } catch (e) { window.open(url, '_blank'); }
-}
 
-async function downloadFile(fileId, fileName = 'AURA-File') {
-    if (!fileId) return;
-    const fData = await getFromLocal(fileId);
-    if (!fData || !fData.signedUrl) return;
+        const file = new File([blob], finalName, { type: blob.type });
 
-    try {
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-                      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-
-        const response = await fetch(fData.signedUrl);
-        const blob = await response.blob();
-        const file = new File([blob], fileName, { type: blob.type });
-
-        if (navigator.share && (isIOS || /Android/i.test(navigator.userAgent))) {
-            await navigator.share({ files: [file], title: fileName });
+        if (isIOS && navigator.canShare && navigator.canShare({ files: [file] })) {
+            await navigator.share({
+                files: [file],
+                title: finalName
+            });
         } else {
-            const url = window.URL.createObjectURL(blob);
+            const blobUrl = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
-            a.style.display = 'none';
-            a.href = url;
-            a.download = fileName;
+            a.href = blobUrl;
+            a.download = finalName;
             document.body.appendChild(a);
             a.click();
-            window.URL.revokeObjectURL(url);
-            document.body.removeChild(a);
+            
+            setTimeout(() => {
+                window.URL.revokeObjectURL(blobUrl);
+                document.body.removeChild(a);
+            }, 200);
         }
     } catch (e) {
-        window.open(fData.signedUrl, '_blank');
+        window.open(url, '_blank');
     }
 }
 
@@ -2755,153 +2750,49 @@ async function streamText(element, text, typingElement = null, speed = 8) {
 // ===========================================================================
 async function handlePowerPoint(rawText) {
     try {
-        const response = await fetch(GAS_URL, {
-            method: 'POST',
-            body: rawText,
-            headers: { 'Content-Type': 'text/plain' }
-        });
+        const response = await fetch(GAS_URL, { method: 'POST', body: rawText });
         const b64 = await response.text();
         if (!b64 || b64.startsWith("Error")) throw new Error("Gagal");
         
-        const fileId = 'ai_pptx_' + Date.now();
         const fileName = `Presentasi_${Date.now()}.pptx`;
-        const fileSize = formatBytes((b64.length * 3) / 4);
+        const mime = "application/vnd.openxmlformats-officedocument.presentationml.presentation";
+        const publicUrl = await uploadAiFileToSupabase(b64, fileName, mime);
         
-        // Simpan dan tunggu sampai transaksi selesai
-        await saveToLocal(fileId, {
-            mime: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-            base64: b64, name: fileName, size: fileSize
-        });
-        
-        return { name: fileName, size: fileSize, fileId: fileId, isAI: false };
+        return { name: fileName, size: 'AI', url: publicUrl, mime: mime, isAI: false };
     } catch (e) { return null; }
 }
 
 async function handleWordDocument(rawText) {
     try {
-        const response = await fetch(SPT_URL, {
-            method: 'POST',
-            body: rawText,
-            headers: { 'Content-Type': 'text/plain' }
-        });
+        const response = await fetch(SPT_URL, { method: 'POST', body: rawText });
         const b64 = await response.text();
         if (!b64 || b64.startsWith("Error")) throw new Error("Gagal");
         
-        const fileId = 'ai_docx_' + Date.now();
         const fileName = `Dokumen_${Date.now()}.docx`;
-        const fileSize = formatBytes((b64.length * 3) / 4);
+        const mime = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+        const publicUrl = await uploadAiFileToSupabase(b64, fileName, mime);
         
-        await saveToLocal(fileId, {
-            mime: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-            base64: b64, name: fileName, size: fileSize
-        });
-        
-        return { name: fileName, size: fileSize, fileId: fileId, isAI: false };
+        return { name: fileName, size: 'AI', url: publicUrl, mime: mime, isAI: false };
     } catch (e) { return null; }
-}
-
-function renderFileCard(container, fileData, iconPath) {
-    let grid = container.querySelector('.file-grid-container');
-    if (!grid) {
-        container.innerHTML = '<div class="grid grid-cols-2 md:grid-cols-4 gap-2 mt-2 file-grid-container"></div>';
-        grid = container.querySelector('.file-grid-container');
-    }
-    const card = document.createElement('div');
-    card.className = "cursor-pointer active:scale-95 transition-all bg-gray-200 rounded-2xl p-3 flex items-center gap-2 relative w-full min-h-[64px] border-none shadow-sm";
-    
-    card.onclick = async (e) => {
-        e.stopPropagation();
-        await downloadFile(fileData.fileId, fileData.name);
-    };
-
-    card.innerHTML = `
-        <div class="w-10 h-10 flex-none flex items-center justify-center overflow-hidden shrink-0">
-            <img src="${iconPath}" class="w-7 h-7 object-contain">
-        </div>
-        <div class="flex-1 flex flex-col justify-center min-w-0 h-10">
-            <div class="text-[12px] font-bold text-gray-700 truncate leading-none mb-1">${fileData.name}</div>
-            <div class="text-[10px] text-gray-400 font-medium leading-none">${fileData.size}</div>
-        </div>`;
-    grid.appendChild(card);
-    if (window.lucide) lucide.createIcons();
-    scrollToBottom();
-}
-
-async function generateAutoTitle(chatId, history) {
-    if (!chatId || chatId.toString().startsWith('chat_') || history.length < 4) return;
-
-    const { data: currentChat, error: fetchError } = await _supabase
-        .from('chats')
-        .select('title')
-        .eq('id', chatId)
-        .single();
-
-    if (fetchError || (currentChat && currentChat.title !== "Percakapan Baru")) {
-        return;
-    }
-
-    const endpoint = `${SUPABASE_URL}/functions/v1/ai-proxy-v2?model=${currentModel}&action=generateContent&version=v1beta`;
-    
-    const context = history.map(m => `${m.role === 'user' ? 'User' : 'AI'}: ${m.parts[0].text}`).join('\n');
-    
-    const prompt = `Analisis percakapan berikut dan buatlah satu judul singkat yang sangat padat, kreatif, dan spesifik (maksimal 4 kata). Judul harus sesuai dengan topik yang dibahas. HANYA hasilkan teks judul saja tanpa tanda kutip atau penjelasan tambahan.
-    
-    KONTEKS:
-    ${context}`;
-
-    try {
-        const res = await fetch(endpoint, {
-            method: 'POST',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'apikey': SUPABASE_KEY, 
-                'Authorization': `Bearer ${SUPABASE_KEY}` 
-            },
-            body: JSON.stringify({
-                contents: [{ role: "user", parts: [{ text: prompt }] }],
-                generationConfig: { 
-                    temperature: 0.8, 
-                    maxOutputTokens: 1024 
-                }
-            })
-        });
-        
-        const d = await res.json();
-        let t = "";
-        
-        if (d.candidates && d.candidates[0].content && d.candidates[0].content.parts) {
-            const textPart = d.candidates[0].content.parts.find(p => p.text);
-            if (textPart) t = textPart.text;
-        }
-        
-        t = t.replace(/[#*`"']/g, '').trim();
-        
-        if (t && t.length > 1) {
-            const { error: updateError } = await _supabase.from('chats').update({ title: t }).eq('id', chatId);
-            if (!updateError) {
-                const historyItem = document.querySelector(`#history-panel div[onclick*="${chatId}"] span`);
-                if (historyItem) {
-                    historyItem.innerText = t;
-                }
-            }
-        }
-    } catch (e) {
-        console.error("Gagal membuat judul:", e);
-    }
 }
 
 // ===========================================================================
 // 19. FUNGSI UTAMA ON SEND
 // ===========================================================================
 async function onSend(e) {
-    if (e) e.preventDefault();
-
+    if (e) { e.preventDefault(); e.stopPropagation(); }
+    input.blur();
+    document.activeElement.blur();
+    
     const setButtonState = (state) => {
         if (state === 'loading' || state === 'streaming') {
             sendBtn.innerHTML = `<i data-lucide="square" class="w-4 h-4 fill-current text-red-500"></i>`;
             isGenerating = true;
         } else {
-            sendBtn.innerHTML = `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width: 20px; height: 20px;" fill="currentColor"><path d="M21.66,12a2,2,0,0,1-1.14,1.81L5.87,20.75A2.08,2.08,0,0,1,5,21a2,2,0,0,1-1.82-2.82L5.46,13H11a1,1,0,0,0,0-2H5.46L3.18,5.87A2,2,0,0,1,5.86,3.25h0l14.65,6.94A2,2,0,0,1,21.66,12Z"></path></svg>`;
+            sendBtn.innerHTML = `
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width: 24px; height: 24px;" fill="currentColor">
+                    <path d="M21.66,12a2,2,0,0,1-1.14,1.81L5.87,20.75A2.08,2.08,0,0,1,5,21a2,2,0,0,1-1.82-2.82L5.46,13H11a1,1,0,0,0,0-2H5.46L3.18,5.87A2,2,0,0,1,5.86,3.25h0l14.65,6.94A2,2,0,0,1,21.66,12Z"></path>
+                </svg>`;
             isGenerating = false;
         }
         if (window.lucide) lucide.createIcons();
@@ -2909,8 +2800,6 @@ async function onSend(e) {
 
     const val = input.value.trim();
     if (!val && pendingFiles.length === 0 && !isGenerating) return;
-
-    input.blur();
 
     if (isGenerating) {
         isGenerating = false;
@@ -2930,12 +2819,22 @@ async function onSend(e) {
         input.value = '';
         adjustInput(input);
 
-        createBubble('user', val, filesToProcess);
-        
-        const aiBubble = createBubble('assistant', '', [], false, true);
-
+        const userBubble = createBubble('user', val, filesToProcess);
         const filesData = await processPendingFiles(filesToProcess);
-        
+
+        if (filesData.filesForStorage && filesData.filesForStorage.length > 0) {
+            const fileCards = userBubble.filesElement.querySelectorAll('.file-card-item');
+            filesData.filesForStorage.forEach((f, idx) => {
+                if (fileCards[idx]) {
+                    fileCards[idx].onclick = (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        unifiedDownload(f.url, f.name);
+                    };
+                }
+            });
+        }
+
         if (!isGenerating) return;
 
         if (isVideoMode || isImageMode) {
@@ -2943,31 +2842,29 @@ async function onSend(e) {
             const firstImg = filesToProcess.find(f => f.mime && f.mime.startsWith('image/'));
             if (firstImg) imgObj = { inline_data: { mime_type: firstImg.mime, data: firstImg.base64 } };
             
-            if (aiBubble && aiBubble.typingElement) aiBubble.typingElement.remove();
-
             if (isVideoMode) {
                 await handleVideoGeneration(val, imgObj);
-                toggleVideoMode();
+                updateChatMode('video');
             } else {
-                toggleImageMode();
-                await handleImageGeneration((filesToProcess.length > 0 ? '/edit ' : '/gambar ') + val, imgObj);
+                const promptPrefix = filesToProcess.length > 0 ? '/edit ' : '/gambar ';
+                await handleImageGeneration(promptPrefix + val, imgObj);
+                updateChatMode('image');
             }
             setButtonState('idle'); 
             return;
         }
 
+        const aiBubble = createBubble('assistant', '', [], false, true);
         const currentTurnText = (val || "Analisis lampiran ini.") + (filesData.officeTextContext ? "\n\nKONTEKS DOKUMEN:\n" + filesData.officeTextContext : "");
         
-        chatHistory.push({
-            role: "user",
-            parts: [...filesData.apiParts, { text: currentTurnText }],
-            _ui: { val, filesForStorage: filesData.filesForStorage }
+        chatHistory.push({ 
+            role: "user", 
+            parts: [...filesData.apiParts, { text: currentTurnText }], 
+            _ui: { val, filesForStorage: filesData.filesForStorage } 
         });
-
         saveCurrentChatToHistory();
 
         const endpoint = `${SUPABASE_URL}/functions/v1/ai-proxy-v2?model=${currentModel}&action=generateContent&version=v1beta`;
-
         const response = await fetch(endpoint, {
             method: 'POST',
             headers: { 
@@ -2979,17 +2876,20 @@ async function onSend(e) {
             body: JSON.stringify({
                 contents: chatHistory.map(h => ({ role: h.role, parts: h.parts })),
                 systemInstruction: { parts: [{ text: systemPrompt + "\n\n" + PERMANENT_PROMPT }] },
-                generationConfig: { temperature: 1, maxOutputTokens: maxTokens, response_modalities: ["TEXT"] },
+                generationConfig: { 
+                    temperature: 1, 
+                    maxOutputTokens: maxTokens, 
+                    response_modalities: ["TEXT"] 
+                },
                 tools: [{ google_search: {} }]
             })
         });
 
         const data = await response.json();
         const parts = data.candidates?.[0]?.content?.parts || [];
-
         let fullAIResponse = "";
         parts.forEach(p => { if(p.text) fullAIResponse += p.text; });
-        
+
         let displayChatText = fullAIResponse;
         const pptMatch = fullAIResponse.match(/\[PPT\]([\s\S]*?)\[\/PPT\]/);
         const wordMatch = fullAIResponse.match(/\[WORD\]([\s\S]*?)\[\/WORD\]/);
@@ -2997,55 +2897,98 @@ async function onSend(e) {
         if (pptMatch) displayChatText = displayChatText.replace(/\[PPT\]([\s\S]*?)\[\/PPT\]/, "").trim();
         if (wordMatch) displayChatText = displayChatText.replace(/\[WORD\]([\s\S]*?)\[\/WORD\]/, "").trim();
 
-        let aiFilesForStorage = [];
-        
-        if (isGenerating) {
-            chatHistory.push({
-                role: "model",
-                parts: [{ text: displayChatText || fullAIResponse }],
-                _ui: { val: displayChatText, filesForStorage: aiFilesForStorage }
-            });
-            saveCurrentChatToHistory();
-        }
+        chatHistory.push({ 
+            role: "model", 
+            parts: [{ text: displayChatText || fullAIResponse }], 
+            _ui: { val: displayChatText, filesForStorage: [] } 
+        });
+        await saveCurrentChatToHistory();
+        generateAutoTitle(currentChatId, chatHistory);
 
         await streamText(aiBubble.textElement, displayChatText, aiBubble.typingElement);
 
         if (pptMatch && isGenerating) {
+            const statusId = 'status-ppt-' + Date.now();
+            aiBubble.filesElement.innerHTML += `
+                <div id="${statusId}" class="flex items-center gap-2 py-2 mt-1">
+                    <svg class="animate-spin h-3.5 w-3.5 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span class="text-sm font-normal text-slate-500 italic flex items-center">
+                        Membuat PowerPoint
+                        <span class="flex ml-0.5">
+                            <span style="animation: blink 1.4s infinite both;">.</span>
+                            <span style="animation: blink 1.4s infinite both; animation-delay: 0.2s;">.</span>
+                            <span style="animation: blink 1.4s infinite both; animation-delay: 0.4s;">.</span>
+                        </span>
+                    </span>
+                </div>`;
             const pptData = await handlePowerPoint(pptMatch[1].trim());
+            if (document.getElementById(statusId)) document.getElementById(statusId).remove();
             if (pptData) {
                 renderFileCard(aiBubble.filesElement, pptData, "icon/ppt-file-icon.svg");
-                const lastMsg = chatHistory[chatHistory.length - 1];
-                if (lastMsg && lastMsg.role === 'model') {
-                    lastMsg._ui.filesForStorage.push(pptData);
-                    saveCurrentChatToHistory();
-                }
+                chatHistory[chatHistory.length - 1]._ui.filesForStorage.push(pptData);
+                saveCurrentChatToHistory();
             }
         }
 
         if (wordMatch && isGenerating) {
+            const statusId = 'status-word-' + Date.now();
+            aiBubble.filesElement.innerHTML += `
+                <div id="${statusId}" class="flex items-center gap-2 py-2 mt-1">
+                    <svg class="animate-spin h-3.5 w-3.5 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span class="text-sm font-normal text-slate-500 italic flex items-center">
+                        Membuat Microsoft Word
+                        <span class="flex ml-0.5">
+                            <span style="animation: blink 1.4s infinite both;">.</span>
+                            <span style="animation: blink 1.4s infinite both; animation-delay: 0.2s;">.</span>
+                            <span style="animation: blink 1.4s infinite both; animation-delay: 0.4s;">.</span>
+                        </span>
+                    </span>
+                </div>`;
             const wordData = await handleWordDocument(wordMatch[1].trim());
+            if (document.getElementById(statusId)) document.getElementById(statusId).remove();
             if (wordData) {
                 renderFileCard(aiBubble.filesElement, wordData, "icon/docx-file-icon.svg");
-                const lastMsg = chatHistory[chatHistory.length - 1];
-                if (lastMsg && lastMsg.role === 'model') {
-                    lastMsg._ui.filesForStorage.push(wordData);
-                    saveCurrentChatToHistory();
-                }
+                chatHistory[chatHistory.length - 1]._ui.filesForStorage.push(wordData);
+                saveCurrentChatToHistory();
             }
         }
 
-        if (isGenerating && currentChatId) {
-		    generateAutoTitle(currentChatId, chatHistory);
-		}
-		
     } catch (err) {
-        if (aiBubble && aiBubble.typingElement) aiBubble.typingElement.remove();
         if (err.name !== 'AbortError') createBubble('assistant', `<span class="text-red-500">${err.message}</span>`);
-    } 
-	finally {
+    } finally {
         setButtonState('idle');
         abortController = null;
-        scrollToBottom();
+    }
+}
+
+function updateChatMode(target) {
+    const chatInput = document.getElementById('chat-input');
+    const btnImage = document.getElementById('btn-mode-image');
+    const btnVideo = document.getElementById('btn-mode-video');
+    
+    const isActivatingImage = target === 'image' && !isImageMode;
+    const isActivatingVideo = target === 'video' && !isVideoMode;
+
+    isImageMode = false;
+    isVideoMode = false;
+    resetButtonUI('btn-mode-image');
+    resetButtonUI('btn-mode-video');
+    chatInput.placeholder = "Tulis pesan...";
+
+    if (isActivatingImage && isImageEnabled) {
+        isImageMode = true;
+        setActiveStyle(btnImage);
+        chatInput.placeholder = "Deskripsikan gambar...";
+    } else if (isActivatingVideo && isVideoEnabled) {
+        isVideoMode = true;
+        setActiveStyle(btnVideo);
+        chatInput.placeholder = "Deskripsikan video...";
     }
 }
 
@@ -3060,6 +3003,25 @@ async function initUI() {
             showView('auth');
             return;
         }
+
+        const userEmailEl = document.getElementById('user-display-email');
+        if (userEmailEl && session.user.email) {
+            userEmailEl.innerText = session.user.email;
+        }
+
+        _supabase
+            .channel('history-changes')
+            .on('postgres_changes', { 
+                event: '*', 
+                schema: 'public', 
+                table: 'chats',
+                filter: `user_id=eq.${session.user.id}` 
+            }, () => {
+                refreshChatCache();
+            })
+            .subscribe();
+
+        refreshChatCache();
 
         const settingsBtn = document.getElementById('admin-settings-btn');
         const userMgmtCard = document.getElementById('user-mgmt-card');
@@ -3167,6 +3129,44 @@ async function initUI() {
         showView('chat');
         createNewChat();
     }
+}
+
+async function generateAutoTitle(chatId, history) {
+    if (!chatId || chatId.toString().startsWith('chat_') || history.length < 2) return;
+
+    const { data: currentChat, error: fetchError } = await _supabase
+        .from('chats')
+        .select('title')
+        .eq('id', chatId)
+        .single();
+
+    if (fetchError || (currentChat && currentChat.title !== "Percakapan Baru")) return;
+
+    const endpoint = `${SUPABASE_URL}/functions/v1/ai-proxy-v2?model=${currentModel}&action=generateContent&version=v1beta`;
+    const context = history.map(m => `${m.role === 'user' ? 'User' : 'AI'}: ${m.parts[0].text}`).join('\n');
+    const prompt = `Tugas kamu membuat judul dari percakpan user dan ai sesuai dengan topik pembahasan minumal 3 kalimat. HANYA hasilkan teks judul saja tanpa tanda kutip atau penjelasan tambahan.\n\nKONTEKS:\n${context}`;
+
+    try {
+        const res = await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` },
+            body: JSON.stringify({
+                contents: [{ role: "user", parts: [{ text: prompt }] }],
+                generationConfig: { temperature: 0.8, maxOutputTokens: 1024 }
+            })
+        });
+        const d = await res.json();
+        let t = "";
+        if (d.candidates && d.candidates[0].content && d.candidates[0].content.parts) {
+            const textPart = d.candidates[0].content.parts.find(p => p.text);
+            if (textPart) t = textPart.text;
+        }
+        t = t.replace(/[#*`"']/g, '').trim();
+        if (t && t.length > 1) {
+            const { error: updateError } = await _supabase.from('chats').update({ title: t }).eq('id', chatId);
+            if (!updateError) refreshChatCache();
+        }
+    } catch (e) { console.error(e); }
 }
 
 // ===========================================================================
