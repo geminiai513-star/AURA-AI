@@ -453,11 +453,7 @@
         <div id="chat-view" class="view-container">
             <header class="h-16 px-4 flex justify-between items-center bg-white shrink-0 border-b border-gray-100 py-0 relative">
 			    <div class="flex items-center h-full">
-			        <img src="icon/icon.png" alt="Logo" class="h-14 w-auto object-contain block py-0">
-			        <div style="display: flex; flex-direction: column; justify-content: center; margin-left: 4px; gap: 3px;">
-			            <span style="font-size: 18px; font-weight: 800; letter-spacing: -0.5px; line-height: 1; background: linear-gradient(90deg, #2563eb 0%, #06b6d4 70%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">AURA</span>
-			            <span style="font-size: 10px; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1;">ARTIFICIAL INTELLIGENCE</span>
-			        </div>
+			        <img src="icon/icon.png" alt="Logo" class="h-16 w-auto object-contain block">
 			    </div>
 			    <button onclick="openHistory()" class="p-2.5 text-gray-500 active:scale-90 transition-transform outline-none bg-transparent border-none cursor-pointer">
 			        <i data-lucide="menu" stroke-width="2.5" class="w-6 h-6"></i>
@@ -569,12 +565,14 @@
 					            <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400" id="dropdown-icon"></i>
 					        </button>
 					        <div id="dropdown-menu" class="hidden absolute left-0 right-0 mt-2 bg-white rounded-2xl shadow-xl border border-gray-100 p-2 z-[110] fade-in">
-					            <div class="flex flex-col">
-					                <div class="dropdown-option py-3 px-4 rounded-xl hover:bg-gray-50 cursor-pointer text-sm font-medium text-gray-800" data-value="gemini-3-flash-preview">Gemini 3 Flash</div>
-					                <div class="dropdown-option py-3 px-4 rounded-xl hover:bg-gray-50 cursor-pointer text-sm font-medium text-gray-800" data-value="gemini-3-pro-preview">Gemini 3 Pro</div>
-					                <div class="dropdown-option py-3 px-4 rounded-xl hover:bg-gray-50 cursor-pointer text-sm font-medium text-gray-800" data-value="gemini-3-deep-think-preview">Gemini 3 Deep Think</div>
-					            </div>
-					        </div>
+							    <div class="flex flex-col">
+							        <div class="dropdown-option py-3 px-4 rounded-xl hover:bg-gray-50 cursor-pointer text-sm font-medium text-gray-800" data-value="gemini-3-flash-preview">Gemini 3 Flash</div>
+							        <div class="dropdown-option py-3 px-4 rounded-xl hover:bg-gray-50 cursor-pointer text-sm font-medium text-gray-800" data-value="gemini-3-pro-preview">Gemini 3 Pro</div>
+							        <div class="dropdown-option py-3 px-4 rounded-xl hover:bg-gray-50 cursor-pointer text-sm font-medium text-gray-800" data-value="gemini-3-deep-think-preview">Gemini 3 Deep Think</div>
+							        <div class="dropdown-option py-3 px-4 rounded-xl hover:bg-gray-50 cursor-pointer text-sm font-medium text-gray-800" data-value="gemini-2.5-flash">Gemini 2.5 Flash</div>
+							        <div class="dropdown-option py-3 px-4 rounded-xl hover:bg-gray-50 cursor-pointer text-sm font-medium text-gray-800" data-value="gemini-2.5-pro">Gemini 2.5 Pro</div>
+							    </div>
+							</div>
 					    </div>
 					
 					    <div class="relative w-full" id="voice-dropdown">
@@ -3105,10 +3103,12 @@ async function initUI() {
         }
 
         const modelLabels = {
-            'gemini-3-flash-preview': 'Gemini 3 Flash',
-            'gemini-3-pro-preview': 'Gemini 3 Pro',
-            'gemini-3-deep-think-preview': 'Gemini 3 Deep Think'
-        };
+		    'gemini-3-flash-preview': 'Gemini 3 Flash',
+		    'gemini-3-pro-preview': 'Gemini 3 Pro',
+		    'gemini-3-deep-think-preview': 'Gemini 3 Deep Think',
+		    'gemini-2.5-flash': 'Gemini 2.5 Flash',
+		    'gemini-2.5-pro': 'Gemini 2.5 Pro'
+		};
         
         if (selectedModelText) {
             selectedModelText.innerText = modelLabels[currentModel] || 'Gemini 3 Flash';
@@ -3166,7 +3166,7 @@ async function generateAutoTitle(chatId, history) {
 
     const endpoint = `${SUPABASE_URL}/functions/v1/ai-proxy-v2?model=${currentModel}&action=generateContent&version=v1beta`;
     const context = history.map(m => `${m.role === 'user' ? 'User' : 'AI'}: ${m.parts[0].text}`).join('\n');
-    const prompt = `Tugas kamu membuat judul dari percakpan user dan ai sesuai dengan topik pembahasan maksimal 3 kalimat. HANYA hasilkan teks judul saja tanpa tanda kutip atau penjelasan tambahan.\n\nKONTEKS:\n${context}`;
+    const prompt = `Tugas kamu hanya Membuat judul singkat dari percakapan user dan ai sesuai dengan topik pembahasan maksimal 3 kata. HANYA hasilkan teks judul saja tanpa tanda kutip atau penjelasan tambahan.\n\nKONTEKS:\n${context}`;
 
     try {
         const res = await fetch(endpoint, {
@@ -3174,7 +3174,7 @@ async function generateAutoTitle(chatId, history) {
             headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` },
             body: JSON.stringify({
                 contents: [{ role: "user", parts: [{ text: prompt }] }],
-                generationConfig: { temperature: 0.8, maxOutputTokens: 1024 }
+                generationConfig: { temperature: 0.5, maxOutputTokens: 1024 }
             })
         });
         const d = await res.json();
