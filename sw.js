@@ -1,4 +1,4 @@
-const CACHE_NAME = 'aura-ios-v26';
+const CACHE_NAME = 'aura-ios-v27';
 
 const ASSETS_TO_CACHE = [
   './',
