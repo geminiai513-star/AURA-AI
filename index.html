@@ -122,19 +122,21 @@
 
         /* Chat Input */
         #chat-input {
-            background: transparent !important;
-            border: none !important;
-            outline: none !important;
-            box-shadow: none !important;
-            resize: none;
-            width: 100%;
-            padding: 12px 12px !important;
-            font-size: 16px;
-            font-weight: 500;
-            line-height: 1.2;
-            max-height: 150px;
-            color: #1f2937;
-        }
+		    background: transparent !important;
+		    border: none !important;
+		    outline: none !important;
+		    box-shadow: none !important;
+		    resize: none;
+		    width: 100%;
+		    padding: 13px 4px !important;
+		    font-size: 16px;
+		    font-weight: 500;
+		    line-height: 20px !important;
+		    max-height: 150px;
+		    color: #1f2937;
+		    display: flex;
+		    align-items: center;
+		}
 		
 		#header-menu-trigger, 
 		#header-dropdown, 
@@ -474,7 +476,7 @@
 			            </div>
 			        </div>
 			        <div id="history-list-container" class="flex-1 overflow-y-auto px-3 pt-1 pb-4 space-y-0.5 custom-scroll"></div>
-			        <div class="px-2 pb-4 pt-2 border-t border-slate-50 flex flex-col space-y-0">
+			        <div class="px-2 pt-2 border-t border-slate-50 flex flex-col space-y-0" style="padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 16px);">
 					    <button onclick="createNewChat()" class="w-full flex items-center gap-3 h-9 px-3 text-slate-600 rounded-lg transition-colors group">
 					        <div class="w-7 h-7 flex items-center justify-center">
 					            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719"/><path d="M8 12h8"/><path d="M12 8v8"/></svg>
@@ -501,20 +503,20 @@
             <main id="chat-scroller">
                 <div id="message-list" class="max-w-3xl mx-auto space-y-4 pb-2"></div>
             </main>
-            <footer style="background-color: #ffffff; padding: 12px 16px; padding-bottom: calc(env(safe-area-inset-bottom, 10px) + 16px);">
+            <footer style="background-color: #ffffff; padding: 12px 16px; padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 16px);">
 			    <div style="max-width: 48rem; margin-left: auto; margin-right: auto;">
 			        <div id="file-preview-container" class="grid grid-cols-2 md:grid-cols-4 gap-2 empty:hidden mt-1 mb-4"></div>
 			        
 			        <div id="capsule-container" style="background-color: #f3f4f6; border-radius: 14px; padding: 4px; transition: all 0.2s ease; border: 1px solid transparent;">
-			            <div id="input-row-1" style="display: flex; align-items: center; gap: 4px; margin-bottom: 4px;">
+			            <div id="input-row-1" style="display: flex; align-items: center; gap: 0; margin-bottom: 4px;">
 			                <button onclick="if(isUploadEnabled) document.getElementById('file-input').click()" style="width: 46px; height: 46px; display: flex; align-items: center; justify-content: center; color: #9ca3af; background: none; border: none; cursor: pointer; flex-shrink: 0;">
-			                    <i data-lucide="plus" class="w-6 h-6"></i>
+			                    <i data-lucide="plus" class="w-5 h-5"></i>
 			                </button>
 			                <input type="file" id="file-input" multiple accept="image/*,application/pdf,.docx,.xlsx,.xls,.pptx,.js,.css,.java,.html,.xml,.py,.sql,.ts,.cpp,.h,.hpp,.lua,.swift" class="hidden" onchange="handleFileSelect(event)">
-			                <textarea id="chat-input" rows="1" placeholder="Tulis pesan..." oninput="adjustInput(this)" onblur="window.scrollTo(0,0)" style="flex: 1; background: transparent; border: none; outline: none; resize: none; padding: 12px 4px; font-size: 15px; font-weight: 500; color: #1f2937; line-height: 20px; min-height: 46px; display: block;"></textarea>
+			                <textarea id="chat-input" rows="1" placeholder="Tulis pesan..." oninput="adjustInput(this)" onblur="window.scrollTo(0,0)" style="flex: 1; background: transparent; border: none; outline: none; resize: none; padding: 12px 8px; font-size: 15px; font-weight: 500; color: #1f2937; line-height: 20px; min-height: 46px; display: block;"></textarea>
 			                <button id="send-btn" onpointerdown="onSend(event)" 
 			                    style="width: 46px; height: 46px; display: flex; align-items: center; justify-content: center; color: #374151; background: none; border: none; cursor: pointer; flex-shrink: 0;">
-			                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width: 24px; height: 24px;" fill="currentColor">
+			                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width: 22px; height: 22px;" fill="currentColor">
 			                        <path d="M21.66,12a2,2,0,0,1-1.14,1.81L5.87,20.75A2.08,2.08,0,0,1,5,21a2,2,0,0,1-1.82-2.82L5.46,13H11a1,1,0,0,0,0-2H5.46L3.18,5.87A2,2,0,0,1,5.86,3.25h0l14.65,6.94A2,2,0,0,1,21.66,12Z"></path>
 			                    </svg>
 			                </button>
@@ -808,14 +810,14 @@ function formatBytes(bytes, decimals = 2) {
 }
 
 function adjustInput(el) {
-    el.style.height = '40px';
+    el.style.height = '46px';
     const maxHeight = 150;
     const currentScrollHeight = el.scrollHeight;
     
-    if (currentScrollHeight > 40) {
+    if (currentScrollHeight > 46) {
         el.style.height = Math.min(currentScrollHeight, maxHeight) + 'px';
     } else {
-        el.style.height = '40px';
+        el.style.height = '46px';
     }
 
     if (currentScrollHeight > maxHeight) {
@@ -828,11 +830,10 @@ function adjustInput(el) {
     const row1 = document.getElementById('input-row-1');
     
     if (container && row1) {
-        if (parseInt(el.style.height) > 44) {
-            row1.style.alignItems = "flex-end";
+        row1.style.alignItems = "center";
+        if (parseInt(el.style.height) > 46) {
             container.style.borderRadius = "12px";
         } else {
-            row1.style.alignItems = "center";
             container.style.borderRadius = "14px";
         }
     }
@@ -1400,7 +1401,7 @@ function renderHistoryFromCache() {
             if (groupLabel !== currentGroup) {
                 currentGroup = groupLabel;
                 const labelDiv = document.createElement('div');
-                labelDiv.className = "text-[10px] font-bold text-slate-500 uppercase px-3 pt-3 pb-1";
+                labelDiv.className = "text-[12px] font-bold text-slate-300 uppercase px-3 pt-3 pb-1";
                 labelDiv.innerText = groupLabel;
                 container.appendChild(labelDiv);
             }
@@ -1650,32 +1651,41 @@ async function loadSavedChat() {
                 const fInfo = files[i];
                 const ph = placeholders[i];
                 let fileUrl = fInfo.url;
+                
                 if (!fileUrl && fInfo.fileId) {
                     const localData = await getFromLocal(fInfo.fileId);
                     if (localData) fileUrl = localData.signedUrl;
                 }
-                if (fInfo.isVideo) {
-                    const container = ph ? ph.parentElement : bubble.filesElement;
-                    const tempId = 'vid_' + Math.random().toString(36).substr(2, 9);
-                    container.id = tempId;
-                    renderVideoToBubble(tempId, fileUrl, fInfo.mime, true);
-                } else if (fInfo.isAI || (fInfo.mime && fInfo.mime.startsWith('image/'))) {
-                    const container = ph ? ph.parentElement : bubble.filesElement;
-                    const tempId = 'img_' + Math.random().toString(36).substr(2, 9);
-                    container.id = tempId;
-                    renderImageToBubble(tempId, fileUrl, fInfo.mime, true);
-                } else if (ph) {
-                    const ext = fInfo.name.split('.').pop().toLowerCase();
-                    ph.innerHTML = getFileIcon(ext);
-                    ph.classList.remove('bg-gray-200', 'animate-pulse', 'file-placeholder');
-                    ph.style.backgroundColor = 'transparent';
-                    const card = ph.closest('.cursor-pointer');
-                    if (card) {
-                        card.onclick = (e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            unifiedDownload(fileUrl, fInfo.name);
-                        };
+
+                const tempId = 'media_' + Math.random().toString(36).substr(2, 9);
+                if (ph && ph.parentElement) ph.parentElement.id = tempId;
+
+                if (fInfo.isAI) {
+                    if (fInfo.isVideo) {
+                        renderVideoToBubble(tempId, fileUrl, fInfo.mime, true, true);
+                    } else {
+                        renderImageToBubble(tempId, fileUrl, fInfo.mime, true, true);
+                    }
+                } else {
+                    if (ph) {
+                        const ext = fInfo.name.split('.').pop().toLowerCase();
+                        const isImg = fInfo.mime && fInfo.mime.startsWith('image/');
+                        
+                        ph.innerHTML = isImg 
+                            ? `<img src="${fileUrl}" class="w-10 h-10 object-cover rounded-lg">` 
+                            : getFileIcon(ext);
+                        
+                        ph.classList.remove('bg-gray-200', 'animate-pulse', 'file-placeholder');
+                        ph.style.backgroundColor = 'transparent';
+                        
+                        const card = ph.closest('.file-card-item') || ph.closest('.cursor-pointer');
+                        if (card) {
+                            card.onclick = (e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                unifiedDownload(fileUrl, fInfo.name);
+                            };
+                        }
                     }
                 }
             }
@@ -2034,7 +2044,7 @@ async function handleImageGeneration(prompt, imgObj = null) {
     }
 }
 
-function renderImageToBubble(targetId, source, mime, isUrl = false) {
+function renderImageToBubble(targetId, source, mime, isUrl = false, isAI = false) {
     const el = document.getElementById(targetId);
     if (!el) return;
     const imageUrl = isUrl ? source : `data:${mime};base64,${source}`;
@@ -2043,23 +2053,29 @@ function renderImageToBubble(targetId, source, mime, isUrl = false) {
     el.style.backgroundColor = 'transparent';
     const wrapper = document.createElement('div');
     wrapper.className = "mt-1 w-full image-container relative inline-block";
+    
     wrapper.onclick = (e) => {
         e.preventDefault();
         e.stopPropagation();
-        if (wrapper.classList.contains('show-dl')) {
-		    unifiedDownload(imageUrl, "AURA_Image.png");
-		} else {
-		    wrapper.classList.add('show-dl');
-		}
+        if (isAI) {
+            if (wrapper.classList.contains('show-dl')) {
+                unifiedDownload(imageUrl, "AURA_Image.png");
+            } else {
+                wrapper.classList.add('show-dl');
+            }
+        } else {
+            unifiedDownload(imageUrl, "AURA_Upload.png");
+        }
     };
-    wrapper.innerHTML = `
-        <img src="${imageUrl}" class="w-full h-auto rounded-xl shadow-md border border-gray-100 block">
+
+    const btnHtml = isAI ? `
         <button class="download-btn" style="position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); border: none; border-radius: 6px; padding: 6px; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10;">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
             </svg>
-        </button>
-    `;
+        </button>` : '';
+
+    wrapper.innerHTML = `<img src="${imageUrl}" class="w-full h-auto rounded-xl shadow-md border border-gray-100 block">${btnHtml}`;
     el.appendChild(wrapper);
     scrollToBottom();
 }
@@ -2129,30 +2145,36 @@ async function handleVideoGeneration(prompt, imageObj = null) {
     }
 }
 
-function renderVideoToBubble(targetId, source, mime, isUrl = false) {
+function renderVideoToBubble(targetId, source, mime, isUrl = false, isAI = false) {
     const el = document.getElementById(targetId);
     if (!el) return;
     const videoUrl = isUrl ? source : `data:${mime};base64,${source}`;
     el.innerHTML = '';
     const wrapper = document.createElement('div');
     wrapper.className = "mt-1 w-full image-container relative inline-block";
-    wrapper.onclick = (e) => {
-        if (e.target.closest('button')) return;
-        wrapper.classList.toggle('show-dl');
-    };
-    wrapper.innerHTML = `
-        <video src="${videoUrl}" controls playsinline class="w-full rounded-xl shadow-md border border-gray-100 block"></video>
+    
+    if (isAI) {
+        wrapper.onclick = (e) => {
+            if (e.target.closest('button')) return;
+            wrapper.classList.toggle('show-dl');
+        };
+    }
+
+    const btnHtml = isAI ? `
         <button class="download-btn" style="position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); border: none; border-radius: 6px; padding: 6px; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 20;">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
             </svg>
-        </button>
-    `;
-    wrapper.querySelector('.download-btn').onclick = (e) => {
-        e.preventDefault();
-		e.stopPropagation();
-		unifiedDownload(videoUrl, "AURA_Video.mp4");
-    };
+        </button>` : '';
+
+    wrapper.innerHTML = `<video src="${videoUrl}" controls playsinline class="w-full rounded-xl shadow-md border border-gray-100 block"></video>${btnHtml}`;
+    
+    if (isAI) {
+        wrapper.querySelector('.download-btn').onclick = (e) => {
+            e.preventDefault(); e.stopPropagation();
+            unifiedDownload(videoUrl, "AURA_Video.mp4");
+        };
+    }
     el.appendChild(wrapper);
     scrollToBottom();
 }
@@ -2790,7 +2812,7 @@ async function onSend(e) {
             isGenerating = true;
         } else {
             sendBtn.innerHTML = `
-                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width: 24px; height: 24px;" fill="currentColor">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width: 22px; height: 22px;" fill="currentColor">
                     <path d="M21.66,12a2,2,0,0,1-1.14,1.81L5.87,20.75A2.08,2.08,0,0,1,5,21a2,2,0,0,1-1.82-2.82L5.46,13H11a1,1,0,0,0,0-2H5.46L3.18,5.87A2,2,0,0,1,5.86,3.25h0l14.65,6.94A2,2,0,0,1,21.66,12Z"></path>
                 </svg>`;
             isGenerating = false;
@@ -3144,7 +3166,7 @@ async function generateAutoTitle(chatId, history) {
 
     const endpoint = `${SUPABASE_URL}/functions/v1/ai-proxy-v2?model=${currentModel}&action=generateContent&version=v1beta`;
     const context = history.map(m => `${m.role === 'user' ? 'User' : 'AI'}: ${m.parts[0].text}`).join('\n');
-    const prompt = `Tugas kamu membuat judul dari percakpan user dan ai sesuai dengan topik pembahasan minumal 3 kalimat. HANYA hasilkan teks judul saja tanpa tanda kutip atau penjelasan tambahan.\n\nKONTEKS:\n${context}`;
+    const prompt = `Tugas kamu membuat judul dari percakpan user dan ai sesuai dengan topik pembahasan maksimal 3 kalimat. HANYA hasilkan teks judul saja tanpa tanda kutip atau penjelasan tambahan.\n\nKONTEKS:\n${context}`;
 
     try {
         const res = await fetch(endpoint, {
