@@ -35,23 +35,24 @@
     <style>
         /* Reset & Base */
         html, body {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            width: 100%;
-            overflow: hidden;
-            position: fixed;
-            background-color: #ffffff;
-            font-family: 'Inter', sans-serif;
-            -webkit-text-size-adjust: none;
-            text-size-adjust: none;
-            overscroll-behavior: none;
-            touch-action: pan-x pan-y;
-			-webkit-user-select: none;
-		    -moz-user-select: none;
-		    -ms-user-select: none;
-		    user-select: none;
-        }
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    min-height: 100dvh;
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    background-color: #ffffff;
+    font-family: 'Inter', sans-serif;
+    -webkit-text-size-adjust: none;
+    text-size-adjust: none;
+    overscroll-behavior: none;
+    touch-action: pan-x pan-y;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
 		
 		* {
 		    -webkit-tap-highlight-color: transparent;
@@ -472,22 +473,22 @@
 			            </div>
 			        </div>
 			        <div id="history-list-container" class="flex-1 overflow-y-auto px-3 pt-1 pb-4 space-y-0.5 custom-scroll"></div>
-			        <div class="px-2 pt-2 border-t border-slate-50 flex flex-col space-y-0" style="padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 16px);">
-					    <button onclick="createNewChat()" class="w-full flex items-center gap-3 h-9 px-3 text-slate-600 rounded-lg transition-colors group">
+			        <div class="px-3 pt-2 border-t border-slate-50 flex flex-col space-y-1" style="padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 16px);">
+					    <button onclick="createNewChat()" class="w-full flex items-center gap-3 h-11 px-3 text-slate-600 rounded-xl transition-colors group bg-gray-50">
 					        <div class="w-7 h-7 flex items-center justify-center">
 					            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719"/><path d="M8 12h8"/><path d="M12 8v8"/></svg>
 					        </div>
 					        <span class="text-[14px] font-semibold">Percakapan Baru</span>
 					    </button>
 					
-					    <button id="admin-settings-btn" onclick="openSettings()" class="hidden w-full flex items-center gap-3 h-9 px-3 text-slate-600 rounded-lg transition-colors group">
+					    <button id="admin-settings-btn" onclick="openSettings()" class="hidden w-full flex items-center gap-3 h-11 px-3 text-slate-600 rounded-xl transition-colors group bg-gray-50">
 					        <div class="w-7 h-7 flex items-center justify-center">
 					            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m14.305 19.53.923-.382"/><path d="m15.228 16.852-.923-.383"/><path d="m16.852 15.228-.383-.923"/><path d="m16.852 20.772-.383.924"/><path d="m19.148 15.228.383-.923"/><path d="m19.53 21.696-.382-.924"/><path d="M2 21a8 8 0 0 1 10.434-7.62"/><path d="m20.772 16.852.924-.383"/><path d="m20.772 19.148.924.383"/><circle cx="10" cy="8" r="5"/><circle cx="18" cy="18" r="3"/></svg>
 					        </div>
 					        <span class="text-[14px] font-medium">Pengaturan</span>
 					    </button>
 					
-					    <button onclick="handleLogout()" class="w-full flex items-center gap-3 h-9 px-3 text-slate-600 rounded-lg transition-colors group">
+					    <button onclick="handleLogout()" class="w-full flex items-center gap-3 h-11 px-3 text-slate-600 rounded-xl transition-colors group bg-gray-50">
 					        <div class="w-7 h-7 flex items-center justify-center">
 					            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/></svg>
 					        </div>
@@ -1518,7 +1519,7 @@ marked.setOptions({ renderer: renderer, langPrefix: 'hljs language-' });
 // ===========================================================================
 function createBubble(role, content = '', files = [], isPlaceholder = false, showTyping = false) {
     const isAI = role === 'assistant' || role === 'model';
-    const roleLabel = isAI ? '<span class="ai-gradient">AURA</span>' : 'USER';
+    const roleLabel = isAI ? '<span class="ai-gradient">NIX</span>' : 'ANDA';
     const now = new Date();
     const timeStr = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
     const div = document.createElement('div');
@@ -1529,30 +1530,30 @@ function createBubble(role, content = '', files = [], isPlaceholder = false, sho
         const aiFile = files.find(f => f.isAI || f.isVideo);
         if (aiFile) {
             filesHtml = `
-                <div class="mt-2 w-full ai-image-container">
-                    <div class="file-placeholder w-full h-48 bg-gray-200 rounded-xl animate-pulse flex items-center justify-center">
-                        <i data-lucide="${aiFile.isVideo ? 'video' : 'image'}" class="w-8 h-8 text-gray-400"></i>
+                <div class="mt-2 w-full ai-image-container min-h-[100px]">
+                    <div class="file-placeholder w-full bg-gray-100 rounded-xl animate-pulse flex items-center justify-center py-12">
+                        <i data-lucide="${aiFile.isVideo ? 'video' : 'image'}" class="w-8 h-8 text-gray-300"></i>
                     </div>
                 </div>`;
         } else {
             filesHtml = '<div class="grid grid-cols-2 md:grid-cols-4 gap-2 mt-2 file-grid-container">';
             files.forEach((f, idx) => {
-			    const ext = f.name.split('.').pop().toLowerCase();
-			    let visual = isPlaceholder 
-			        ? `<div class="file-placeholder w-10 h-10 flex items-center justify-center bg-gray-200 rounded-lg" data-idx="${idx}"></div>`
-			        : (f.mime && f.mime.startsWith('image/')) 
-			            ? `<img src="data:${f.mime};base64,${f.base64}" class="w-10 h-10 object-cover rounded-lg">` 
-			            : getFileIcon(ext);
-			    
-			    filesHtml += `
-			        <div class="cursor-pointer active:scale-95 transition-all bg-gray-200 rounded-2xl p-3 flex items-center gap-2 relative w-full min-h-[64px] border-none shadow-sm file-card-item">
-			            <div class="w-10 h-10 flex-none flex items-center justify-center overflow-hidden shrink-0">${visual}</div>
-			            <div class="flex-1 flex flex-col justify-center min-w-0 h-10">
-			                <div class="text-[12px] font-bold text-gray-700 truncate leading-none mb-1">${f.name}</div>
-			                <div class="text-[10px] text-gray-400 font-medium leading-none">${f.size || ''}</div>
-			            </div>
-			        </div>`;
-			});
+                const ext = f.name.split('.').pop().toLowerCase();
+                let visual = isPlaceholder 
+                    ? `<div class="file-placeholder w-10 h-10 flex items-center justify-center bg-gray-200 rounded-lg" data-idx="${idx}"></div>`
+                    : (f.mime && f.mime.startsWith('image/')) 
+                        ? `<img src="data:${f.mime};base64,${f.base64}" class="w-10 h-10 object-cover rounded-lg">` 
+                        : getFileIcon(ext);
+                
+                filesHtml += `
+                    <div class="cursor-pointer active:scale-95 transition-all bg-gray-200 rounded-2xl p-3 flex items-center gap-2 relative w-full min-h-[64px] border-none shadow-sm file-card-item">
+                        <div class="w-10 h-10 flex-none flex items-center justify-center overflow-hidden shrink-0">${visual}</div>
+                        <div class="flex-1 flex flex-col justify-center min-w-0 h-10">
+                            <div class="text-[12px] font-bold text-gray-700 truncate leading-none mb-1">${f.name}</div>
+                            <div class="text-[10px] text-gray-400 font-medium leading-none">${f.size || ''}</div>
+                        </div>
+                    </div>`;
+            });
             filesHtml += '</div>';
         }
     }
@@ -2049,34 +2050,28 @@ function renderImageToBubble(targetId, source, mime, isUrl = false, isAI = false
     el.innerHTML = '';
     el.classList.remove('bg-gray-200', 'animate-pulse', 'file-placeholder');
     el.style.backgroundColor = 'transparent';
-    const wrapper = document.createElement('div');
-    wrapper.className = "mt-1 w-full image-container relative inline-block";
     
-    wrapper.onclick = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        if (isAI) {
-            if (wrapper.classList.contains('show-dl')) {
-                unifiedDownload(imageUrl, "AURA_Image.png");
-            } else {
-                wrapper.classList.add('show-dl');
-            }
-        } else {
-            unifiedDownload(imageUrl, "AURA_Upload.png");
-        }
-    };
+    const wrapper = document.createElement('div');
+    wrapper.className = "mt-1 w-full relative inline-block overflow-hidden rounded-xl";
+    
+    let downloadBtnHtml = '';
+    if (isAI) {
+        downloadBtnHtml = `
+            <button onclick="unifiedDownload('${imageUrl}', 'AURA_Image.png')" class="absolute top-3 right-3 bg-black/40 backdrop-blur-md border-none rounded-lg p-2 text-white cursor-pointer hover:bg-black/60 transition-all flex items-center justify-center z-20">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+            </button>`;
+    } else {
+        wrapper.onclick = () => unifiedDownload(imageUrl, "AURA_Upload.png");
+        wrapper.style.cursor = 'pointer';
+    }
 
-    const btnHtml = isAI ? `
-        <button class="download-btn" style="position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); border: none; border-radius: 6px; padding: 6px; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
-            </svg>
-        </button>` : '';
-
-    wrapper.innerHTML = `<img src="${imageUrl}" class="w-full h-auto rounded-xl shadow-md border border-gray-100 block">${btnHtml}`;
+    wrapper.innerHTML = `<img src="${imageUrl}" class="w-full h-auto shadow-md border border-gray-100 block">${downloadBtnHtml}`;
     el.appendChild(wrapper);
     scrollToBottom();
 }
+
 
 // ===========================================================================
 // 13. FUNGSI VIDEO MODE
@@ -2148,34 +2143,25 @@ function renderVideoToBubble(targetId, source, mime, isUrl = false, isAI = false
     if (!el) return;
     const videoUrl = isUrl ? source : `data:${mime};base64,${source}`;
     el.innerHTML = '';
+    
     const wrapper = document.createElement('div');
-    wrapper.className = "mt-1 w-full image-container relative inline-block";
+    wrapper.className = "mt-1 w-full relative inline-block overflow-hidden rounded-xl";
     
+    let downloadBtnHtml = '';
     if (isAI) {
-        wrapper.onclick = (e) => {
-            if (e.target.closest('button')) return;
-            wrapper.classList.toggle('show-dl');
-        };
+        downloadBtnHtml = `
+            <button onclick="unifiedDownload('${videoUrl}', 'AURA_Video.mp4')" class="absolute top-3 right-3 bg-black/40 backdrop-blur-md border-none rounded-lg p-2 text-white cursor-pointer hover:bg-black/60 transition-all flex items-center justify-center z-30">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+            </button>`;
     }
 
-    const btnHtml = isAI ? `
-        <button class="download-btn" style="position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); border: none; border-radius: 6px; padding: 6px; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 20;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
-            </svg>
-        </button>` : '';
-
-    wrapper.innerHTML = `<video src="${videoUrl}" controls playsinline class="w-full rounded-xl shadow-md border border-gray-100 block"></video>${btnHtml}`;
-    
-    if (isAI) {
-        wrapper.querySelector('.download-btn').onclick = (e) => {
-            e.preventDefault(); e.stopPropagation();
-            unifiedDownload(videoUrl, "AURA_Video.mp4");
-        };
-    }
+    wrapper.innerHTML = `<video src="${videoUrl}" controls playsinline class="w-full shadow-md border border-gray-100 block"></video>${downloadBtnHtml}`;
     el.appendChild(wrapper);
     scrollToBottom();
 }
+
 
 function startVideoPolling(fullName, targetId, videoPrompt) {
     const statusEl = document.getElementById(`status-text-${targetId}`);
