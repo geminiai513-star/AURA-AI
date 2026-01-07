@@ -1,6 +1,6 @@
 {
-  "name": "ASISTEN AI",
-  "short_name": "ASISTEN AI",
+  "name": "NIX AI",
+  "short_name": "NIX AI",
   "start_url": "./index.html",
   "scope": "/",
   "display": "standalone",
